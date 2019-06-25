@@ -1,0 +1,30 @@
+{
+  "namemsg": "ca-name",
+  "author": "Xxmarijnw",
+  "version": "0.4.9",
+  "url": "",
+  "descriptionmsg": "ca-description",
+  "license-name": "GPL-2.0-or-later",
+  "type": "parserhook",
+  "MessagesDirs": {
+    "WSArrays": [
+      "i18n"
+    ]
+  },
+  "AutoloadClasses": {
+    "WSArrays": "src/WSArrays.php"
+  },
+  "ExtensionMessagesFiles": {
+    "WSArraysMagic": "WSArrays.i18n.php"
+  },
+  "Hooks": {
+    "ParserFirstCallInit": [
+      "WSArrays::onParserFirstCallInit"
+    ]
+  },
+  "config": {
+    "MaxDefinedArrays": false,
+    "DefinedArraysGlobal": []
+  },
+  "manifest_version": 1
+}

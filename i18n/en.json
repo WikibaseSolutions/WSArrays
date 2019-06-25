@@ -1,0 +1,20 @@
+{
+  "@metadata": {
+    "authors": [
+      "Marijn van Wezel <marijn@wikibase.nl>"
+    ]
+  },
+  "ca-name": "WSArrays",
+  "ca-description": "Parser functions to allow the creation and traversing of associative and multidimensional arrays",
+  "ca-omitted": "$1 must not be omitted",
+  "ca-map-multidimensional": "You cannot map a multidimensional array",
+  "ca-nonexistant-subarray": "You cannot push to a non-existant subarray",
+  "ca-undefined-array": "This array has not been defined",
+  "ca-subarray-not-provided": "You must provide a subarray",
+  "ca-invalid-name": "This name is invalid",
+  "ca-invalid-wson": "You must provide the array in valid WSON",
+  "ca-max-defined-arrays-reached": "Maximum allowed number of defined arrays ($1) reached ($2)",
+  "ca-sort-missing-key": "Key must not be omitted when using keysort",
+  "ca-sort-array-too-deep": "This array cannot be sorted using keysort (must be 2-dimensional)",
+  "ca-sort-broken": "This array cannot be sorted using $1"
+}

@@ -1,0 +1,15 @@
+{
+  "ca-name": "The name of the extension (normally WSArrays)",
+  "ca-description": "The description of the extension as shown on Special:Version",
+  "ca-omitted": "Error message shown when someone forgets a required parameter",
+  "ca-map-multidimensional": "Error message shown when someone tries to map a multidimensional array using #complexarrayprint",
+  "ca-nonexistent-subarray": "Error message shown when someone tries to push a value to a non-existent subarray",
+  "ca-undefined-array": "Error message shown when someone tries to apply transactions or print a non-existent array",
+  "ca-subarray-not-provided": "Error message shown when someone omits a subarray",
+  "ca-invalid-name": "Error message shown when someone tries to apply transactions to an invalid name",
+  "ca-invalid-wson": "Error message shown when someone uses invalid WSON",
+  "ca-max-defined-arrays-reached": "Error message shown when someone tries to define too many arrays",
+  "ca-sort-missing-key": "Error message shown when someone omits the key while using keysort",
+  "ca-sort-array-too-deep": "Error message shown when someone tries to use keysort on an array that isn't two-dimensional",
+  "ca-sort-broken": "Error message shown when the sorting failed"
+}
