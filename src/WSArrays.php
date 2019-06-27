@@ -5,7 +5,7 @@
  * Initialization file for WSArrays.
  *
  * @license GPL-2.0-or-later
- * @version: 0.4.7
+ * @version: 0.4.9.1
  *
  * @author Xxmarijnw <marijn@wikibase.nl>
  *
@@ -110,16 +110,21 @@ class WSArrays extends GlobalFunctions {
             $parser->setFunctionHook( 'complexarraysort', [ComplexArraySort::class, 'defineParser'] );
             $parser->setFunctionHook( 'casort', [ComplexArraySort::class, 'defineParser'] );
 
-            // complexarraymaptemplate alias camaptemplate, camapt, catemplate
+            // complexarraymaptemplate alias camaptemplate, camapt, catemplate, camap
             $parser->setFunctionHook( 'complexarraymaptemplate', [ComplexArrayMapTemplate::class, 'defineParser'] );
             $parser->setFunctionHook( 'camaptemplate', [ComplexArrayMapTemplate::class, 'defineParser'] );
             $parser->setFunctionHook( 'camapt', [ComplexArrayMapTemplate::class, 'defineParser'] );
             $parser->setFunctionHook( 'catemplate', [ComplexArrayMapTemplate::class, 'defineParser'] );
+            $parser->setFunctionHook( 'camap', [ComplexArrayMapTemplate::class, 'defineParser'] );
 
             // complexarraypushvalue alias complexarraypush, capush
             $parser->setFunctionHook( 'complexarraypushvalue', [ComplexArrayPushValue::class, 'defineParser'] );
             $parser->setFunctionHook( 'complexarraypush', [ComplexArrayPushValue::class, 'defineParser'] );
             $parser->setFunctionHook( 'capush', [ComplexArrayPushValue::class, 'defineParser'] );
+
+            // complexarrayextract alias caextract
+            $parser->setFunctionHook( 'complexarrayextract', [ComplexArrayExtract::class, 'defineParser'] );
+            $parser->setFunctionHook( 'caextract', [ComplexArrayExtract::class, 'defineParser'] );
         } catch(Exception $e) {
             return false;
         }
