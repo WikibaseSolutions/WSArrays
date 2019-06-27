@@ -30,27 +30,18 @@ class ComplexArrayUnique extends WSArrays
      * @return array|null
      */
     private static function arrayUnique($name) {
-        $ca_undefined_array = wfMessage('ca-undefined-array');
-        if(!$array = GlobalFunctions::getArrayFromArrayName($name)) return GlobalFunctions::error($ca_undefined_array);
+        $array = WSArrays::$arrays[$name];
 
         if(GlobalFunctions::containsArray($array)) {
-            $array = array_unique($array);
+            $array = array_unique($array, SORT_REGULAR);
 
             WSArrays::$arrays[$name] = $array;
         } else {
-            $array = self::arrayUniqueMultidimensional($array);
+            $array = array_unique($array);
 
             WSArrays::$arrays[$name] = $array;
         }
 
         return null;
-    }
-
-    /**
-     * @param $array
-     * @return array
-     */
-    private static function arrayUniqueMultidimensional($array) {
-        return array_intersect_key($array, array_unique(array_map('serialize', $array)));
     }
 }
