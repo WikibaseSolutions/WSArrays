@@ -5,7 +5,7 @@
  * Initialization file for WSArrays.
  *
  * @license GPL-2.0-or-later
- * @version: 0.4.9.1
+ * @version: 0.5.0
  *
  * @author Xxmarijnw <marijn@wikibase.nl>
  *
@@ -131,5 +131,5 @@ class WSArrays extends GlobalFunctions {
 
         return true;
     }
-
+    
 }
