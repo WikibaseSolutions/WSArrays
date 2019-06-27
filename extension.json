@@ -1,8 +1,9 @@
 {
+  "name": "WSArrays",
   "namemsg": "ca-name",
   "author": "Xxmarijnw",
   "version": "0.4.9",
-  "url": "",
+  "url": "https://www.mediawiki.org/wiki/Extension:WSArrays",
   "descriptionmsg": "ca-description",
   "license-name": "GPL-2.0-or-later",
   "type": "parserhook",
