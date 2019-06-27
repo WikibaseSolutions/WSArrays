@@ -54,8 +54,12 @@ $magicWords['en'] = [
     'camaptemplate' => [ 0, 'camaptemplate' ],
     'camapt' => [ 0, 'camapt' ],
     'catemplate' => [ 0, 'catemplate' ],
+    'camap' => [ 0, 'camap' ],
 
     'complexarraypushvalue' => [ 0, 'complexarraypushvalue' ],
     'complexarraypush' => [ 0, 'complexarraypush' ],
-    'capush' => [ 0, 'capush' ]
+    'capush' => [ 0, 'capush' ],
+
+    'complexarrayextract' => [ 0, 'complexarrayextract' ],
+    'caextract' => [ 0, 'caextract' ]
 ];
