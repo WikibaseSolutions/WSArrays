@@ -1,31 +1,32 @@
 <?php
 
 /**
- * Class ComplexArrayMerge
+ * Class ComplexArrayUnion
  *
- * Defines the parser function {{#complexarraymerge:}}, which allows users to merge multiple arrays.
+ * Defines the parser function {{#complexarraypusharray:}}, which allows users to push one or more arrays to the end of another array, creating a new array.
  *
  * @extends WSArrays
  */
-class ComplexArrayMerge extends WSArrays
+class ComplexArrayPushArray extends WSArrays
 {
     /**
-     * Define all allowed parameters.
+     * Define parameters and initialize parser.
      *
      * @param Parser $parser
+     * @param string $name
      * @return array|null
      */
     public static function defineParser( Parser $parser ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        return self::arrayMerge(func_get_args());
+        return self::arrayUnion(func_get_args());
     }
 
     /**
-     * @param $args
+     * @param $name
      * @return array|null
      */
-    private static function arrayMerge($args) {
+    private static function arrayUnion($args) {
         // Remove $parser from args
         array_shift($args);
 
@@ -34,14 +35,6 @@ class ComplexArrayMerge extends WSArrays
 
         // Remove the first (second) argument
         array_shift($args);
-
-        // Get and remove the last argument
-        $last_element = array_pop($args);
-
-        // If the last element is not "recursive", add it back
-        if($last_element !== "recursive") {
-            array_push($args, $last_element);
-        }
 
         $ca_too_little_arrays = wfMessage('ca-too-little-arrays');
         if(count($args) < 2) return GlobalFunctions::error($ca_too_little_arrays);
@@ -56,12 +49,7 @@ class ComplexArrayMerge extends WSArrays
             array_push($arrays, WSArrays::$arrays[$array]);
         }
 
-
-        if($last_element === "recursive") {
-            WSArrays::$arrays[$new_array] = call_user_func_array('array_merge_recursive', $arrays);
-        } else {
-            WSArrays::$arrays[$new_array] = call_user_func_array('array_merge', $arrays);
-        }
+        WSArrays::$arrays[$new_array] = $arrays;
 
         return null;
     }
