@@ -61,5 +61,8 @@ $magicWords['en'] = [
     'capush' => [ 0, 'capush' ],
 
     'complexarrayextract' => [ 0, 'complexarrayextract' ],
-    'caextract' => [ 0, 'caextract' ]
+    'caextract' => [ 0, 'caextract' ],
+
+    'complexarraypusharray' => [ 0, 'complexarraypusharray' ],
+    'capusharray' => [ 0, 'capusharray' ]
 ];

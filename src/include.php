@@ -17,3 +17,4 @@ include INCLUDE_DIR . 'ComplexArraySort.class.php';
 include INCLUDE_DIR . 'ComplexArrayMapTemplate.class.php';
 include INCLUDE_DIR . 'ComplexArrayPushValue.class.php';
 include INCLUDE_DIR . 'ComplexArrayExtract.class.php';
+include INCLUDE_DIR . 'ComplexArrayPushArray.class.php';

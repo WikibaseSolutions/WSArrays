@@ -15,15 +15,16 @@ class ComplexArrayMapTemplate extends WSArrays
      * @param Parser $parser
      * @param string $name
      * @param string $template
+     * @param string $options
      * @return array
      */
-    public static function defineParser( Parser $parser, $name = '', $template = '') {
+    public static function defineParser( Parser $parser, $name = '', $template = '', $options = '') {
         GlobalFunctions::fetchSemanticArrays();
 
         if(empty($name)) return GlobalFunctions::error("Name should not be omitted");
         if(empty($template)) return GlobalFunctions::error("Template should not be omitted");
 
-        return self::arrayMapTemplate($name, $template);
+        return self::arrayMapTemplate($name, $template, $options);
     }
 
     /**
@@ -31,7 +32,7 @@ class ComplexArrayMapTemplate extends WSArrays
      * @param $template
      * @return array
      */
-    private static function arrayMapTemplate($name, $template) {
+    private static function arrayMapTemplate($name, $template, $options = '') {
         $base_array = strtok($name, "[");
 
         $ca_undefined_array = wfMessage('ca-undefined-array');
@@ -45,7 +46,7 @@ class ComplexArrayMapTemplate extends WSArrays
 
         $return = null;
 
-        if(GlobalFunctions::containsArray($array)) {
+        if(GlobalFunctions::containsArray($array) && $options !== "condensed") {
             foreach($array as $value) {
                 self::map($value, $return, $template);
             }

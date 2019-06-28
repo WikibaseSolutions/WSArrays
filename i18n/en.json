@@ -16,5 +16,10 @@
   "ca-max-defined-arrays-reached": "Maximum allowed number of defined arrays ($1) reached ($2)",
   "ca-sort-missing-key": "Key must not be omitted when using keysort",
   "ca-sort-array-too-deep": "This array cannot be sorted using keysort (must be 2-dimensional)",
-  "ca-sort-broken": "This array cannot be sorted using $1"
+  "ca-sort-broken": "This array cannot be sorted using $1",
+  "ca-too-little-arrays": "You must provide at least two arrays",
+  "ca-nonexistant-multiple": "One or more arrays has not been defined",
+  "ca-smw-paramdesc-name": "Defines the name of the array being created",
+  "ca-smw-paramdesc-hide": "Hides all semantic variables in the result",
+  "ca-smw-paramdesc-unassociative": "Converts the named keys to integer keys"
 }
