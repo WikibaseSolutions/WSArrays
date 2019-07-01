@@ -24,7 +24,7 @@ class ComplexArrayExtract extends WSArrays
         $ca_omitted = wfMessage('ca-omitted', 'Subarray');
         if(!$subarray) return GlobalFunctions::error($ca_omitted);
 
-        return self::arrayExtract($name, $subarray);
+        return ComplexArrayExtract::arrayExtract($name, $subarray);
     }
 
     /**

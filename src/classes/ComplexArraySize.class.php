@@ -23,7 +23,7 @@ class ComplexArraySize extends WSArrays
         $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
         if(empty($name)) return GlobalFunctions::error($ca_omitted);
 
-        return self::arraySize($name, $options);
+        return ComplexArraySize::arraySize($name, $options);
     }
 
     /**

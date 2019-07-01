@@ -24,7 +24,7 @@ class ComplexArrayMapTemplate extends WSArrays
         if(empty($name)) return GlobalFunctions::error("Name should not be omitted");
         if(empty($template)) return GlobalFunctions::error("Template should not be omitted");
 
-        return self::arrayMapTemplate($name, $template, $options);
+        return ComplexArrayMapTemplate::arrayMapTemplate($name, $template, $options);
     }
 
     /**
@@ -48,10 +48,10 @@ class ComplexArrayMapTemplate extends WSArrays
 
         if(GlobalFunctions::containsArray($array) && $options !== "condensed") {
             foreach($array as $value) {
-                self::map($value, $return, $template);
+                ComplexArrayMapTemplate::map($value, $return, $template);
             }
         } else {
-            self::map($array, $return, $template);
+            ComplexArrayMapTemplate::map($array, $return, $template);
         }
 
         return array($return, "noparse" => false);

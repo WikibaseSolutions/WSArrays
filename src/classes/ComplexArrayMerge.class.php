@@ -18,7 +18,7 @@ class ComplexArrayMerge extends WSArrays
     public static function defineParser( Parser $parser ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        return self::arrayMerge(func_get_args());
+        return ComplexArrayMerge::arrayMerge(func_get_args());
     }
 
     /**

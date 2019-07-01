@@ -27,7 +27,7 @@ class ComplexArrayDefine extends WSArrays
         $ca_omitted = wfMessage('ca-omitted', 'Array');
         if(empty($wson)) return GlobalFunctions::error($ca_omitted);
 
-        return self::arrayDefine($name, $wson);
+        return ComplexArrayDefine::arrayDefine($name, $wson);
     }
 
     /**

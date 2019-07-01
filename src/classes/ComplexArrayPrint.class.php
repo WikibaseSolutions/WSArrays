@@ -42,7 +42,7 @@ class ComplexArrayPrint extends WSArrays
         $ca_omitted = wfMessage('ca-omitted', 'Name');
         if(empty($name)) return GlobalFunctions::error($ca_omitted);
 
-        return self::arrayPrint($name, $options, $map, $subject);
+        return ComplexArrayPrint::arrayPrint($name, $options, $map, $subject);
     }
 
     /**
@@ -53,20 +53,20 @@ class ComplexArrayPrint extends WSArrays
      * @return array|mixed|null|string|string[]
      */
     private static function arrayPrint($name, $options = '', $map = '', $subject = '') {
-        self::$name = $name;
-        self::$map = $map;
+        ComplexArrayPrint::$name = $name;
+        ComplexArrayPrint::$map = $map;
 
-        if($subject) self::$subject = $subject;
+        if($subject) ComplexArrayPrint::$subject = $subject;
 
         $ca_undefined_array = wfMessage('ca-undefined-array');
-        if(!self::$array = GlobalFunctions::getArrayFromArrayName($name)) return GlobalFunctions::error($ca_undefined_array);
+        if(!ComplexArrayPrint::$array = GlobalFunctions::getArrayFromArrayName($name)) return GlobalFunctions::error($ca_undefined_array);
 
         if(!empty($options)) {
             GlobalFunctions::serializeOptions($options);
 
-            $result = self::applyOptions($options);
+            $result = ComplexArrayPrint::applyOptions($options);
         } else {
-            $result = self::createList();
+            $result = ComplexArrayPrint::createList();
         }
 
         return $result;
@@ -83,14 +83,14 @@ class ComplexArrayPrint extends WSArrays
 
         switch($options) {
             case 'map':
-                return self::applyMapping();
+                return ComplexArrayPrint::applyMapping();
                 break;
             case 'markup':
             case 'wson':
-                return self::ArrayToWSON(self::$array);
+                return ComplexArrayPrint::ArrayToWSON(ComplexArrayPrint::$array);
                 break;
             default:
-                return self::createList($options);
+                return ComplexArrayPrint::createList($options);
                 break;
         }
     }
@@ -100,18 +100,18 @@ class ComplexArrayPrint extends WSArrays
      */
     private static function applyMapping() {
         $ca_omitted = wfMessage('ca-omitted', 'Mapping');
-        if(!self::$map) return GlobalFunctions::error($ca_omitted);
+        if(!ComplexArrayPrint::$map) return GlobalFunctions::error($ca_omitted);
 
         $ca_map_multidimensional = wfMessage('ca-map-multidimensional');
-        if(GlobalFunctions::containsArray(self::$array)) return GlobalFunctions::error($ca_map_multidimensional);
+        if(GlobalFunctions::containsArray(ComplexArrayPrint::$array)) return GlobalFunctions::error($ca_map_multidimensional);
 
-        if(count(self::$array) === 1) {
-            return self::mapValue(self::$array);
+        if(count(ComplexArrayPrint::$array) === 1) {
+            return ComplexArrayPrint::mapValue(ComplexArrayPrint::$array);
         }
 
         $result = null;
-        foreach(self::$array as $value) {
-            $result .= self::mapValue($value);
+        foreach(ComplexArrayPrint::$array as $value) {
+            $result .= ComplexArrayPrint::mapValue($value);
         }
 
         return $result;
@@ -122,7 +122,7 @@ class ComplexArrayPrint extends WSArrays
      * @return mixed
      */
     private static function mapValue($value) {
-        return str_replace(self::$subject, $value, self::$map);
+        return str_replace(ComplexArrayPrint::$subject, $value, ComplexArrayPrint::$map);
     }
 
     /**
@@ -132,16 +132,16 @@ class ComplexArrayPrint extends WSArrays
      * @return array|null|string
      */
     private static function createList($type = "unordered") {
-        if(count(self::$array) === 1 && !GlobalFunctions::containsArray(self::$array)) {
-            return self::$array;
+        if(count(ComplexArrayPrint::$array) === 1 && !GlobalFunctions::containsArray(ComplexArrayPrint::$array)) {
+            return ComplexArrayPrint::$array;
         }
 
-        if($type == "ordered") self::$indent_char = "#";
-        $indent_char = self::$indent_char;
+        if($type == "ordered") ComplexArrayPrint::$indent_char = "#";
+        $indent_char = ComplexArrayPrint::$indent_char;
 
         $result = null;
 
-        foreach(self::$array as $key => $value) {
+        foreach(ComplexArrayPrint::$array as $key => $value) {
             if(!is_array($value)) {
                 if(!is_numeric($key)) {
                     $result .= "$indent_char $key: $value\n";
@@ -151,7 +151,7 @@ class ComplexArrayPrint extends WSArrays
             } else {
                 $result .= "$indent_char ".strval($key)."\n";
 
-                self::addArrayToUnorderedList($value, $result);
+                ComplexArrayPrint::addArrayToUnorderedList($value, $result);
             }
         }
 
@@ -166,14 +166,14 @@ class ComplexArrayPrint extends WSArrays
     private static function addArrayToUnorderedList($array, &$result, $depth = 0) {
         $depth++;
 
-        $indent_char = self::$indent_char;
+        $indent_char = ComplexArrayPrint::$indent_char;
 
         foreach($array as $key => $value) {
             $indent = str_repeat("$indent_char", $depth + 1);
 
             if(is_array($value)) {
                 $result .= "$indent ".strval($key)."\n";
-                self::addArrayToUnorderedList($value, $result, $depth);
+                ComplexArrayPrint::addArrayToUnorderedList($value, $result, $depth);
             } else {
                 if(!is_numeric($key)) {
                     $result .= "$indent $key: $value\n";

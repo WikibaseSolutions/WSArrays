@@ -19,7 +19,7 @@ class ComplexArrayPushArray extends WSArrays
     public static function defineParser( Parser $parser ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        return self::arrayUnion(func_get_args());
+        return ComplexArrayPushArray::arrayUnion(func_get_args());
     }
 
     /**

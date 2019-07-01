@@ -22,7 +22,7 @@ class ComplexArrayUnique extends WSArrays
         $ca_omitted = wfMessage('ca-omitted', 'Name');
         if(empty($name)) return GlobalFunctions::error($ca_omitted);
 
-        return self::arrayUnique($name);
+        return ComplexArrayUnique::arrayUnique($name);
     }
 
     /**
