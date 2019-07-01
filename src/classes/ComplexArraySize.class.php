@@ -20,8 +20,11 @@ class ComplexArraySize extends WSArrays
     public static function defineParser( Parser $parser, $name = '', $options = '') {
         GlobalFunctions::fetchSemanticArrays();
 
-        $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
-        if(empty($name)) return GlobalFunctions::error($ca_omitted);
+        if(empty($name)) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
+
+            return GlobalFunctions::error($ca_omitted);
+        }
 
         return ComplexArraySize::arraySize($name, $options);
     }
@@ -34,10 +37,14 @@ class ComplexArraySize extends WSArrays
      * @return array|int
      */
     private static function arraySize($name, $options = '') {
-        $base_array = strtok($name, "[");
+        $base_array = GlobalFunctions::calculateBaseArray($name);
 
-        $ca_undefined_array = wfMessage('ca-undefined-array');
-        if(!isset(WSArrays::$arrays[$base_array])) return GlobalFunctions::error($ca_undefined_array);
+        if(!isset(WSArrays::$arrays[$base_array])) {
+            $ca_undefined_array = wfMessage('ca-undefined-array');
+
+            return GlobalFunctions::error($ca_undefined_array);
+        }
+
         $array = WSArrays::$arrays[$base_array];
 
         if(!strpos($name, "[") && empty($options)) {
@@ -52,9 +59,15 @@ class ComplexArraySize extends WSArrays
             return $count;
         }
 
-        if(!is_array($array = GlobalFunctions::getArrayFromArrayName($name))) return GlobalFunctions::error($ca_undefined_array);
+        if(!is_array($array = GlobalFunctions::getArrayFromArrayName($name))) {
+            $ca_undefined_array = wfMessage('ca-undefined-array');
 
-        if($options === "top") return count($array);
+            return GlobalFunctions::error($ca_undefined_array);
+        }
+
+        if($options === "top") {
+            return count($array);
+        }
 
         return count($array, COUNT_RECURSIVE);
     }

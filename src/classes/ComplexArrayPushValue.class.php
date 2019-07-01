@@ -20,11 +20,17 @@ class ComplexArrayPushValue extends WSArrays
     public static function defineParser( Parser $parser, $array = '', $value = '') {
         GlobalFunctions::fetchSemanticArrays();
 
-        $ca_omitted = wfMessage('ca-omitted', 'Array');
-        if(empty($array)) return GlobalFunctions::error($ca_omitted);
+        if(empty($array)) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
 
-        $ca_omitted = wfMessage('ca-omitted', 'Value');
-        if(empty($value)) return GlobalFunctions::error($ca_omitted);
+            return GlobalFunctions::error($ca_omitted);
+        }
+
+        if(empty($value)) {
+            $ca_omitted = wfMessage('ca-omitted', 'Value');
+
+            return GlobalFunctions::error($ca_omitted);
+        }
 
         return ComplexArrayPushValue::arrayPushValue($array, $value);
     }
@@ -35,10 +41,14 @@ class ComplexArrayPushValue extends WSArrays
      * @return array|bool|null
      */
     private static function arrayPushValue($array, $value) {
-        $base_array = strtok($array, "[");
+        $base_array = self::calculateBaseArray($array);
 
-        $ca_undefined_array = wfMessage('ca-undefined-array');
-        if(!isset(WSArrays::$arrays[$base_array])) return GlobalFunctions::error($ca_undefined_array);
+        if(!isset(WSArrays::$arrays[$base_array])) {
+            $ca_undefined_array = wfMessage('ca-undefined-array');
+
+            return GlobalFunctions::error($ca_undefined_array);
+        }
+
         $wsarray = WSArrays::$arrays[$base_array];
 
         if(!strpos($array, "[")) {
@@ -55,14 +65,17 @@ class ComplexArrayPushValue extends WSArrays
             return null;
         }
 
-        $valid = preg_match_all("/(?<=\[).+?(?=\])/", $array, $matches);
+        if(preg_match_all("/(?<=\[).+?(?=\])/", $array, $matches) === 0) {
+            $ca_invalid_name = wfMessage('ca-invalid-name');
 
-        $ca_invalid_name = wfMessage('ca-invalid-name');
-        if($valid === 0) return GlobalFunctions::error($ca_invalid_name);
+            return GlobalFunctions::error($ca_invalid_name);
+        }
 
         $result = ComplexArrayPushValue::add($matches[0], $wsarray, $value);
 
-        if($result !== true) return $result;
+        if($result !== true) {
+            return $result;
+        }
 
         WSArrays::$arrays[$base_array] = $wsarray;
 
@@ -85,9 +98,7 @@ class ComplexArrayPushValue extends WSArrays
         }
 
         $temp =& $array;
-
         $depth = count($path);
-
         $current_depth = 1;
         foreach($path as $key) {
             $current_depth++;

@@ -19,8 +19,11 @@ class ComplexArrayUnique extends WSArrays
     public static function defineParser( Parser $parser, $name = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        $ca_omitted = wfMessage('ca-omitted', 'Name');
-        if(empty($name)) return GlobalFunctions::error($ca_omitted);
+        if(empty($name)) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
+
+            return GlobalFunctions::error($ca_omitted);
+        }
 
         return ComplexArrayUnique::arrayUnique($name);
     }

@@ -21,8 +21,17 @@ class ComplexArrayMapTemplate extends WSArrays
     public static function defineParser( Parser $parser, $name = '', $template = '', $options = '') {
         GlobalFunctions::fetchSemanticArrays();
 
-        if(empty($name)) return GlobalFunctions::error("Name should not be omitted");
-        if(empty($template)) return GlobalFunctions::error("Template should not be omitted");
+        if(empty($name)) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
+
+            return GlobalFunctions::error($ca_omitted);
+        }
+
+        if(empty($template)) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Template' );
+
+            return GlobalFunctions::error($ca_omitted);
+        }
 
         return ComplexArrayMapTemplate::arrayMapTemplate($name, $template, $options);
     }
@@ -30,22 +39,27 @@ class ComplexArrayMapTemplate extends WSArrays
     /**
      * @param $name
      * @param $template
+     * @param $options
      * @return array
      */
     private static function arrayMapTemplate($name, $template, $options = '') {
-        $base_array = strtok($name, "[");
+        $base_array = GlobalFunctions::calculateBaseArray($name);
 
-        $ca_undefined_array = wfMessage('ca-undefined-array');
+        if(!isset(WSArrays::$arrays[$base_array])) {
+            $ca_undefined_array = wfMessage('ca-undefined-array');
 
-        if(!isset(WSArrays::$arrays[$base_array])) return GlobalFunctions::error($ca_undefined_array);
-        $array = WSArrays::$arrays[$base_array];
+            return GlobalFunctions::error($ca_undefined_array);
+        }
 
-        if(strpos($name, "[") && strpos($name, "]")) {
-            if(!$array = GlobalFunctions::getArrayFromArrayName($name)) return GlobalFunctions::error($ca_undefined_array);
+        $array = GlobalFunctions::getArrayFromArrayName($name);
+
+        if(!$array) {
+                $ca_undefined_array = wfMessage('ca-undefined-array');
+
+                return GlobalFunctions::error($ca_undefined_array);
         }
 
         $return = null;
-
         if(GlobalFunctions::containsArray($array) && $options !== "condensed") {
             foreach($array as $value) {
                 ComplexArrayMapTemplate::map($value, $return, $template);

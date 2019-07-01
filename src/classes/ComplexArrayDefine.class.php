@@ -21,11 +21,23 @@ class ComplexArrayDefine extends WSArrays
     public static function defineParser( Parser $parser, $name = '', $wson = '') {
         GlobalFunctions::fetchSemanticArrays();
 
-        $ca_omitted = wfMessage('ca-omitted', 'Name');
-        if(empty($name)) return GlobalFunctions::error($ca_omitted);
+        if(empty($name)) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
 
-        $ca_omitted = wfMessage('ca-omitted', 'Array');
-        if(empty($wson)) return GlobalFunctions::error($ca_omitted);
+            return GlobalFunctions::error($ca_omitted);
+        }
+
+        if(!GlobalFunctions::isValidArrayName($name)) {
+            $ca_invalid_name = wfMessage( 'ca-invalid-name' );
+
+            return GlobalFunctions::error($ca_invalid_name);
+        }
+
+        if(empty($wson)) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Array' );
+
+            return GlobalFunctions::error($ca_omitted);
+        }
 
         return ComplexArrayDefine::arrayDefine($name, $wson);
     }
@@ -40,15 +52,19 @@ class ComplexArrayDefine extends WSArrays
     private static function arrayDefine($name, $wson) {
         GlobalFunctions::WSONtoJSON($wson);
 
-        $ca_invalid_wson = wfMessage('ca-invalid-wson');
-        if(!GlobalFunctions::isValidJSON($wson)) return GlobalFunctions::error($ca_invalid_wson);
+        if(!GlobalFunctions::isValidJSON($wson)) {
+            $ca_invalid_wson = wfMessage('ca-invalid-wson');
 
-        $ca_max_defined_arrays_reached = wfMessage('ca-max-defined-arrays-reached', WSArrays::$options['max_defined_arrays'], $name);
-        if(GlobalFunctions::definedArrayLimitReached()) return GlobalFunctions::error($ca_max_defined_arrays_reached);
+            return GlobalFunctions::error($ca_invalid_wson);
+        }
 
-        $array = json_decode($wson, true);
+        if(GlobalFunctions::definedArrayLimitReached()) {
+            $ca_max_defined_arrays_reached = wfMessage('ca-max-defined-arrays-reached', WSArrays::$options['max_defined_arrays'], $name);
 
-        WSArrays::$arrays[$name] = $array;
+            return GlobalFunctions::error($ca_max_defined_arrays_reached);
+        }
+
+        WSArrays::$arrays[$name] = json_decode($wson, true);
 
         return null;
     }
