@@ -26,7 +26,7 @@ class ComplexArrayPushValue extends WSArrays
         $ca_omitted = wfMessage('ca-omitted', 'Value');
         if(empty($value)) return GlobalFunctions::error($ca_omitted);
 
-        return self::arrayPushValue($array, $value);
+        return ComplexArrayPushValue::arrayPushValue($array, $value);
     }
 
     /**
@@ -60,7 +60,7 @@ class ComplexArrayPushValue extends WSArrays
         $ca_invalid_name = wfMessage('ca-invalid-name');
         if($valid === 0) return GlobalFunctions::error($ca_invalid_name);
 
-        $result = self::add($matches[0], $wsarray, $value);
+        $result = ComplexArrayPushValue::add($matches[0], $wsarray, $value);
 
         if($result !== true) return $result;
 

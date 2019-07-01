@@ -29,7 +29,7 @@ class ComplexArrayAddValue extends WSArrays
         $ca_subarray_not_provided = wfMessage('ca-subarray-not-provided');
         if(!strpos($name, "[") || !strpos($name, "]")) return GlobalFunctions::error($ca_subarray_not_provided);
 
-        return self::arrayAddValue($name, $value);
+        return ComplexArrayAddValue::arrayAddValue($name, $value);
     }
 
     /**
@@ -49,7 +49,7 @@ class ComplexArrayAddValue extends WSArrays
         $ca_invalid_name = wfMessage('ca-invalid-name');
         if($valid === 0) return GlobalFunctions::error($ca_invalid_name);
 
-        self::set($matches[0], $wsarray, $value);
+        ComplexArrayAddValue::set($matches[0], $wsarray, $value);
 
         WSArrays::$arrays[$base_array] = $wsarray;
 
