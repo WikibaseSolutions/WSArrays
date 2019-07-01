@@ -20,14 +20,24 @@ class ComplexArrayAddValue extends WSArrays
     public static function defineParser( Parser $parser, $name = '', $value = '') {
         GlobalFunctions::fetchSemanticArrays();
 
-        $ca_omitted = wfMessage('ca-omitted', 'Name');
-        if(empty($name)) return GlobalFunctions::error($ca_omitted);
+        if(empty($name)) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
 
-        $ca_omitted = wfMessage('ca-omitted', "Value");
-        if(empty($value)) return GlobalFunctions::error($ca_omitted);
+            return GlobalFunctions::error($ca_omitted);
+        }
 
-        $ca_subarray_not_provided = wfMessage('ca-subarray-not-provided');
-        if(!strpos($name, "[") || !strpos($name, "]")) return GlobalFunctions::error($ca_subarray_not_provided);
+        if(empty($value)) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Value' );
+
+            return GlobalFunctions::error($ca_omitted);
+        }
+
+        if(!strpos($name, "[") ||
+           !strpos($name, "]")) {
+            $ca_subarray_not_provided = wfMessage( 'ca-subarray-not-provided' );
+
+            return GlobalFunctions::error($ca_subarray_not_provided);
+        }
 
         return ComplexArrayAddValue::arrayAddValue($name, $value);
     }
@@ -38,16 +48,21 @@ class ComplexArrayAddValue extends WSArrays
      * @return array|null
      */
     private static function arrayAddValue($array, $value) {
-        $base_array = strtok($array, "[");
+        $base_array = GlobalFunctions::calculateBaseArray($array);
 
-        $ca_undefined_array = wfMessage('ca-undefined-array');
-        if(!isset(WSArrays::$arrays[$base_array])) return GlobalFunctions::error($ca_undefined_array);
+        if(!isset(WSArrays::$arrays[$base_array])) {
+            $ca_undefined_array = wfMessage('ca-undefined-array');
+
+            return GlobalFunctions::error($ca_undefined_array);
+        }
+
+        if(preg_match_all("/(?<=\[).+?(?=\])/", $array, $matches) === 0) {
+            $ca_invalid_name = wfMessage('ca-invalid-name');
+
+            return GlobalFunctions::error($ca_invalid_name);
+        }
+
         $wsarray = WSArrays::$arrays[$base_array];
-
-        $valid = preg_match_all("/(?<=\[).+?(?=\])/", $array, $matches);
-
-        $ca_invalid_name = wfMessage('ca-invalid-name');
-        if($valid === 0) return GlobalFunctions::error($ca_invalid_name);
 
         ComplexArrayAddValue::set($matches[0], $wsarray, $value);
 

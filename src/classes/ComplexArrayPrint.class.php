@@ -39,8 +39,11 @@ class ComplexArrayPrint extends WSArrays
     public static function defineParser( Parser $parser, $name = '', $options = '', $map = '', $subject = '') {
         GlobalFunctions::fetchSemanticArrays();
 
-        $ca_omitted = wfMessage('ca-omitted', 'Name');
-        if(empty($name)) return GlobalFunctions::error($ca_omitted);
+        if(empty($name)) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
+
+            return GlobalFunctions::error($ca_omitted);
+        }
 
         return ComplexArrayPrint::arrayPrint($name, $options, $map, $subject);
     }
@@ -56,10 +59,13 @@ class ComplexArrayPrint extends WSArrays
         ComplexArrayPrint::$name = $name;
         ComplexArrayPrint::$map = $map;
 
-        if($subject) ComplexArrayPrint::$subject = $subject;
+        if(!ComplexArrayPrint::$array = GlobalFunctions::getArrayFromArrayName($name)) {
+            $ca_undefined_array = wfMessage('ca-undefined-array');
 
-        $ca_undefined_array = wfMessage('ca-undefined-array');
-        if(!ComplexArrayPrint::$array = GlobalFunctions::getArrayFromArrayName($name)) return GlobalFunctions::error($ca_undefined_array);
+            return GlobalFunctions::error($ca_undefined_array);
+        }
+
+        if($subject) ComplexArrayPrint::$subject = $subject;
 
         if(!empty($options)) {
             GlobalFunctions::serializeOptions($options);
@@ -99,11 +105,17 @@ class ComplexArrayPrint extends WSArrays
      * @return array|mixed|null|string
      */
     private static function applyMapping() {
-        $ca_omitted = wfMessage('ca-omitted', 'Mapping');
-        if(!ComplexArrayPrint::$map) return GlobalFunctions::error($ca_omitted);
+        if(!ComplexArrayPrint::$map) {
+            $ca_omitted = wfMessage('ca-omitted', 'Mapping');
 
-        $ca_map_multidimensional = wfMessage('ca-map-multidimensional');
-        if(GlobalFunctions::containsArray(ComplexArrayPrint::$array)) return GlobalFunctions::error($ca_map_multidimensional);
+            return GlobalFunctions::error($ca_omitted);
+        }
+
+        if(GlobalFunctions::containsArray(ComplexArrayPrint::$array)) {
+            $ca_map_multidimensional = wfMessage('ca-map-multidimensional');
+
+            return GlobalFunctions::error($ca_map_multidimensional);
+        }
 
         if(count(ComplexArrayPrint::$array) === 1) {
             return ComplexArrayPrint::mapValue(ComplexArrayPrint::$array);

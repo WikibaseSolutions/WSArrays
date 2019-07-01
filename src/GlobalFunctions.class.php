@@ -87,10 +87,14 @@ class GlobalFunctions
      * @return bool
      */
     public static function containsArray($array) {
-        if(!is_array($array)) return false;
+        if(!is_array($array)) {
+            return false;
+        }
 
         foreach($array as $value) {
-            if(is_array($value)) return true;
+            if(is_array($value)) {
+                return true;
+            }
         }
 
         return false;
@@ -106,15 +110,19 @@ class GlobalFunctions
         if(!strpos($name, "[")) {
             if(WSArrays::$arrays[$name]) return WSArrays::$arrays[$name];
         } else {
-            $base_array = strtok($name, "[");
+            $base_array = GlobalFunctions::calculateBaseArray($name);
 
-            $ca_undefined_array = wfMessage('ca-undefined-array');
+            if(!isset(WSArrays::$arrays[$base_array])) {
+                $ca_undefined_array = wfMessage('ca-undefined-array');
 
-            if(!isset(WSArrays::$arrays[$base_array])) return GlobalFunctions::error($ca_undefined_array);
+                return GlobalFunctions::error($ca_undefined_array);
+            }
+
+            if(preg_match_all("/(?<=\[).+?(?=\])/", $name, $matches) === 0) {
+                return false;
+            }
+
             $array = WSArrays::$arrays[$base_array];
-
-            $valid = preg_match_all("/(?<=\[).+?(?=\])/", $name, $matches);
-            if($valid === 0) return false;
 
             foreach($matches[0] as $match) {
                 if(ctype_digit($match)) $match = intval($match);
@@ -127,7 +135,9 @@ class GlobalFunctions
                     }
                 }
 
-                if($current_array === $array) return false;
+                if($current_array === $array) {
+                    return false;
+                }
             }
 
             return $array;
@@ -162,7 +172,9 @@ class GlobalFunctions
      */
     public static function definedArrayLimitReached() {
         if(WSArrays::$options['max_defined_arrays'] !== -1) {
-            if(count(WSArrays::$arrays) + 1 > count(WSArrays::$options['max_defined_arrays'])) return true;
+            if(count(WSArrays::$arrays) + 1 > WSArrays::$options['max_defined_arrays']) {
+                return true;
+            }
         }
 
         return false;
@@ -171,6 +183,8 @@ class GlobalFunctions
     /**
      * Fetch any arrays defined by Semantic MediaWiki.
      *
+     * Semantic MediaWiki stores all ComplexArrays in the configuration parameter $wfDefinedArraysGlobal. In order to allow access to these array, we need to move them to WSArrays::$arrays.
+     *
      * @return void
      */
     public static function fetchSemanticArrays() {
@@ -178,5 +192,19 @@ class GlobalFunctions
         if($wfDefinedArraysGlobal !== null) {
             WSArrays::$arrays = array_merge(WSArrays::$arrays, $wfDefinedArraysGlobal);
         }
+    }
+
+    /**
+     * Get the name of the base array from a full name.
+     *
+     * @param $array
+     * @return string
+     */
+    public static function calculateBaseArray($array) {
+        return strtok($array, "[");
+    }
+
+    public static function isValidArrayName($name) {
+        return (ctype_alnum(trim($name)));
     }
 }
