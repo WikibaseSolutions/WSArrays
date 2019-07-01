@@ -34,9 +34,6 @@ $magicWords['en'] = [
     'complexarrayslice' => [ 0, 'complexarrayslice' ],
     'caslice' => [ 0, 'caslice' ],
 
-    'complexarraycut' => [ 0, 'complexarraycut' ],
-    'cacut' => [ 0, 'cacut' ],
-
     'complexarrayunique' => [ 0, 'complexarrayunique' ],
     'caunique' => [ 0, 'caunique' ],
 
