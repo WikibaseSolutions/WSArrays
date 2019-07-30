@@ -80,6 +80,8 @@ class ComplexArrayMap extends WSArrays {
      */
     private static function arrayMap($array_name, $map_key, $map) {
         $base_array = GlobalFunctions::calculateBaseArray($array_name);
+        
+        ComplexArrayMap::$buffer = '';
 
         if(!isset(WSArrays::$arrays[$base_array])) {
             $ca_undefined_array = wfMessage('ca-undefined-array');
