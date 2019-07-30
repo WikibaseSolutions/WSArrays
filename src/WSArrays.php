@@ -200,6 +200,9 @@ class WSArrays extends GlobalFunctions {
                         "capusharray"
                     ]
                 ],
+            ];
+
+            $sfh_function_hooks = [
                 [
                     "class" => "ComplexArrayMap",
                     "hooks" => [
@@ -210,6 +213,7 @@ class WSArrays extends GlobalFunctions {
             ];
 
             WSArrays::setHooks($parser, $function_hooks);
+            WSArrays::setSFHHooks($parser, $sfh_function_hooks);
         } catch(Exception $e) {
             return false;
         }
@@ -226,6 +230,21 @@ class WSArrays extends GlobalFunctions {
 
             foreach($hooks as $hook) {
                 $parser->setFunctionHook( $hook, [$class, 'defineParser'] );
+            }
+        }
+
+        return true;
+    }
+
+    protected static function setSFHHooks( Parser $parser, $sfh_function_hooks) {
+        if(!is_array($sfh_function_hooks)) return false;
+
+        foreach($sfh_function_hooks as $sfh_function_hook) {
+            $class = $sfh_function_hook['class'];
+            $hooks = $sfh_function_hook['hooks'];
+
+            foreach($hooks as $hook) {
+                $parser->setFunctionHook( $hook, [$class, 'defineParser'], Parser::SFH_OBJECT_ARGS );
             }
         }
 
