@@ -14,9 +14,25 @@ namespace SMW\Query\ResultPrinters;
  * @extends ResultPrinter
  */
 class ComplexArrayPrinter extends ResultPrinter {
-    private $name;
-    private $unassociative;
-    private $hide_meta;
+    /**
+     * @var string
+     */
+    private $name = '';
+
+    /**
+     * @var bool
+     */
+    private $unassociative = false;
+
+    /**
+     * @var bool
+     */
+    private $hide_meta = false;
+
+    /**
+     * @var bool
+     */
+    private $simple = false;
 
     /**
      * Define the name of the format.
@@ -48,8 +64,14 @@ class ComplexArrayPrinter extends ResultPrinter {
 
         $definitions[] = [
             'name' => 'unassociative',
-            'message' => 'Converts the named keys to integer keys',
+            'message' => 'ca-smw-paramdesc-unassociative',
             'default' => 'false'
+        ];
+
+        $definitions[] = [
+            'name' => 'simple',
+            'message' => 'ca-smw-paramdesc-simple',
+            'default' => 'true'
         ];
 
         return $definitions;
@@ -74,6 +96,7 @@ class ComplexArrayPrinter extends ResultPrinter {
         $this->name = $this->params['name'];
         $this->hide_meta = filter_var($this->params['hide'], FILTER_VALIDATE_BOOLEAN);
         $this->unassociative = filter_var($this->params['unassociative'], FILTER_VALIDATE_BOOLEAN);
+        $this->simple = filter_var($this->params['simple'], FILTER_VALIDATE_BOOLEAN);
 
         if(!$this->name) {
             $json = json_encode($this->buildResultArray( $queryResult ));
@@ -117,6 +140,16 @@ class ComplexArrayPrinter extends ResultPrinter {
                             case 't':
                                 $printout[0] = 1;
                                 break;
+                        }
+
+                        if($this->simple) {
+                            if(is_array($printout[0])) {
+                                if(isset($printout[0]['fulltext'])) {
+                                    $printout[0] = $printout[0]['fulltext'];
+                                }
+                            } elseif(strpos($printout[0], 'mailto:') !== false) {
+                                $printout[0] = str_replace("mailto:", "", $printout[0]);
+                            }
                         }
 
                         if($this->unassociative) {
