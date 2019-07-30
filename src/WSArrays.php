@@ -5,7 +5,7 @@
  * Initialization file for WSArrays.
  *
  * @license GPL-2.0-or-later
- * @version: 1.1.0
+ * @version: 1.2.0
  *
  * @author Xxmarijnw <marijn@wikibase.nl>
  *
@@ -53,7 +53,7 @@ $GLOBALS['smwgResultFormats']['complexarray'] = 'SMW\Query\ResultPrinters\Comple
  */
 class WSArrays extends GlobalFunctions {
     const INCLUDE_DIR = 'classes/';
-    const VERSION = '1.1.0';
+    const VERSION = '1.2.0';
 
     /**
      * This variable holds all defined arrays. If an array is defined called "array", the array will be stored in self::$arrays["array"].
