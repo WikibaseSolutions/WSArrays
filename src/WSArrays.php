@@ -5,7 +5,7 @@
  * Initialization file for WSArrays.
  *
  * @license GPL-2.0-or-later
- * @version: 1.0
+ * @version: 1.1.0
  *
  * @author Xxmarijnw <marijn@wikibase.nl>
  *
@@ -15,25 +15,28 @@ if (!defined( 'MEDIAWIKI' ) ) {
     die();
 } else {
     global $wgVersion;
+    global $wfSkipVersionControl;
 
-    if(version_compare($wgVersion, 1.27) < 0) {
-        if(function_exists('wfMessage')) {
-            $ca_unsupported_version = wfMessage('ca-unsopported-version', 'MediaWiki', $wgVersion, '1.27');
-        } else {
-            $ca_unsupported_version = "This version of MediaWiki is not supported by WSArrays (has version ".$wgVersion.", requires at least version 1.27)";
+    if(!$wfSkipVersionControl) {
+        if(version_compare($wgVersion, 1.27) < 0) {
+            if(function_exists('wfMessage')) {
+                $ca_unsupported_version = wfMessage('ca-unsopported-version', 'MediaWiki', $wgVersion, '1.27');
+            } else {
+                $ca_unsupported_version = "This version of MediaWiki is not supported by WSArrays (has version ".$wgVersion.", requires at least version 1.27)";
+            }
+
+            throw new Exception($ca_unsupported_version);
         }
 
-        throw new Exception($ca_unsupported_version);
-    }
+        if(version_compare(PHP_VERSION, 5.4) < 0) {
+            if(function_exists('wfMessage')) {
+                $ca_unsupported_version = wfMessage('ca-unsopported-version', 'PHP', PHP_VERSION, '5.4');
+            } else {
+                $ca_unsupported_version = "This version of PHP is not supported by WSArrays (has version ".PHP_VERSION.", requires at least version 5.4)";
+            }
 
-    if(version_compare(PHP_VERSION, 5.4) < 0) {
-        if(function_exists('wfMessage')) {
-            $ca_unsupported_version = wfMessage('ca-unsopported-version', 'PHP', PHP_VERSION, '5.4');
-        } else {
-            $ca_unsupported_version = "This version of PHP is not supported by WSArrays (has version ".PHP_VERSION.", requires at least version 5.4)";
+            throw new Exception($ca_unsupported_version);
         }
-
-        throw new Exception($ca_unsupported_version);
     }
 }
 
@@ -50,6 +53,7 @@ $GLOBALS['smwgResultFormats']['complexarray'] = 'SMW\Query\ResultPrinters\Comple
  */
 class WSArrays extends GlobalFunctions {
     const INCLUDE_DIR = 'classes/';
+    const VERSION = '1.1.0';
 
     /**
      * This variable holds all defined arrays. If an array is defined called "array", the array will be stored in self::$arrays["array"].
@@ -171,8 +175,7 @@ class WSArrays extends GlobalFunctions {
                         "complexarraymaptemplate",
                         "camaptemplate",
                         "camapt",
-                        "catemplate",
-                        "camap"
+                        "catemplate"
                     ]
                 ],
                 [
@@ -197,6 +200,13 @@ class WSArrays extends GlobalFunctions {
                         "capusharray"
                     ]
                 ],
+                [
+                    "class" => "ComplexArrayMap",
+                    "hooks" => [
+                        "complexarraymap",
+                        "camap"
+                    ]
+                ]
             ];
 
             WSArrays::setHooks($parser, $function_hooks);
