@@ -9,8 +9,19 @@
  */
 class ComplexArraySort extends WSArrays
 {
+    /**
+     * @var
+     */
     private static $key;
+
+    /**
+     * @var
+     */
     private static $name;
+
+    /**
+     * @var
+     */
     private static $array;
 
     /**
@@ -22,7 +33,7 @@ class ComplexArraySort extends WSArrays
      * @param string $key
      * @return array|null
      */
-    public static function defineParser( Parser $parser, $name = '', $options = '', $key = '') {
+    public static function defineParser( Parser $parser, $name = '', $options = '', $key = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
         if(empty($name)) {

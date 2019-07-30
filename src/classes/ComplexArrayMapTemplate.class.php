@@ -18,7 +18,7 @@ class ComplexArrayMapTemplate extends WSArrays
      * @param string $options
      * @return array
      */
-    public static function defineParser( Parser $parser, $name = '', $template = '', $options = '') {
+    public static function defineParser( Parser $parser, $name = '', $template = '', $options = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
         if(empty($name)) {
@@ -87,6 +87,8 @@ class ComplexArrayMapTemplate extends WSArrays
 
                     $subvalue = $json;
                 }
+
+                if(is_numeric($key)) $key += 1;
 
                 $t .= "|$key=$subvalue";
             }

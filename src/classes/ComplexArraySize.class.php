@@ -17,7 +17,7 @@ class ComplexArraySize extends WSArrays
      * @param string $options
      * @return array|int
      */
-    public static function defineParser( Parser $parser, $name = '', $options = '') {
+    public static function defineParser( Parser $parser, $name = '', $options = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
         if(empty($name)) {

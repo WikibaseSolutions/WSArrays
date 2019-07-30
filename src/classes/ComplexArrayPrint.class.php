@@ -36,7 +36,7 @@ class ComplexArrayPrint extends WSArrays
      * @param string $subject
      * @return array|mixed|null|string|string[]
      */
-    public static function defineParser( Parser $parser, $name = '', $options = '', $map = '', $subject = '') {
+    public static function defineParser( Parser $parser, $name = '', $options = '', $map = '', $subject = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
         if(empty($name)) {
@@ -118,7 +118,7 @@ class ComplexArrayPrint extends WSArrays
         }
 
         if(count(ComplexArrayPrint::$array) === 1) {
-            return ComplexArrayPrint::mapValue(ComplexArrayPrint::$array);
+            return ComplexArrayPrint::mapValue(ComplexArrayPrint::$array[0]);
         }
 
         $result = null;
@@ -134,6 +134,8 @@ class ComplexArrayPrint extends WSArrays
      * @return mixed
      */
     private static function mapValue($value) {
+        if(is_array($value)) return null;
+
         return str_replace(ComplexArrayPrint::$subject, $value, ComplexArrayPrint::$map);
     }
 

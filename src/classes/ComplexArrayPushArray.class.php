@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class ComplexArrayUnion
+ * Class ComplexArrayPushArray
  *
  * Defines the parser function {{#complexarraypusharray:}}, which allows users to push one or more arrays to the end of another array, creating a new array.
  *
@@ -10,53 +10,39 @@
 class ComplexArrayPushArray extends WSArrays
 {
     /**
+     * @var string
+     */
+    private static $new_array = '';
+
+    /**
      * Define parameters and initialize parser.
      *
      * @param Parser $parser
-     * @param string $name
      * @return array|null
      */
     public static function defineParser( Parser $parser ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        return ComplexArrayPushArray::arrayUnion(func_get_args());
+        return ComplexArrayPushArray::arrayPush(func_get_args());
     }
 
     /**
-     * @param $name
+     * @param $args
      * @return array|null
      */
-    private static function arrayUnion($args) {
-        // Remove $parser from args
-        array_shift($args);
+    private static function arrayPush($args) {
+        ComplexArrayPushArray::parseFunctionArguments($args);
 
-        // Get the first argument (name of new array)
-        $new_array = reset($args);
-
-        if(!GlobalFunctions::isValidArrayName($new_array)) {
+        if(!GlobalFunctions::isValidArrayName(ComplexArrayPushArray::$new_array)) {
             $ca_invalid_name = wfMessage( 'ca-invalid-name' );
 
             return GlobalFunctions::error($ca_invalid_name);
         }
 
-        // Remove the first (second) argument
-        array_shift($args);
-
         if(count($args) < 2) {
             $ca_too_little_arrays = wfMessage('ca-too-little-arrays');
 
             return GlobalFunctions::error($ca_too_little_arrays);
-        }
-
-        $arrays = [];
-        foreach($args as $array) {
-            if(!WSArrays::$arrays[$array]) {
-                $ca_nonexistent_multiple = wfMessage('ca-nonexistent-multiple');
-
-                return GlobalFunctions::error($ca_nonexistent_multiple);
-            }
-
-            array_push($arrays, WSArrays::$arrays[$array]);
         }
 
         if(GlobalFunctions::definedArrayLimitReached()) {
@@ -65,8 +51,56 @@ class ComplexArrayPushArray extends WSArrays
             return GlobalFunctions::error($ca_max_defined_arrays_reached);
         }
 
-        WSArrays::$arrays[$new_array] = $arrays;
+        $arrays = ComplexArrayPushArray::iterate($args);
+
+        if(!is_array($arrays)) {
+            $ca_nonexistent_multiple = wfMessage('ca-nonexistent-multiple');
+
+            return GlobalFunctions::error($ca_nonexistent_multiple);
+        }
+
+        WSArrays::$arrays[ComplexArrayPushArray::$new_array] = $arrays;
 
         return null;
+    }
+
+    /**
+     * @param $arr
+     * @return array|bool
+     */
+    private static function iterate($arr) {
+        $arrays = [];
+        foreach($arr as $array) {
+            if(!WSArrays::$arrays[$array]) {
+                return false;
+            }
+
+            array_push($arrays, WSArrays::$arrays[$array]);
+        }
+
+        return $arrays;
+    }
+
+    /**
+     * @param $args
+     */
+    private static function parseFunctionArguments(&$args) {
+        ComplexArrayPushArray::removeFirstItemFromArray($args);
+        ComplexArrayPushArray::getFirstItemFromArray($args);
+        ComplexArrayPushArray::removeFirstItemFromArray($args);
+    }
+
+    /**
+     * @param $array
+     */
+    private static function removeFirstItemFromArray(&$array) {
+        array_shift($array);
+    }
+
+    /**
+     * @param $array
+     */
+    private static function getFirstItemFromArray(&$array) {
+        ComplexArrayPushArray::$new_array = reset($array);
     }
 }

@@ -3,6 +3,8 @@
 /**
  * Class ComplexArraySearch
  *
+ * Defines the parser function {{#complexarraysearcharray:}}, which allows users to search for a string in the array, and define an array with all the keys of the result.
+ *
  * @extends WSArrays
  */
 class ComplexArraySearchArray extends WSArrays
@@ -12,11 +14,12 @@ class ComplexArraySearchArray extends WSArrays
 
     /**
      * @param Parser $parser
+     * @param string $new_array
      * @param string $name
      * @param string $value
      * @return array
      */
-    public static function defineParser(Parser $parser, $new_array = '', $name = '', $value = '')
+    public static function defineParser( Parser $parser, $new_array = '', $name = '', $value = '' )
     {
         GlobalFunctions::fetchSemanticArrays();
 

@@ -108,7 +108,7 @@ class GlobalFunctions
      */
     public static function getArrayFromArrayName($name) {
         if(!strpos($name, "[")) {
-            if(WSArrays::$arrays[$name]) return WSArrays::$arrays[$name];
+            if(isset(WSArrays::$arrays[$name])) return WSArrays::$arrays[$name];
         } else {
             $base_array = GlobalFunctions::calculateBaseArray($name);
 
@@ -128,6 +128,11 @@ class GlobalFunctions
                 if(ctype_digit($match)) $match = intval($match);
 
                 $current_array = $array;
+
+                if(!is_array($array)) {
+                    return false;
+                }
+
                 foreach($array as $key => $value) {
                     if($key === $match) {
                         $array = $value;
@@ -204,7 +209,18 @@ class GlobalFunctions
         return strtok($array, "[");
     }
 
+    /**
+     * @param $name
+     * @return bool
+     */
     public static function isValidArrayName($name) {
-        return (ctype_alnum(trim($name)));
+        if(strpos($name, '[') !== false ||
+           strpos($name, ']') !== false ||
+           strpos($name, '{') !== false ||
+           strpos($name, '}') !== false) {
+            return false;
+        }
+
+        return true;
     }
 }

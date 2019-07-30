@@ -17,7 +17,7 @@ class ComplexArrayAddValue extends WSArrays
      * @param string $value
      * @return array|null
      */
-    public static function defineParser( Parser $parser, $name = '', $value = '') {
+    public static function defineParser( Parser $parser, $name = '', $value = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
         if(empty($name)) {

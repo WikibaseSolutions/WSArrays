@@ -44,8 +44,8 @@ class ComplexArraySlice extends WSArrays
     /**
      * @param $new_array
      * @param $array
-     * @param $offset
-     * @param string $length
+     * @param integer $offset
+     * @param integer $length
      * @return array|null
      */
     private static function arraySlice($new_array, $array, $offset = 0, $length = 0) {
