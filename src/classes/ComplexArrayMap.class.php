@@ -35,41 +35,47 @@ class ComplexArrayMap extends WSArrays {
     private static $hide = false;
 
     /**
-     * Define parameters and initialize parser.
+     * Define parameters and initialize parser. This parser is hooked with Parser::SFH_OBJECT_ARGS.
      *
      * @param Parser $parser
-     * @param string $name
-     * @param string $map_key
-     * @param string $map
-     * @param string $hide
+     * @param string $frame
+     * @param string $args
      * @return array|null
      */
-    public static function defineParser( Parser $parser, $name = '', $map_key = '', $map = '', $hide = '' ) {
+    public static function defineParser( Parser $parser, $frame, $args ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if(empty($name)) {
+        // Name
+        if(!isset($args[0])) {
             $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
 
             return GlobalFunctions::error($ca_omitted);
         }
 
-        if(empty($map_key)) {
+        // Map key
+        if(!isset($args[1])) {
             $ca_omitted = wfMessage( 'ca-omitted', 'Map key' );
 
             return GlobalFunctions::error($ca_omitted);
         }
 
-        if(empty($map)) {
+        // Map
+        if(!isset($args[2])) {
             $ca_omitted = wfMessage( 'ca-omitted', 'Map' );
 
             return GlobalFunctions::error($ca_omitted);
         }
 
-        if(!empty($hide) && $hide === "true") {
+        // Hide
+        if(isset($args[3]) && trim($frame->expand($args[3])) === "true") {
             ComplexArrayMap::$hide = true;
         }
 
-        return ComplexArrayMap::arrayMap($name, $map_key, $map);
+        $name = trim( $frame->expand( $args[0] ) );
+        $map_key = trim( $frame->expand( $args[1] ) );
+        $map = trim( $frame->expand( $args[2], PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES ) );
+
+        return array(ComplexArrayMap::arrayMap($name, $map_key, $map), 'noparse' => false);
     }
 
     /**
@@ -80,7 +86,7 @@ class ComplexArrayMap extends WSArrays {
      */
     private static function arrayMap($array_name, $map_key, $map) {
         $base_array = GlobalFunctions::calculateBaseArray($array_name);
-        
+
         ComplexArrayMap::$buffer = '';
 
         if(!isset(WSArrays::$arrays[$base_array])) {

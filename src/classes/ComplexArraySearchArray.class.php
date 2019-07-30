@@ -73,8 +73,7 @@ class ComplexArraySearchArray extends WSArrays
 
     /**
      * @param $value
-     * @param $key
-     * @return int
+     * @param $keyß
      */
     private static function findValues($value, $key) {
         $array = GlobalFunctions::getArrayFromArrayName($key);
