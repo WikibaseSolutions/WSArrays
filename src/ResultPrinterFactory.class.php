@@ -1,0 +1,98 @@
+<?php
+
+/**
+ * Class ResultPrinterFactory
+ */
+class ResultPrinterFactory extends WSArrays {
+    /**
+     * @var string
+     */
+    private static $result_printer_dir = '';
+
+    /**
+     * @param Parser $parser
+     * @return bool
+     */
+    public static function loadResultPrinters( Parser &$parser ) {
+        require_once("ResultPrinter.class.php");
+
+        ResultPrinterFactory::$result_printer_dir = dirname( __FILE__ ) . '/classes';
+
+        spl_autoload_register("ResultPrinterFactory::autoload");
+
+        $handles = glob(ResultPrinterFactory::$result_printer_dir . '/*.class.php');
+        if ( !is_array( $handles ) ) {
+            return false;
+        }
+
+        foreach ( $handles as $extension ) {
+            if ( is_file($extension) ) {
+                ResultPrinterFactory::loadResultPrinter( $parser, $extension );
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Parser $parser
+     * @param $extension
+     * @return bool
+     */
+    private static function loadResultPrinter( Parser &$parser, $extension ) {
+        $class_file = basename( $extension );
+        $class = pathinfo($class_file, PATHINFO_FILENAME);
+        $class = explode('.', $class)[0];
+
+        // Is this actually a result printer?
+        if ( get_parent_class($class) !== "ResultPrinter" ) {
+            return false;
+        }
+
+        $object = new $class();
+
+        $parser_name = $object->getName();
+        $parser_aliases = $object->getAliases();
+        $parser_type = $object->getType();
+
+        ResultPrinterFactory::setHook( $parser, $class, $parser_name, $parser_aliases, $parser_type );
+
+        return true;
+    }
+
+    /**
+     * @param Parser $parser
+     * @param $class
+     * @param $parser_name
+     * @param array $parser_aliases
+     * @param $parser_type
+     */
+    private static function setHook( Parser &$parser, $class, $parser_name, array $parser_aliases = array(), $parser_type = 'normal' ) {
+        if($parser_type === 'sfh') {
+            $parser->setFunctionHook( $parser_name, [ $class, 'getResult' ], Parser::SFH_OBJECT_ARGS );
+        } else {
+            $parser->setFunctionHook( $parser_name, [ $class, 'getResult' ] );
+        }
+
+        if ( count( $parser_aliases ) > 0 ) {
+            foreach ( $parser_aliases as $alias ) {
+                if($parser_type === 'sfh') {
+                    $parser->setFunctionHook( $alias, [ $class, 'getResult' ], Parser::SFH_OBJECT_ARGS );
+                } else {
+                    $parser->setFunctionHook( $alias, [ $class, 'getResult' ] );
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $class
+     */
+    protected static function autoload( $class ) {
+        $file = ResultPrinterFactory::$result_printer_dir . '/' . $class . '.class.php';
+
+        if ( file_exists( $file ) ) {
+            require_once $file;
+        }
+    }
+}
