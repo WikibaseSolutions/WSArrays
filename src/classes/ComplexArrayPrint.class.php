@@ -1,14 +1,46 @@
 <?php
 
 /**
+ * WSArrays - Associative and multidimensional arrays for MediaWiki.
+ * Copyright (C) 2019 Marijn van Wezel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
+
+/**
  * Class ComplexArrayPrint
  *
  * Defines the parser function {{#complexarrayprint:}}, which allows users to display an array in a couple of ways.
  *
  * @extends WSArrays
  */
-class ComplexArrayPrint extends WSArrays
-{
+class ComplexArrayPrint extends ResultPrinter {
+    public function getName() {
+        return 'complexarrayprint';
+    }
+
+    public function getAliases() {
+        return [
+            'caprint'
+        ];
+    }
+
+    public function getType() {
+        return 'sfh';
+    }
+
     /**
      * Holds the array being worked on.
      *
@@ -17,35 +49,69 @@ class ComplexArrayPrint extends WSArrays
     protected static $array = [];
 
     /**
-     * Holds defined parameters.
-     *
-     * @var string
+     * @var null
      */
     private static $name = null;
+
+    /**
+     * @var null
+     */
     private static $map = null;
+
+    /**
+     * @var string
+     */
     private static $subject = "@@";
+
+    /**
+     * @var string
+     */
     private static $indent_char = "*";
 
     /**
-     * Define all allowed parameters.
+     * Define all allowed parameters. This parser is hooked with Parser::SFH_OBJECT_ARGS.
      *
      * @param Parser $parser
-     * @param string $name
-     * @param string $options
-     * @param string $map
-     * @param string $subject
+     * @param Object $frame
+     * @param Object $args
      * @return array|mixed|null|string|string[]
+     *
+     * @throws Exception
      */
-    public static function defineParser( Parser $parser, $name = '', $options = '', $map = '', $subject = '' ) {
+    public static function getResult( Parser $parser, $frame, $args ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if(empty($name)) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
-
-            return GlobalFunctions::error($ca_omitted);
+        if ( isset( $args[ 0 ] ) ) {
+            $name = trim( $frame->expand( $args[ 0 ] ) );
+        } else {
+            $name = '';
         }
 
-        return ComplexArrayPrint::arrayPrint($name, $options, $map, $subject);
+        if ( isset( $args[ 1 ] ) ) {
+            $options = trim( $frame->expand( $args[ 1 ] ) );
+        } else {
+            $options = '';
+        }
+
+        if ( isset( $args[ 2 ] ) ) {
+            $map = trim( $frame->expand( $args[ 2 ] ) );
+        } else {
+            $map = '';
+        }
+
+        if ( isset( $args[ 3 ] ) ) {
+            $subject = trim( $frame->expand( $args[ 3 ], PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES ) );
+        } else {
+            $subject = '';
+        }
+
+        if ( empty( $name ) ) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
+
+            return GlobalFunctions::error( $ca_omitted );
+        }
+
+        return ComplexArrayPrint::arrayPrint( $name, $options, $map, $subject );
     }
 
     /**
@@ -54,23 +120,26 @@ class ComplexArrayPrint extends WSArrays
      * @param string $map
      * @param string $subject
      * @return array|mixed|null|string|string[]
+     *
+     * @throws Exception
      */
-    private static function arrayPrint($name, $options = '', $map = '', $subject = '') {
-        ComplexArrayPrint::$name = $name;
-        ComplexArrayPrint::$map = $map;
+    private static function arrayPrint( $name, $options = '', $map = '', $subject = '' ) {
+        ComplexArrayPrint::$name  = $name;
+        ComplexArrayPrint::$map   = $map;
+        ComplexArrayPrint::$array = GlobalFunctions::getArrayFromArrayName( $name );
 
-        if(!ComplexArrayPrint::$array = GlobalFunctions::getArrayFromArrayName($name)) {
-            $ca_undefined_array = wfMessage('ca-undefined-array');
-
-            return GlobalFunctions::error($ca_undefined_array);
+        if ( !ComplexArrayPrint::$array ) {
+            return null;
         }
 
-        if($subject) ComplexArrayPrint::$subject = $subject;
+        if ( $subject ) {
+            ComplexArrayPrint::$subject = $subject;
+        }
 
-        if(!empty($options)) {
-            GlobalFunctions::serializeOptions($options);
+        if ( !empty( $options ) ) {
+            GlobalFunctions::serializeOptions( $options );
 
-            $result = ComplexArrayPrint::applyOptions($options);
+            $result = ComplexArrayPrint::applyOptions( $options );
         } else {
             $result = ComplexArrayPrint::createList();
         }
@@ -82,21 +151,21 @@ class ComplexArrayPrint extends WSArrays
      * @param $options
      * @return array|mixed|null|string|string[]
      */
-    private static function applyOptions($options) {
-        if(gettype($options) === "array") {
-            $options = $options[0];
+    private static function applyOptions( $options ) {
+        if ( gettype( $options ) === "array" ) {
+            $options = $options[ 0 ];
         }
 
-        switch($options) {
+        switch ( $options ) {
             case 'map':
                 return ComplexArrayPrint::applyMapping();
                 break;
             case 'markup':
             case 'wson':
-                return ComplexArrayPrint::ArrayToWSON(ComplexArrayPrint::$array);
+                return ComplexArrayPrint::arrayToWSON( ComplexArrayPrint::$array );
                 break;
             default:
-                return ComplexArrayPrint::createList($options);
+                return ComplexArrayPrint::createList( $options );
                 break;
         }
     }
@@ -105,25 +174,25 @@ class ComplexArrayPrint extends WSArrays
      * @return array|mixed|null|string
      */
     private static function applyMapping() {
-        if(!ComplexArrayPrint::$map) {
-            $ca_omitted = wfMessage('ca-omitted', 'Mapping');
+        if ( !ComplexArrayPrint::$map ) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Mapping' );
 
-            return GlobalFunctions::error($ca_omitted);
+            return GlobalFunctions::error( $ca_omitted );
         }
 
-        if(GlobalFunctions::containsArray(ComplexArrayPrint::$array)) {
-            $ca_map_multidimensional = wfMessage('ca-map-multidimensional');
+        if ( GlobalFunctions::containsArray( ComplexArrayPrint::$array ) ) {
+            $ca_map_multidimensional = wfMessage( 'ca-map-multidimensional' );
 
-            return GlobalFunctions::error($ca_map_multidimensional);
+            return GlobalFunctions::error( $ca_map_multidimensional );
         }
 
-        if(count(ComplexArrayPrint::$array) === 1) {
-            return ComplexArrayPrint::mapValue(ComplexArrayPrint::$array[0]);
+        if ( count( ComplexArrayPrint::$array ) === 1 ) {
+            return ComplexArrayPrint::mapValue( ComplexArrayPrint::$array[ 0 ] );
         }
 
         $result = null;
-        foreach(ComplexArrayPrint::$array as $value) {
-            $result .= ComplexArrayPrint::mapValue($value);
+        foreach ( ComplexArrayPrint::$array as $value ) {
+            $result .= ComplexArrayPrint::mapValue( $value );
         }
 
         return $result;
@@ -133,10 +202,10 @@ class ComplexArrayPrint extends WSArrays
      * @param $value
      * @return mixed
      */
-    private static function mapValue($value) {
-        if(is_array($value)) return null;
+    private static function mapValue( $value ) {
+        if ( is_array( $value ) ) return null;
 
-        return str_replace(ComplexArrayPrint::$subject, $value, ComplexArrayPrint::$map);
+        return str_replace( ComplexArrayPrint::$subject, $value, ComplexArrayPrint::$map );
     }
 
     /**
@@ -145,27 +214,36 @@ class ComplexArrayPrint extends WSArrays
      * @param string $type
      * @return array|null|string
      */
-    private static function createList($type = "unordered") {
-        if(count(ComplexArrayPrint::$array) === 1 && !GlobalFunctions::containsArray(ComplexArrayPrint::$array)) {
-            return ComplexArrayPrint::$array;
+    private static function createList( $type = "unordered" ) {
+        if ( count( ComplexArrayPrint::$array ) === 1 && !GlobalFunctions::containsArray( ComplexArrayPrint::$array ) ) {
+            if ( is_array( ComplexArrayPrint::$array ) ) {
+                $last_el = reset( ComplexArrayPrint::$array );
+                $return  = key( ComplexArrayPrint::$array ) . ": " . $last_el;
+
+                return $return;
+            } else {
+                return ComplexArrayPrint::$array;
+            }
         }
 
-        if($type == "ordered") ComplexArrayPrint::$indent_char = "#";
+        if ( $type == "ordered" ) {
+            ComplexArrayPrint::$indent_char = "#";
+        }
+
         $indent_char = ComplexArrayPrint::$indent_char;
 
         $result = null;
-
-        foreach(ComplexArrayPrint::$array as $key => $value) {
-            if(!is_array($value)) {
-                if(!is_numeric($key)) {
+        foreach ( ComplexArrayPrint::$array as $key => $value ) {
+            if ( !is_array( $value ) ) {
+                if ( !is_numeric( $key ) ) {
                     $result .= "$indent_char $key: $value\n";
                 } else {
                     $result .= "$indent_char $value\n";
                 }
             } else {
-                $result .= "$indent_char ".strval($key)."\n";
+                $result .= "$indent_char ".strval( $key )."\n";
 
-                ComplexArrayPrint::addArrayToUnorderedList($value, $result);
+                ComplexArrayPrint::addArrayToList( $value, $result );
             }
         }
 
@@ -177,19 +255,42 @@ class ComplexArrayPrint extends WSArrays
      * @param $result
      * @param int $depth
      */
-    private static function addArrayToUnorderedList($array, &$result, $depth = 0) {
+    private static function addArrayToList( $array, &$result, $depth = 0 ) {
         $depth++;
 
         $indent_char = ComplexArrayPrint::$indent_char;
 
-        foreach($array as $key => $value) {
-            $indent = str_repeat("$indent_char", $depth + 1);
+        foreach ( $array as $key => $value ) {
+            $indent = str_repeat( "$indent_char", $depth + 1 );
 
-            if(is_array($value)) {
-                $result .= "$indent ".strval($key)."\n";
-                ComplexArrayPrint::addArrayToUnorderedList($value, $result, $depth);
+            if ( is_array( $value ) ) {
+                $result .= "$indent ".strval( $key )."\n";
+                ComplexArrayPrint::addArrayToUnorderedList( $value, $result, $depth );
             } else {
-                if(!is_numeric($key)) {
+                if ( !is_numeric( $key ) ) {
+                    $result .= "$indent $key: $value\n";
+                } else {
+                    $result .= "$indent $value\n";
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $array
+     * @param $result
+     * @param int $depth
+     */
+    private static function addArrayToUnorderedList( $array, &$result, $depth = 0 ) {
+        $depth++;
+        $indent_char = ComplexArrayPrint::$indent_char;
+        foreach( $array as $key => $value ) {
+            $indent = str_repeat( "$indent_char", $depth + 1 );
+            if( is_array( $value ) ) {
+                $result .= "$indent ".strval( $key )."\n";
+                self::addArrayToUnorderedList( $value, $result, $depth );
+            } else {
+                if( !is_numeric( $key ) ) {
                     $result .= "$indent $key: $value\n";
                 } else {
                     $result .= "$indent $value\n";

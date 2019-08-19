@@ -2,7 +2,7 @@
   "name": "WSArrays",
   "namemsg": "ca-name",
   "author": "Xxmarijnw",
-  "version": "1.2.0",
+  "version": "1.4",
   "url": "https://www.mediawiki.org/wiki/Extension:WSArrays",
   "descriptionmsg": "ca-description",
   "license-name": "GPL-2.0-or-later",
@@ -24,7 +24,6 @@
     ]
   },
   "config": {
-    "MaxDefinedArrays": false,
     "SkipVersionControl": false,
     "DefinedArraysGlobal": []
   },
