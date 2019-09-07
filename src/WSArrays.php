@@ -24,7 +24,7 @@
  * Initialization file for WSArrays.
  *
  * @license GPL-2.0-or-later
- * @version: 1.2.1
+ * @version: 1.5
  *
  * @author Xxmarijnw <marijn@wikibase.nl>
  *
@@ -61,7 +61,11 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 require_once 'GlobalFunctions.class.php';
 
-$GLOBALS[ 'smwgResultFormats' ][ 'complexarray' ] = 'SMW\Query\ResultPrinters\ComplexArrayPrinter';
+global $wfEnableResultPrinter;
+
+if ( $wfEnableResultPrinter ) {
+    $GLOBALS[ 'smwgResultFormats' ][ 'complexarray' ] = 'SMW\Query\ResultPrinters\ComplexArrayPrinter';
+}
 
 /**
  * Class WSArrays
@@ -71,7 +75,7 @@ $GLOBALS[ 'smwgResultFormats' ][ 'complexarray' ] = 'SMW\Query\ResultPrinters\Co
  * @extends GlobalFunctions
  */
 class WSArrays extends SafeComplexArray {
-    const VERSION = '1.4';
+    const VERSION = '1.5';
 
     /**
      * This variable holds all defined arrays. If an array is defined called "array", the array will be stored in WSArrays::$arrays["array"].

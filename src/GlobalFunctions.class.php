@@ -30,7 +30,7 @@ class GlobalFunctions {
     /**
      * Print an error message.
      *
-     * @param $message
+     * @param string $message
      * @return array
      */
     public static function error( $message ) {
@@ -49,7 +49,7 @@ class GlobalFunctions {
     /**
      * Check if the given string $json is valid JSON.
      *
-     * @param $json
+     * @param string $json
      * @return bool
      */
     public static function isValidJSON( $json ) {
@@ -61,7 +61,7 @@ class GlobalFunctions {
     /**
      * Convert WSON (custom JSON) to JSON.
      *
-     * @param $wson
+     * @param string $wson
      */
     public static function WSONtoJSON( &$wson ) {
         $wson = preg_replace( "/(?!\B\"[^\"]*)\(\((?![^\"]*\"\B)/i", "{", $wson );
@@ -71,7 +71,7 @@ class GlobalFunctions {
     /**
      * Convert JSON to WSON.
      *
-     * @param $json
+     * @param string $json
      */
     public static function JSONtoWSON( &$json ) {
         $json = preg_replace( "/(?!\B\"[^\"]*){(?![^\"]*\"\B)/i", "((", $json );
@@ -81,7 +81,7 @@ class GlobalFunctions {
     /**
      * Convert an array to WSON.
      *
-     * @param $array
+     * @param array $array
      * @return null|string|string[]
      */
     public static function ArrayToWSON( $array ) {
@@ -91,6 +91,12 @@ class GlobalFunctions {
         return preg_replace( "/(?!\B\"[^\"]*)}(?![^\"]*\"\B)/i", "))", $wson );
     }
 
+    /**
+     * Convert WSON to an array.
+     *
+     * @param string $wson
+     * @return bool|mixed
+     */
     public static function WSONtoArray( $wson ) {
         GlobalFunctions::WSONtoJSON( $wson );
 
@@ -108,7 +114,7 @@ class GlobalFunctions {
     /**
      * Create an array from a comma-separated list.
      *
-     * @param $options
+     * @param string $options
      */
     public static function serializeOptions( &$options ) {
         $options = explode( ",", $options );
@@ -117,7 +123,7 @@ class GlobalFunctions {
     /**
      * Check if an array contains a subarray.
      *
-     * @param $array
+     * @param array $array
      * @return bool
      */
     public static function containsArray( $array ) {
@@ -137,64 +143,150 @@ class GlobalFunctions {
     /**
      * Return the contents of a subarray based on the name (basearray[subarray][subarray]...).
      *
-     * @param $name
-     * @param $unsafe
+     * @param string $array_name
+     * @param boolean $unsafe
      * @return bool|array
      *
      * @throws Exception
      */
-    public static function getArrayFromArrayName( $name, $unsafe = false ) {
-        if ( !strpos( $name, "[" ) ) {
-            if ( isset( WSArrays::$arrays[ $name ] ) ) {
+    public static function getArrayFromArrayName( $array_name, $unsafe = false ) {
+        global $wgEscapeEntitiesInArrays;
+        if($wgEscapeEntitiesInArrays === false) {
+            $unsafe = true;
+        }
+
+        /* This is already a base array, so just get the array */
+        if ( !strpos( $array_name, "[" ) ) {
+            if ( isset( WSArrays::$arrays[ $array_name ] ) ) {
                 if($unsafe === true) {
-                    return GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $name ] );
+                    return GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
                 } else {
-                    return GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $name ] );
+                    return GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
                 }
             }
         } else {
-            $base_array = GlobalFunctions::calculateBaseArray( $name );
+            return GlobalFunctions::getSubarrayFromArrayName( $array_name, $unsafe );
+        }
 
-            if ( !isset( WSArrays::$arrays[ $base_array ] ) ) {
-                $ca_undefined_array = wfMessage( 'ca-undefined-array' );
+        return false;
+    }
 
-                return GlobalFunctions::error( $ca_undefined_array );
+    /**
+     * Get the subarray from an array name in the form of <base_array>[<sub1>][<sub2>][...]. Used by GlobalFunctions::getArrayFromArrayName().
+     *
+     * @param string $array_name
+     * @param bool $unsafe
+     * @return array|bool|mixed
+     * @throws Exception
+     */
+    private static function getSubarrayFromArrayName( $array_name, $unsafe ) {
+        /* Get the name of the base array */
+        $base_array_name = GlobalFunctions::calculateBaseArray( $array_name );
+
+        if ( !GlobalFunctions::arrayExists( $base_array_name ) ) {
+            $ca_undefined_array = wfMessage( 'ca-undefined-array' );
+
+            return GlobalFunctions::error( $ca_undefined_array );
+        }
+
+        if ( preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches ) === 0 ) {
+            return false;
+        }
+
+        if ( $unsafe === true ) {
+            $array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array_name ] );
+        } else {
+            $array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array_name ] );
+        }
+
+        if ( !is_array( $array ) ) {
+            return false;
+        }
+
+        $array = GlobalFunctions::getArrayFromMatch( $array, $matches[0] );
+
+        return $array;
+    }
+
+    /**
+     * @param array $array
+     * @param array $matches
+     * @return array|bool|mixed
+     */
+    private static function getArrayFromMatch( array $array, array $matches ) {
+        $wairudokado_helper_object = false;
+
+        foreach ($matches as $index => $match) {
+            $current_array = $array;
+
+            if ($wairudokado_helper_object === true) {
+                $wairudokado_helper_object = false;
+
+                continue;
             }
 
-            if ( preg_match_all( "/(?<=\[).+?(?=\])/", $name, $matches ) === 0 ) {
-                return false;
-            }
+            /*
+             * The Wairudokado (transliterated Japanese for wildcard, tribute to the Scope Resolution Operator in PHP) operator gives users the ability to use wildcards as pointers in an array
+             */
+            if (GlobalFunctions::isWairudokado($match)) {
+                if ( GlobalFunctions::isWairudokado( end( $matches ) ) ) {
+                    // The Wairudokado operator does not make sense when it's at the end, so just ignore it
+                    return $array;
+                }
 
-            if($unsafe === true) {
-                $array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
+                if ( GlobalFunctions::isWairudokado( $matches[$index + 1] ) ) {
+                    // Skip sequential Wairudokado operators and interpret them as one
+                    continue;
+                }
+
+                $array = GlobalFunctions::getArrayFromWairudokado( $array, $matches, $index );
+                $wairudokado_helper_object = true;
             } else {
-                $array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
-            }
-
-            foreach ( $matches[ 0 ] as $match ) {
-                if ( ctype_digit( $match ) ) {
-                    $match = intval( $match );
-                }
-
-                $current_array = $array;
-
-                if ( !is_array( $array ) ) {
-                    return false;
-                }
-
-                foreach ( $array as $key => $value ) {
-                    if ( $key === $match ) {
+                foreach ($array as $key => $value) {
+                    if ($key == $match) {
                         $array = $value;
-                        break;
+                        continue;
                     }
                 }
 
-                if ( $current_array === $array ) {
+                if ($current_array === $array) {
                     return false;
                 }
             }
+        }
 
-            return $array;
+        return $array;
+    }
+
+    /**
+     * @param $array
+     * @param $matches
+     * @param $index
+     * @return array
+     */
+    private static function getArrayFromWairudokado( $array, $matches, $index ) {
+        $helper_array = [];
+
+        foreach ( $array as $item ) {
+            if ( !is_array( $item ) ) {
+                continue;
+            }
+
+            array_push( $helper_array, $item[ $matches[ $index + 1 ] ] );
+        }
+
+        return $helper_array;
+    }
+
+    /**
+     * Check if the user has supplied a wildcard. Used by GlobalFunctions::getSubarrayFromArrayName().
+     *
+     * @param string $match
+     * @return bool
+     */
+    private static function isWairudokado( $match ) {
+        if ( $match === '*' ) {
+            return true;
         }
 
         return false;
@@ -203,7 +295,7 @@ class GlobalFunctions {
     /**
      * Find the max depth of a multidimensional array.
      *
-     * @param $array
+     * @param array $array
      * @param int $depth
      * @return int|mixed
      */
@@ -212,26 +304,11 @@ class GlobalFunctions {
         foreach ( array_filter( $array, 'is_array' ) as $subarray ) {
             $max_sub_depth = max(
                 $max_sub_depth,
-                self::arrayMaxDepth($subarray, $depth + 1)
+                GlobalFunctions::arrayMaxDepth($subarray, $depth + 1)
             );
         }
 
         return $max_sub_depth + $depth;
-    }
-
-    /**
-     * Checks whether the maximum number of arrays as defined by $wfMaxDefinedArrays has been reached.
-     *
-     * @return bool
-     */
-    public static function definedArrayLimitReached() {
-        if ( WSArrays::$options[ 'max_defined_arrays' ] !== -1 ) {
-            if ( count( WSArrays::$arrays ) + 1 > WSArrays::$options[ 'max_defined_arrays' ] ) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -251,22 +328,22 @@ class GlobalFunctions {
     /**
      * Get the name of the base array from a full name.
      *
-     * @param $array
+     * @param string $array_name
      * @return string
      */
-    public static function calculateBaseArray( $array ) {
-        return strtok( $array, "[" );
+    public static function calculateBaseArray( $array_name ) {
+        return strtok( $array_name, "[" );
     }
 
     /**
-     * @param $name
+     * @param string $array_name
      * @return bool
      */
-    public static function isValidArrayName( $name ) {
-        if ( strpos( $name, '[' ) !== false ||
-            strpos( $name, ']' ) !== false ||
-            strpos( $name, '{' ) !== false ||
-            strpos( $name, '}' ) !== false ) {
+    public static function isValidArrayName( $array_name ) {
+        if ( strpos( $array_name, '[' ) !== false ||
+            strpos( $array_name, ']' ) !== false ||
+            strpos( $array_name, '{' ) !== false ||
+            strpos( $array_name, '}' ) !== false ) {
             return false;
         }
 
@@ -289,5 +366,17 @@ class GlobalFunctions {
      */
     public static function getUnsafeArrayFromSafeComplexArray( SafeComplexArray $array ) {
         return $array->getUnsafeArray();
+    }
+
+    /**
+     * @param string $array_name
+     * @return bool
+     */
+    public static function arrayExists( $array_name ) {
+        if ( isset( WSArrays::$arrays[ $array_name ] ) ) {
+            return true;
+        }
+
+        return false;
     }
 }
