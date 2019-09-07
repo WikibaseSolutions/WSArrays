@@ -47,12 +47,13 @@ class ComplexArrayDefine extends ResultPrinter {
      * @param Parser $parser
      * @param string $name The name of the array that is going to be defined
      * @param string $wson The array, encoded in valid JSON
+     * @param string $sep The separator used when defining a simple array, default: ,
      *
      * @throws Exception
      *
      * @return null
      */
-    public static function getResult( Parser $parser, $name = '', $wson = '' ) {
+    public static function getResult( Parser $parser, $name = '', $wson = '', $sep = ',' ) {
         GlobalFunctions::fetchSemanticArrays();
 
         if ( empty( $name ) ) {
@@ -74,28 +75,29 @@ class ComplexArrayDefine extends ResultPrinter {
             return null;
         }
 
-        return ComplexArrayDefine::arrayDefine( $name, $wson );
+        return ComplexArrayDefine::arrayDefine( $name, $wson, $sep );
     }
 
     /**
      * Define array and store it in WSArrays::$arrays as a SafeComplexArray object.
      *
-     * @param $name
-     * @param $wson
+     * @param string $name
+     * @param string $wson
      * @return array|null
      * @throws Exception
      */
-    private static function arrayDefine( $name, $wson ) {
+    private static function arrayDefine( $name, $wson, $sep ) {
         // Convert the WSON to an array
         $array = GlobalFunctions::WSONtoArray( $wson );
 
+        // If it's not WSON, assume it is a simple array
         if ( !$array ) {
-            $ca_invalid_wson = wfMessage( 'ca-invalid-wson' );
+            $array = explode( $sep, $wson );
 
-            return GlobalFunctions::error( $ca_invalid_wson );
+            WSArrays::$arrays[$name] = new SafeComplexArray( $array );
+        } else {
+            WSArrays::$arrays[$name] = new SafeComplexArray( $array );
         }
-
-        WSArrays::$arrays[$name] = new SafeComplexArray( $array );
 
         return null;
     }

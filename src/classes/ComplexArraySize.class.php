@@ -45,22 +45,22 @@ class ComplexArraySize extends ResultPrinter {
      * Define all allowed parameters.
      *
      * @param Parser $parser
-     * @param string $name
+     * @param string $array_name
      * @param string $options
      * @return array|int
      *
      * @throws Exception
      */
-    public static function getResult( Parser $parser, $name = '', $options = '' ) {
+    public static function getResult( Parser $parser, $array_name = '', $options = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
+        if ( empty( $array_name ) ) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Array key' );
 
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        return ComplexArraySize::arraySize( $name, $options );
+        return ComplexArraySize::arraySize( $array_name, $options );
     }
 
     /**
@@ -75,11 +75,11 @@ class ComplexArraySize extends ResultPrinter {
     private static function arraySize( $name, $options = '' ) {
         $base_array = GlobalFunctions::calculateBaseArray( $name );
 
-        if ( !isset( WSArrays::$arrays[$base_array] ) ) {
+        if ( !GlobalFunctions::arrayExists( $base_array ) ) {
             return null;
         }
 
-        $array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[$base_array] );
+        $array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
 
         if ( !strpos( $name, "[" ) && empty( $options ) ) {
             $count = count( $array, COUNT_RECURSIVE );

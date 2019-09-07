@@ -89,21 +89,21 @@ class ComplexArrayPushArray extends ResultPrinter {
     }
 
     /**
-     * @param $arr
+     * @param array $array
      * @return array|bool
      *
      * @throws Exception
      */
-    private static function iterate( $arr ) {
+    private static function iterate( $array ) {
         $arrays = [];
-        foreach ( $arr as $array ) {
-            if ( !isset( WSArrays::$arrays[ $array ] ) ) {
+        foreach ( $array as $array_name ) {
+            if ( !GlobalFunctions::arrayExists( $array_name ) ) {
                 continue;
             }
 
-            $safe_array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $array ] );
+            $push_array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
 
-            array_push( $arrays, $safe_array );
+            array_push( $arrays, $push_array );
         }
 
         return $arrays;

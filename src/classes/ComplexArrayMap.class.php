@@ -68,6 +68,11 @@ class ComplexArrayMap extends ResultPrinter {
     private static $hide = false;
 
     /**
+     * @var string
+     */
+    private static $sep = "";
+
+    /**
      * Define parameters and initialize parser. This parser is hooked with Parser::SFH_OBJECT_ARGS.
      *
      * @param Parser $parser
@@ -101,8 +106,13 @@ class ComplexArrayMap extends ResultPrinter {
             return GlobalFunctions::error( $ca_omitted );
         }
 
+        // Separator
+        if ( isset( $args[ 3 ] ) && !empty( $args[ 3 ] ) ) {
+            ComplexArrayMap::$sep = trim( $frame->expand( $args[ 3 ] ) );
+        }
+
         // Hide
-        if ( isset( $args[ 3 ] ) && trim( $frame->expand( $args[ 3 ] ) ) === "true" ) {
+        if ( isset( $args[ 4 ] ) && trim( $frame->expand( $args[ 4 ] ) ) === "true" ) {
             ComplexArrayMap::$hide = true;
         }
 
@@ -125,7 +135,7 @@ class ComplexArrayMap extends ResultPrinter {
         ComplexArrayMap::$buffer = '';
 
         $base_array = GlobalFunctions::calculateBaseArray( $array_name );
-        $array = GlobalFunctions::getArrayFromArrayName($array_name);
+        $array = GlobalFunctions::getArrayFromArrayName( $array_name );
 
         if ( !isset( WSArrays::$arrays[ $base_array ] ) || !$array ) {
             return null;
@@ -158,13 +168,17 @@ class ComplexArrayMap extends ResultPrinter {
                     case 'float':
                         $mapping = str_replace( $map_key, $subarray, $map );
 
-                        ComplexArrayMap::$buffer .= $mapping;
+                        ComplexArrayMap::$buffer .= $mapping . ComplexArrayMap::$sep;
                 }
             } else {
                 $preg_quote = preg_quote( $map_key );
 
-                ComplexArrayMap::$buffer .= preg_replace_callback( "/($preg_quote(\[[^\[\]]+\])+)/", 'ComplexArrayMap::replaceCallback', $map );
+                ComplexArrayMap::$buffer .= preg_replace_callback( "/($preg_quote(\[[^\[\]]+\])+)/", 'ComplexArrayMap::replaceCallback', $map ) . ComplexArrayMap::$sep;
             }
+        }
+
+        if ( !empty(ComplexArrayMap::$sep ) ) {
+            ComplexArrayMap::$buffer = preg_replace( '/' . preg_quote( ComplexArrayMap::$sep, '/' ) . '$/', '', ComplexArrayMap::$buffer );
         }
 
         return ComplexArrayMap::$buffer;
@@ -205,7 +219,7 @@ class ComplexArrayMap extends ResultPrinter {
     private static function getValueFromMatch( $match ) {
         $pointer = ComplexArrayMap::getPointerFromArrayName( $match );
         $array_name = ComplexArrayMap::getArrayNameFromPointer( $pointer );
-        $value = GlobalFunctions::getArrayFromArrayName( $array_name );
+        $value = GlobalFunctions::getArrayFromArrayName( $array_name, true );
 
         return $value;
     }

@@ -47,22 +47,22 @@ class ComplexArraySearch extends ResultPrinter {
     private static $found = 0;
 
     /**
-     * @var int
+     * @var string
      */
-    private static $key = 0;
+    private static $array_name = '';
 
     /**
      * @param Parser $parser
-     * @param string $name
+     * @param string $array_name
      * @param string $value
      * @return array
      *
      * @throws Exception
      */
-    public static function getResult( Parser $parser, $name = '', $value = '' ) {
+    public static function getResult( Parser $parser, $array_name = '', $value = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $name ) ) {
+        if ( empty( $array_name ) ) {
             $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
 
             return GlobalFunctions::error( $ca_omitted );
@@ -74,61 +74,61 @@ class ComplexArraySearch extends ResultPrinter {
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        return ComplexArraySearch::arraySearch( $name, $value );
+        return ComplexArraySearch::arraySearch( $array_name, $value );
     }
 
     /**
-     * @param $name
+     * @param string $array_name
      * @param $value
      * @return array|int
      *
      * @throws Exception
      */
-    private static function arraySearch( $name, $value ) {
-        if ( !WSArrays::$arrays[ $name ] ) {
+    private static function arraySearch( $array_name, $value ) {
+        if ( !WSArrays::$arrays[ $array_name ] ) {
             return null;
         }
 
-        ComplexArraySearch::findValue( $value, $name );
+        ComplexArraySearch::findValue( $value, $array_name );
 
-        return htmlspecialchars(ComplexArraySearch::$key);
+        return htmlspecialchars(ComplexArraySearch::$array_name);
     }
 
     /**
-     * @param $value
-     * @param $key
+     * @param string $value
+     * @param string $array_name
      *
      * @throws Exception
      */
-    private static function findValue( $value, $key ) {
-        $array = GlobalFunctions::getArrayFromArrayName( $key, true );
+    private static function findValue( $value, $array_name ) {
+        $array = GlobalFunctions::getArrayFromArrayName( $array_name, true );
 
-        ComplexArraySearch::i( $array, $value, $key );
+        ComplexArraySearch::i( $array, $value, $array_name );
     }
 
     /**
-     * @param $array
-     * @param $value
-     * @param $key
+     * @param array $array
+     * @param string $value
+     * @param string $array_name
      */
-    private static function i( $array, $value, &$key ) {
+    private static function i( $array, $value, &$array_name ) {
         if ( ComplexArraySearch::$found === 1 ) {
             return;
         }
 
         foreach( $array as $current_key => $current_item ) {
-            $key .= "[$current_key]";
+            $array_name .= "[$current_key]";
 
             if( $value == $current_item ) {
-                ComplexArraySearch::$key = $key;
+                ComplexArraySearch::$array_name = $array_name;
 
                 ComplexArraySearch::$found = 1;
             } else {
                 if( is_array( $current_item ) ) {
-                    ComplexArraySearch::i( $current_item, $value, $key );
+                    ComplexArraySearch::i( $current_item, $value, $array_name );
                 }
 
-                $key = substr( $key, 0, strrpos( $key, '[' ) );
+                $array_name = substr( $array_name, 0, strrpos( $array_name, '[' ) );
             }
         }
     }

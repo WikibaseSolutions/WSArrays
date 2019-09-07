@@ -50,37 +50,37 @@ class ComplexArrayUnique extends ResultPrinter {
      *
      * @throws Exception
      */
-    public static function getResult( Parser $parser, $name = '' ) {
+    public static function getResult( Parser $parser, $array_name = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
+        if ( empty( $array_name ) ) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Array key' );
 
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        return ComplexArrayUnique::arrayUnique( $name );
+        return ComplexArrayUnique::arrayUnique( $array_name );
     }
 
     /**
      * Apply array_unique onto the array and safe it again as SafeComplexArray
      *
-     * @param $name
+     * @param string $array_name
      * @return array|null
      *
      * @throws Exception
      */
-    private static function arrayUnique( $name ) {
-        $array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $name ] );
+    private static function arrayUnique( $array_name ) {
+        $array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
 
         if ( GlobalFunctions::containsArray( $array ) ) {
             $array = array_unique( $array, SORT_REGULAR );
 
-            WSArrays::$arrays[ $name ] = new SafeComplexArray( $array );
+            WSArrays::$arrays[ $array_name ] = new SafeComplexArray( $array );
         } else {
             $array = array_unique( $array );
 
-            WSArrays::$arrays[ $name ] = new SafeComplexArray( $array );
+            WSArrays::$arrays[ $array_name ] = new SafeComplexArray( $array );
         }
 
         return null;

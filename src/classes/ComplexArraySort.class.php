@@ -49,7 +49,7 @@ class ComplexArraySort extends ResultPrinter {
     /**
      * @var
      */
-    private static $name;
+    private static $array_name;
 
     /**
      * @var
@@ -67,33 +67,33 @@ class ComplexArraySort extends ResultPrinter {
      *
      * @throws Exception
      */
-    public static function getResult( Parser $parser, $name = '', $options = '', $key = '' ) {
+    public static function getResult( Parser $parser, $array_name = '', $options = '', $key = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $name ) ) {
+        if ( empty( $array_name ) ) {
             $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
 
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        return ComplexArraySort::arraySort( $name, $options, $key );
+        return ComplexArraySort::arraySort( $array_name, $options, $key );
     }
 
     /**
-     * @param $name
+     * @param string $array_name
      * @param string $options
      * @param string $key
      * @return array|null
      *
      * @throws Exception
      */
-    private static function arraySort( $name, $options = '', $key = '' ) {
-        ComplexArraySort::$name = $name;
-        ComplexArraySort::$array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $name ] );
-
-        if ( !isset( WSArrays::$arrays[$name] ) ) {
+    private static function arraySort( $array_name, $options = '', $key = '' ) {
+        if ( !GlobalFunctions::arrayExists( $array_name ) ) {
             return null;
         }
+
+        ComplexArraySort::$array_name = $array_name;
+        ComplexArraySort::$array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
 
         if ( !empty( $key ) ) {
             ComplexArraySort::$key = $key;
@@ -116,7 +116,7 @@ class ComplexArraySort extends ResultPrinter {
         }
 
         if( $result === true ) {
-            WSArrays::$arrays[ $name ] = new SafeComplexArray( ComplexArraySort::$array );
+            WSArrays::$arrays[ $array_name ] = new SafeComplexArray( ComplexArraySort::$array );
 
             return null;
         } else {

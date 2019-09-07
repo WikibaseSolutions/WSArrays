@@ -84,7 +84,7 @@ class ComplexArrayMapTemplate extends ResultPrinter {
         $base_array = GlobalFunctions::calculateBaseArray( $name );
         $array = GlobalFunctions::getArrayFromArrayName( $name );
 
-        if ( !isset( WSArrays::$arrays[$base_array] ) || !$array) {
+        if ( !GlobalFunctions::arrayExists( $base_array ) || !$array) {
             return null;
         }
 

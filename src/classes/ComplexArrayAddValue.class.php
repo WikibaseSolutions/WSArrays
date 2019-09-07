@@ -94,7 +94,7 @@ class ComplexArrayAddValue extends ResultPrinter {
         /*
          * The array has not been found, return.
          */
-        if ( !isset( WSArrays::$arrays[ $base_array ] ) ) {
+        if ( !GlobalFunctions::arrayExists( $base_array ) ) {
             return null;
         }
 

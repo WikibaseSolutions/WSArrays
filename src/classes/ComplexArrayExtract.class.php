@@ -51,7 +51,7 @@ class ComplexArrayExtract extends ResultPrinter {
      *
      * @throws Exception
      */
-    public static function getResult( Parser $parser, $name = '', $subarray = '' ) {
+    public static function getResult( Parser $parser, $name = '', $array_name = '' ) {
         if ( !$name ) {
             $ca_omitted = wfMessage( 'ca-omitted', 'New array' );
 
@@ -64,13 +64,13 @@ class ComplexArrayExtract extends ResultPrinter {
             return GlobalFunctions::error( $ca_invalid_name );
         }
 
-        if ( !$subarray ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Subarray' );
+        if ( !$array_name ) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Array key' );
 
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        return ComplexArrayExtract::arrayExtract( $name, $subarray );
+        return ComplexArrayExtract::arrayExtract( $name, $array_name );
     }
 
     /**
@@ -80,7 +80,7 @@ class ComplexArrayExtract extends ResultPrinter {
      *
      * @throws Exception
      */
-    private static function arrayExtract( $name, $subarray ) {
+    private static function arrayExtract( $name, $array_name ) {
         // If no subarray is provided, show an error.
         if( !strpos( $subarray, "[" ) ||
             !strpos( $subarray, "]" ) ) {
@@ -92,6 +92,7 @@ class ComplexArrayExtract extends ResultPrinter {
         $array = GlobalFunctions::getArrayFromArrayName( $subarray, true );
 
         if( !$array ) {
+            // Array does not exist
             return null;
         }
 

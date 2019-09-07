@@ -126,19 +126,21 @@ class ComplexArrayPrint extends ResultPrinter {
     private static function arrayPrint( $name, $options = '', $map = '', $subject = '' ) {
         ComplexArrayPrint::$name  = $name;
         ComplexArrayPrint::$map   = $map;
+
         ComplexArrayPrint::$array = GlobalFunctions::getArrayFromArrayName( $name );
 
         if ( !ComplexArrayPrint::$array ) {
+            // Array does not exist
             return null;
         }
 
         if ( $subject ) {
+            // If there is a subject set, store it
             ComplexArrayPrint::$subject = $subject;
         }
 
         if ( !empty( $options ) ) {
             GlobalFunctions::serializeOptions( $options );
-
             $result = ComplexArrayPrint::applyOptions( $options );
         } else {
             $result = ComplexArrayPrint::createList();

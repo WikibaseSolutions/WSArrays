@@ -52,10 +52,10 @@ class ComplexArrayPushValue extends ResultPrinter {
      *
      * @throws Exception
      */
-    public static function getResult( Parser $parser, $array = '', $value = '' ) {
+    public static function getResult( Parser $parser, $array_name = '', $value = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $array ) ) {
+        if ( empty( $array_name ) ) {
             $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
 
             return GlobalFunctions::error( $ca_omitted );
@@ -67,21 +67,21 @@ class ComplexArrayPushValue extends ResultPrinter {
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        return ComplexArrayPushValue::arrayPushValue( $array, $value );
+        return ComplexArrayPushValue::arrayPushValue( $array_name, $value );
     }
 
     /**
-     * @param $array
+     * @param $array_name
      * @param $value
      * @return array|bool|null
      *
      * @throws Exception
      */
-    private static function arrayPushValue( $array, $value ) {
-        $base_array = ComplexArrayPushValue::calculateBaseArray( $array );
+    private static function arrayPushValue( $array_name, $value ) {
+        $base_array = ComplexArrayPushValue::calculateBaseArray( $array_name );
 
         // If the array doesn't exist yet, create it
-        if ( !isset( WSArrays::$arrays[ $base_array ] ) ) {
+        if ( !GlobalFunctions::arrayExists( $array_name ) ) {
             if ( !GlobalFunctions::isValidArrayName( $base_array ) ) {
                 $ca_invalid_name = wfMessage( 'ca-invalid-name' );
 
@@ -91,35 +91,35 @@ class ComplexArrayPushValue extends ResultPrinter {
             WSArrays::$arrays[ $base_array ] = new SafeComplexArray();
         }
 
-        $wsarray = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
+        $array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
 
-        if ( !strpos( $array, "[" ) ) {
+        if ( !strpos( $array_name, "[" ) ) {
             GlobalFunctions::WSONtoJSON( $value );
 
             if ( GlobalFunctions::isValidJSON( $value ) ) {
                 $value = json_decode( $value, true );
             }
 
-            array_push( $wsarray, $value );
+            array_push( $array, $value );
 
-            WSArrays::$arrays[ $base_array ] = new SafeComplexArray( $wsarray );
+            WSArrays::$arrays[ $base_array ] = new SafeComplexArray( $array );
 
             return null;
         }
 
-        if ( preg_match_all( "/(?<=\[).+?(?=\])/", $array, $matches ) === 0 ) {
+        if ( preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches ) === 0 ) {
             $ca_invalid_name = wfMessage( 'ca-invalid-name' );
 
             return GlobalFunctions::error( $ca_invalid_name );
         }
 
-        $result = ComplexArrayPushValue::add( $matches[0], $wsarray, $value );
+        $result = ComplexArrayPushValue::add( $matches[0], $array, $value );
 
         if ( $result !== true ) {
             return $result;
         }
 
-        WSArrays::$arrays[ $base_array ] = new SafeComplexArray( $wsarray );
+        WSArrays::$arrays[ $base_array ] = new SafeComplexArray( $array );
 
         return null;
     }

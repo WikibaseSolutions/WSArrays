@@ -47,10 +47,10 @@ class ComplexArrayReset extends ResultPrinter {
      * @param Parser $parser
      * @param string $array
      */
-    public static function getResult( Parser $parser, $array = '' ) {
+    public static function getResult( Parser $parser, $array_name = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        ComplexArrayReset::arrayReset( $array );
+        ComplexArrayReset::arrayReset( $array_name );
     }
 
     /**
@@ -58,12 +58,12 @@ class ComplexArrayReset extends ResultPrinter {
      *
      * @param string $array
      */
-    private static function arrayReset( $array = '' ) {
-        if ( empty( $array ) ) {
+    private static function arrayReset( $array_name = '' ) {
+        if ( empty( $array_name ) ) {
             WSArrays::$arrays = [];
         } else {
-            if ( isset( WSArrays::$arrays[ $array ] ) ) {
-                unset( WSArrays::$arrays[ $array ] );
+            if ( isset( WSArrays::$arrays[ $array_name ] ) ) {
+                unset( WSArrays::$arrays[ $array_name ] );
             }
         }
     }

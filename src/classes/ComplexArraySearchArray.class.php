@@ -46,31 +46,30 @@ class ComplexArraySearchArray extends ResultPrinter {
 
     /**
      * @param Parser $parser
-     * @param string $new_array
-     * @param string $name
+     * @param string $new_array_name
+     * @param string $array_name
      * @param string $value
      * @return array
      *
      * @throws Exception
      */
-    public static function getResult( Parser $parser, $new_array = '', $name = '', $value = '' )
-    {
+    public static function getResult( Parser $parser, $new_array_name = '', $array_name = '', $value = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $new_array ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'New array' );
+        if ( empty( $new_array_name ) ) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'New array key' );
 
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        if ( !GlobalFunctions::isValidArrayName( $new_array ) ) {
+        if ( !GlobalFunctions::isValidArrayName( $new_array_name ) ) {
             $ca_invalid_name = wfMessage( 'ca-invalid-name' );
 
             return GlobalFunctions::error($ca_invalid_name);
         }
 
-        if ( empty( $name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
+        if ( empty( $array_name ) ) {
+            $ca_omitted = wfMessage( 'ca-omitted', 'Array key' );
 
             return GlobalFunctions::error( $ca_omitted );
         }
@@ -81,7 +80,7 @@ class ComplexArraySearchArray extends ResultPrinter {
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        return ComplexArraySearchArray::arraySearchArray( $new_array, $name, $value );
+        return ComplexArraySearchArray::arraySearchArray( $new_array_name, $array_name, $value );
     }
 
     /**
@@ -93,7 +92,7 @@ class ComplexArraySearchArray extends ResultPrinter {
      * @throws Exception
      */
     private static function arraySearchArray( $new_array, $name, $value ) {
-        if ( !WSArrays::$arrays[ $name ] ) {
+        if ( !GlobalFunctions::arrayExists( $name ) ) {
             return null;
         }
 
