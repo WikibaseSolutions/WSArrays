@@ -2,7 +2,7 @@
   "name": "WSArrays",
   "namemsg": "ca-name",
   "author": "Xxmarijnw",
-  "version": "1.4",
+  "version": "1.5",
   "url": "https://www.mediawiki.org/wiki/Extension:WSArrays",
   "descriptionmsg": "ca-description",
   "license-name": "GPL-2.0-or-later",
@@ -25,6 +25,8 @@
   },
   "config": {
     "SkipVersionControl": false,
+    "EnableResultPrinter": false,
+    "EscapeEntitiesInArrays": true,
     "DefinedArraysGlobal": []
   },
   "manifest_version": 1
