@@ -184,9 +184,7 @@ class GlobalFunctions {
         $base_array_name = GlobalFunctions::calculateBaseArray( $array_name );
 
         if ( !GlobalFunctions::arrayExists( $base_array_name ) ) {
-            $ca_undefined_array = wfMessage( 'ca-undefined-array' );
-
-            return GlobalFunctions::error( $ca_undefined_array );
+            return false;
         }
 
         if ( preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches ) === 0 ) {
