@@ -150,8 +150,8 @@ class GlobalFunctions {
      * @throws Exception
      */
     public static function getArrayFromArrayName( $array_name, $unsafe = false ) {
-        global $wgEscapeEntitiesInArrays;
-        if($wgEscapeEntitiesInArrays === false) {
+        global $wfEscapeEntitiesInArrays;
+        if($wfEscapeEntitiesInArrays === false) {
             $unsafe = true;
         }
 
