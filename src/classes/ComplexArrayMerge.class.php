@@ -117,6 +117,8 @@ class ComplexArrayMerge extends ResultPrinter {
      * @throws Exception
      */
     private static function iterate( $arr ) {
+        global $wfEscapeEntitiesInArrays;
+
         $arrays = [];
         foreach( $arr as $array ) {
             // Check if the array exists
@@ -125,7 +127,11 @@ class ComplexArrayMerge extends ResultPrinter {
             }
 
             // Convert the SafeComplexArray object to an actual array
-            $safe_array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $array ] );
+            if ( $wfEscapeEntitiesInArrays === true ) {
+                $safe_array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $array ] );
+            } else {
+                $safe_array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $array ] );
+            }
 
             array_push( $arrays, $safe_array );
         }

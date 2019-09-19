@@ -222,9 +222,9 @@ class ComplexArrayPrint extends ResultPrinter {
                 $last_el = reset( ComplexArrayPrint::$array );
                 $return  = key( ComplexArrayPrint::$array ) . ": " . $last_el;
 
-                return $return;
+                return array( $return, 'noparse' => false, 'isHTML' => false );
             } else {
-                return ComplexArrayPrint::$array;
+                return array( ComplexArrayPrint::$array, 'noparse' => false, 'isHTML' => false );
             }
         }
 

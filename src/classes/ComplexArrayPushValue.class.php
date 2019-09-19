@@ -39,33 +39,36 @@ class ComplexArrayPushValue extends ResultPrinter {
     }
 
     public function getType() {
-        return 'normal';
+        return 'sfh';
     }
 
     /**
      * Define all allowed parameters.
      *
      * @param Parser $parser
-     * @param string $array
-     * @param string $value
+     * @param string $frame
+     * @param string $args
      * @return array|bool|null
      *
      * @throws Exception
      */
-    public static function getResult( Parser $parser, $array_name = '', $value = '' ) {
+    public static function getResult( Parser $parser, $frame, $args ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $array_name ) ) {
+        if ( !isset( $args[ 0 ] ) || empty( $args[ 0 ] ) ) {
             $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
 
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        if ( empty( $value ) ) {
+        if ( !isset( $args[ 1 ] ) || empty( $args[ 1 ] ) ) {
             $ca_omitted = wfMessage( 'ca-omitted', 'Value' );
 
             return GlobalFunctions::error( $ca_omitted );
         }
+
+        $array_name = trim( $frame->expand( $args[ 0 ] ) );
+        $value = trim( $frame->expand( $args[ 1 ], PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES ) );
 
         return ComplexArrayPushValue::arrayPushValue( $array_name, $value );
     }
@@ -91,7 +94,13 @@ class ComplexArrayPushValue extends ResultPrinter {
             WSArrays::$arrays[ $base_array ] = new SafeComplexArray();
         }
 
-        $array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
+        global $wfEscapeEntitiesInArrays;
+
+        if ( $wfEscapeEntitiesInArrays === true ) {
+            $array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
+        } else {
+            $array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
+        }
 
         if ( !strpos( $array_name, "[" ) ) {
             GlobalFunctions::WSONtoJSON( $value );

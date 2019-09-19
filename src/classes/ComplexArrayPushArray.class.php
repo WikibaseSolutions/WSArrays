@@ -95,13 +95,19 @@ class ComplexArrayPushArray extends ResultPrinter {
      * @throws Exception
      */
     private static function iterate( $array ) {
+        global $wfEscapeEntitiesInArrays;
+
         $arrays = [];
         foreach ( $array as $array_name ) {
             if ( !GlobalFunctions::arrayExists( $array_name ) ) {
                 continue;
             }
 
-            $push_array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
+            if ( $wfEscapeEntitiesInArrays === true ) {
+                $push_array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
+            } else {
+                $push_array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
+            }
 
             array_push( $arrays, $push_array );
         }

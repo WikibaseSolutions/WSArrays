@@ -38,28 +38,44 @@ class ComplexArrayDefine extends ResultPrinter {
     }
 
     public function getType() {
-        return 'normal';
+        return 'sfh';
     }
 
     /**
      * Define all allowed parameters.
      *
      * @param Parser $parser
-     * @param string $name The name of the array that is going to be defined
-     * @param string $wson The array, encoded in valid JSON
-     * @param string $sep The separator used when defining a simple array, default: ,
+     * @param string $frame
+     * @param string $args
      *
      * @throws Exception
      *
      * @return null
      */
-    public static function getResult( Parser $parser, $name = '', $wson = '', $sep = ',' ) {
+    public static function getResult( Parser $parser, $frame, $args ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $name ) ) {
+        // Name
+        if ( !isset( $args[ 0 ] ) || empty( $args[ 0 ] ) ) {
             $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
 
             return GlobalFunctions::error( $ca_omitted );
+        } else {
+            $name = trim( $frame->expand( $args[ 0 ] ) );
+        }
+
+        // Array (in WSON)
+        if ( !isset( $args[ 1 ] ) || empty( $args[ 2 ] ) ) {
+            $wson = null;
+        } else {
+            $wson = trim( $frame->expand( $args[ 1 ], PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES ) );
+        }
+
+        // Separator
+        if ( !isset( $args[ 2 ] ) || empty( $args[ 2 ] ) ) {
+            $sep = null;
+        } else {
+            $sep = trim( $frame->expand( $args[ 2 ] ) );
         }
 
         if ( !GlobalFunctions::isValidArrayName( $name ) ) {
@@ -70,7 +86,7 @@ class ComplexArrayDefine extends ResultPrinter {
 
         // Define an empty array
         if ( empty( $wson ) ) {
-            WSArrays::$arrays[$name] = new SafeComplexArray();
+            WSArrays::$arrays[ $name ] = new SafeComplexArray();
 
             return null;
         }
