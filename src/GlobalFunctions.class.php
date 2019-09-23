@@ -377,4 +377,23 @@ class GlobalFunctions {
 
         return false;
     }
+
+    public static function rawValue( $arg, $frame, $parser = '' ) {
+        $expanded_frame = $frame->expand( $arg, PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES | PPFrame::NO_TAGS | PPFrame::NO_IGNORE );
+        $trimmed_frame  = trim( $expanded_frame );
+
+        return $trimmed_frame;
+    }
+
+    public static function getSFHValue( $arg, $frame ) {
+        return trim( $frame->expand( $arg ) );
+    }
+
+    public static function toArrayIfValid( &$value ) {
+        GlobalFunctions::WSONtoJSON( $value );
+
+        if ( GlobalFunctions::isValidJSON( $value ) ) {
+            $value = json_decode( $value, true );
+        }
+    }
 }
