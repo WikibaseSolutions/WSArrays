@@ -378,6 +378,18 @@ class GlobalFunctions {
         return false;
     }
 
+    public static function getValue($arg, $frame, $parser = '', $noparse = false ) {
+        if ( $noparse === true ) {
+            if ( empty( $parser ) ) {
+                return null;
+            } else {
+                return GlobalFunctions::rawValue( $arg, $frame, $parser );
+            }
+        } else {
+            return GlobalFunctions::getSFHValue( $arg, $frame );
+        }
+    }
+
     public static function rawValue( $arg, $frame, $parser = '' ) {
         $expanded_frame = $frame->expand( $arg, PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES | PPFrame::NO_TAGS | PPFrame::NO_IGNORE );
         $trimmed_frame  = trim( $expanded_frame );
