@@ -61,21 +61,28 @@ class ComplexArrayDefine extends ResultPrinter {
 
             return GlobalFunctions::error( $ca_omitted );
         } else {
-            $name = GlobalFunctions::getSFHValue( $args[ 0 ], $frame );
+            $name = GlobalFunctions::getValue( $args[ 0 ], $frame );
+        }
+
+        // Noparse
+        if ( isset( $args[ 3 ] ) && !empty( $args[ 3 ] ) ) {
+            $noparse = true;
+        } else {
+            $noparse = false;
         }
 
         // Array (in WSON)
         if ( !isset( $args[ 1 ] ) || empty( $args[ 1 ] ) ) {
             $wson = null;
         } else {
-            $wson = GlobalFunctions::rawValue( $args[ 1 ], $frame, $parser );
+            $wson = GlobalFunctions::getValue( $args[ 1 ], $frame, $parser, $noparse );
         }
 
         // Separator
         if ( !isset( $args[ 2 ] ) || empty( $args[ 2 ] ) ) {
             $sep = ",";
         } else {
-            $sep = GlobalFunctions::getSFHValue( $args[ 2 ], $frame );
+            $sep = GlobalFunctions::getValue( $args[ 2 ], $frame );
         }
 
         if ( !GlobalFunctions::isValidArrayName( $name ) ) {

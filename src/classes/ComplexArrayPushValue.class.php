@@ -67,8 +67,14 @@ class ComplexArrayPushValue extends ResultPrinter {
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        $array_name = GlobalFunctions::getSFHValue( $args[ 0 ], $frame );
-        $value = GlobalFunctions::rawValue( $args[ 1 ], $frame, $parser );
+        if ( isset( $args[ 2 ] )&& !empty( $args[ 2 ] ) ) {
+            $noparse = true;
+        } else {
+            $noparse = false;
+        }
+
+        $array_name = GlobalFunctions::getValue( $args[ 0 ], $frame );
+        $value = GlobalFunctions::getValue( $args[ 1 ], $frame, $parser, $noparse );
 
         return ComplexArrayPushValue::arrayPushValue( $array_name, $value );
     }
@@ -93,13 +99,13 @@ class ComplexArrayPushValue extends ResultPrinter {
 
             WSArrays::$arrays[ $base_array ] = new SafeComplexArray();
         }
-
+        /*
         if ( preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches ) === 0 ) {
             $ca_invalid_name = wfMessage( 'ca-invalid-name' );
 
             return GlobalFunctions::error( $ca_invalid_name );
         }
-
+        */
         global $wfEscapeEntitiesInArrays;
         if ( $wfEscapeEntitiesInArrays === true ) {
             $array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
