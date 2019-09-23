@@ -85,19 +85,22 @@ class ComplexArrayPrinter extends ResultPrinter {
     private $name = '';
 
     /**
-     * @var bool
+     * @var string
      */
-    private $unassociative = false;
-
-    /**
-     * @var bool
-     */
-    private $hide_meta = false;
+    private $delimiter = ',';
 
     /**
      * @var bool
      */
     private $simple = false;
+
+    /**
+     * @var array
+     */
+    private $r = [];
+    private $v = [];
+    private $res = [];
+    private $return = [];
 
     /**
      * Define the name of the format.
@@ -122,21 +125,15 @@ class ComplexArrayPrinter extends ResultPrinter {
         ];
 
         $definitions[] = [
-            'name' => 'hide',
-            'message' => 'ca-smw-paramdesc-hide',
-            'default' => 'false'
-        ];
-
-        $definitions[] = [
-            'name' => 'unassociative',
-            'message' => 'ca-smw-paramdesc-unassociative',
-            'default' => 'false'
-        ];
-
-        $definitions[] = [
             'name' => 'simple',
             'message' => 'ca-smw-paramdesc-simple',
             'default' => 'true'
+        ];
+
+        $definitions[] = [
+            'name' => 'valuesep',
+            'message' => 'ca-smw-paramdesc-valuesep',
+            'default' => ','
         ];
 
         return $definitions;
@@ -159,8 +156,7 @@ class ComplexArrayPrinter extends ResultPrinter {
         global $wfDefinedArraysGlobal;
 
         $this->name = $this->params[ 'name' ];
-        $this->hide_meta = filter_var( $this->params[ 'hide' ], FILTER_VALIDATE_BOOLEAN );
-        $this->unassociative = filter_var( $this->params[ 'unassociative' ], FILTER_VALIDATE_BOOLEAN );
+        $this->delimiter = $this->params[ 'valuesep' ];
         $this->simple = filter_var( $this->params[ 'simple' ], FILTER_VALIDATE_BOOLEAN );
 
         if ( !$this->name ) {
@@ -184,63 +180,176 @@ class ComplexArrayPrinter extends ResultPrinter {
      * @return array
      */
     private function buildResultArray( \SMWQueryResult $res ) {
-        /**
-         *
-         */
-        $res = array_merge( $res->serializeToArray(), [ 'rows' => $res->getCount() ] );
+        $this->res = array_merge( $res->serializeToArray() );
 
-        /**
-         * Create an empty array that needs to be returned.
-         */
-        $return = [];
-
-        foreach ( $res['results'] as $result ) {
-            $r = [];
-
-            $printouts = $result[ 'printouts' ];
-
-            if ( count($printouts) !== 0 ) {
-                foreach ( $printouts as $key => $printout ) {
-                    if ( isset( $printout[ 0 ] ) ) {
-                        switch ( $printout[ 0 ] ) {
-                            case 'f':
-                                $printout[ 0 ] = 0;
-                                break;
-                            case 't':
-                                $printout[ 0 ] = 1;
-                                break;
-                        }
-
-                        if ( $this->simple ) {
-                            if ( is_array( $printout[ 0 ] ) ) {
-                                if ( isset( $printout[ 0 ][ 'fulltext' ] ) ) {
-                                    $printout[ 0 ] = $printout[ 0 ][ 'fulltext' ];
-                                }
-                            } elseif ( strpos( $printout[ 0 ], 'mailto:' ) !== false ) {
-                                $printout[0] = str_replace( "mailto:", "", $printout[ 0 ] );
-                            }
-                        }
-
-                        if ( $this->unassociative ) {
-                            array_push( $r, $printout[ 0 ] );
-                        } else {
-                            $r[$key] = $printout[ 0 ];
-                        }
-                    }
-                }
-            }
-
-            if ( !$this->hide_meta ) {
-                if ( isset( $result[ 'fulltext' ] ) ) $r[ 'catitle' ] = $result[ 'fulltext' ];
-                if ( isset( $result[ 'fullurl' ] ) ) $r[ 'cafullurl' ] = $result[ 'fullurl' ];
-                if ( isset( $result[ 'namespace' ] ) ) $r[ 'canamespace' ] = $result[ 'namespace' ];
-                if ( isset( $result[ 'exists' ] ) ) $r[ 'caexists' ] = $result[ 'exists' ];
-                if ( isset( $result[ 'displaytitle' ] ) ) $r[ 'cadisplaytitle' ] = $result[ 'displaytitle' ];
-            }
-
-            array_push( $return, $r );
+        foreach ( $this->res['results'] as $result ) {
+            $this->formatResult( $result );
         }
 
-        return $return;
+        return $this->return;
+    }
+
+    private function formatResult( $result ) {
+        foreach ( $result["printouts"] as $key => $printout ) {
+            $this->formatPrintout( $key, $printout );
+        }
+
+        if ( isset( $result[ 'fulltext' ] ) ) $this->r[ 'catitle' ] = $result[ 'fulltext' ];
+        if ( isset( $result[ 'fullurl' ] ) ) $this->r[ 'cafullurl' ] = $result[ 'fullurl' ];
+        if ( isset( $result[ 'namespace' ] ) ) $this->r[ 'canamespace' ] = $result[ 'namespace' ];
+        if ( isset( $result[ 'exists' ] ) ) $this->r[ 'caexists' ] = $result[ 'exists' ];
+        if ( isset( $result[ 'displaytitle' ] ) ) $this->r[ 'cadisplaytitle' ] = $result[ 'displaytitle' ];
+
+        array_push( $this->return, $this->r );
+    }
+
+    /**
+     * @param $key
+     * @param $printout
+     */
+    private function formatPrintout( $key, $printout ) {
+        $this->v = [];
+
+        $prop_type = $this->fetchPropType( $key );
+        foreach ( $printout as $property ) {
+            $this->formatProperty( $prop_type, $property );
+        }
+
+        $this->addPrintout( $key );
+    }
+
+    /**
+     * @param $key
+     */
+    private function addPrintout( $key ) {
+        if ( !empty( $this->v ) ) {
+            if ( $this->isOneDimensional() ) {
+                $this->r[$key] = implode( $this->delimiter, $this->v );
+            } else {
+                if ( count( $this->v ) === 1 ) {
+                    $this->r[$key] = $this->v[0];
+                } else {
+                    $this->r[$key] = $this->v;
+                }
+            }
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    private function isOneDimensional() {
+        foreach ( $this->v as $value ) {
+            if ( is_array( $value ) ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $prop_type
+     * @param $property
+     */
+    private function formatProperty( $prop_type, $property ) {
+        switch ( $prop_type ) {
+            case "_wpg":
+                array_push( $this->v, $this->formatPropertyOfType_wpg( $property ) );
+                break;
+            case "_dat":
+                array_push( $this->v, $this->formatPropertyOfType_dat( $property ) );
+                break;
+            case "_ema":
+                array_push( $this->v, $this->formatPropertyOfType_ema( $property ) );
+                break;
+            case "_boo":
+                array_push( $this->v, $this->formatPropertyOfType_boo( $property ) );
+                break;
+            default:
+                array_push( $this->v, $this->formatPropertyOfType_txt( $property ) );
+                break;
+        }
+    }
+
+    /**
+     * Format property values of type _wpg (page).
+     *
+     * @param $property
+     * @return string|array
+     */
+    private function formatPropertyOfType_wpg( $property ) {
+        if ( $this->simple === true && isset ( $property['fulltext'] ) ) {
+            return $property['fulltext'];
+        }
+
+        return $property;
+    }
+
+    /**
+     * Format property values of type _dat (date).
+     *
+     * @param $property
+     * @return string
+     */
+    private function formatPropertyOfType_dat( $property ) {
+        $unix_timestamp = $property["timestamp"];
+
+        // Return ISO 8601 timestamp
+        return date( 'c', $unix_timestamp );
+    }
+
+    /**
+     * Format property values of type _ema (email).
+     *
+     * @param $property
+     * @return string
+     */
+    private function formatPropertyOfType_ema( $property ) {
+        return str_replace( "mailto:", "", $property );
+    }
+
+    /**
+     * Format property values of type _boo (boolean).
+     *
+     * @param $property
+     * @return string
+     */
+    private function formatPropertyOfType_boo( $property ) {
+        switch ( $property ) {
+            case 't':
+                return '1';
+            case 'f':
+                return '0';
+        }
+
+        return $property;
+    }
+
+    /**
+     * This function is not really necessary, it is just here for proper semantics.
+     *
+     * @param $property
+     * @return string
+     */
+    private function formatPropertyOfType_txt( $property ) {
+        return $property;
+    }
+
+    /**
+     * @param $key
+     * @return string
+     */
+    private function fetchPropType( $key ) {
+        $print_requests = $this->res["printrequests"];
+
+        foreach ( $print_requests as $print_request ) {
+            if ( $print_request["label"] === $key ) {
+                return $print_request["typeid"];
+            }
+        }
+
+        // When the property isn't found (should never happen) assume _txt.
+        return "_txt";
     }
 }
