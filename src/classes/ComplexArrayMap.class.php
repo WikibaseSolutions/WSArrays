@@ -116,9 +116,9 @@ class ComplexArrayMap extends ResultPrinter {
             ComplexArrayMap::$hide = true;
         }
 
-        $name = trim( $frame->expand( $args[ 0 ] ) );
-        $map_key = trim( $frame->expand( $args[ 1 ] ) );
-        $map = trim( $frame->expand( $args[ 2 ], PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES ) );
+        $name = GlobalFunctions::getSFHValue( $args[ 0 ], $frame );
+        $map_key = GlobalFunctions::getSFHValue( $args[ 1 ], $frame );
+        $map = GlobalFunctions::rawValue( $args[ 2 ], $frame, $parser );
 
         return array( ComplexArrayMap::arrayMap( $name, $map_key, $map ), 'noparse' => false );
     }

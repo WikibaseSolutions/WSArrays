@@ -61,21 +61,21 @@ class ComplexArrayDefine extends ResultPrinter {
 
             return GlobalFunctions::error( $ca_omitted );
         } else {
-            $name = trim( $frame->expand( $args[ 0 ] ) );
+            $name = GlobalFunctions::getSFHValue( $args[ 0 ], $frame );
         }
 
         // Array (in WSON)
-        if ( !isset( $args[ 1 ] ) || empty( $args[ 2 ] ) ) {
+        if ( !isset( $args[ 1 ] ) || empty( $args[ 1 ] ) ) {
             $wson = null;
         } else {
-            $wson = trim( $frame->expand( $args[ 1 ], PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES ) );
+            $wson = GlobalFunctions::rawValue( $args[ 1 ], $frame, $parser );
         }
 
         // Separator
         if ( !isset( $args[ 2 ] ) || empty( $args[ 2 ] ) ) {
-            $sep = null;
+            $sep = ",";
         } else {
-            $sep = trim( $frame->expand( $args[ 2 ] ) );
+            $sep = GlobalFunctions::getSFHValue( $args[ 2 ], $frame );
         }
 
         if ( !GlobalFunctions::isValidArrayName( $name ) ) {
@@ -102,7 +102,7 @@ class ComplexArrayDefine extends ResultPrinter {
      * @return array|null
      * @throws Exception
      */
-    private static function arrayDefine( $name, $wson, $sep ) {
+    private static function arrayDefine( $name, $wson, $sep = "," ) {
         // Convert the WSON to an array
         $array = GlobalFunctions::WSONtoArray( $wson );
 

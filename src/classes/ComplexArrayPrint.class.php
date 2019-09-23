@@ -82,25 +82,25 @@ class ComplexArrayPrint extends ResultPrinter {
         GlobalFunctions::fetchSemanticArrays();
 
         if ( isset( $args[ 0 ] ) ) {
-            $name = trim( $frame->expand( $args[ 0 ] ) );
+            $name = GlobalFunctions::getSFHValue( $args[ 0 ], $frame );
         } else {
             $name = '';
         }
 
         if ( isset( $args[ 1 ] ) ) {
-            $options = trim( $frame->expand( $args[ 1 ] ) );
+            $options = GlobalFunctions::getSFHValue( $args[ 1 ], $frame );
         } else {
             $options = '';
         }
 
         if ( isset( $args[ 2 ] ) ) {
-            $map = trim( $frame->expand( $args[ 2 ] ) );
+            $map = GlobalFunctions::getSFHValue( $args[ 2 ], $frame );
         } else {
             $map = '';
         }
 
         if ( isset( $args[ 3 ] ) ) {
-            $subject = trim( $frame->expand( $args[ 3 ], PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES ) );
+            $subject = GlobalFunctions::rawValue( $args[ 3 ], $frame, $parser );
         } else {
             $subject = '';
         }
