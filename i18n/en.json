@@ -22,5 +22,7 @@
   "ca-unsupported-version": "This version of $1 is not supported by WSArrays (has version $2, requires at least version $3)",
   "ca-smw-paramdesc-name": "Defines the name of the array being created",
   "ca-smw-paramdesc-hide": "Hides all semantic variables in the result",
-  "ca-smw-paramdesc-unassociative": "Converts the named keys to integer keys"
+  "ca-smw-paramdesc-unassociative": "Converts the named keys to integer keys",
+  "ca-smw-paramdesc-simple": "Hides more detailed information from the query",
+  "ca-smw-paramdesc-valuesep": "Delimiter between properties of the same name"
 }
