@@ -393,9 +393,7 @@ class GlobalFunctions {
             return null;
         }
 
-        if ( empty( $noparse ) || !( ctype_digit( $noparse ) && is_numeric( $noparse ) ) ) {
-            $noparse = 0;
-        } else {
+        if ( !empty( $noparse) && gettype( $noparse ) !== "int" ) {
             $noparse = intval( $noparse );
         }
 
