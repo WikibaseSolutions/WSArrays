@@ -94,13 +94,9 @@ class ComplexArrayPushValue extends ResultPrinter {
 
             WSArrays::$arrays[ $base_array ] = new SafeComplexArray();
         }
-        /*
-        if ( preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches ) === 0 ) {
-            $ca_invalid_name = wfMessage( 'ca-invalid-name' );
 
-            return GlobalFunctions::error( $ca_invalid_name );
-        }
-        */
+        preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches );
+
         global $wfEscapeEntitiesInArrays;
         if ( $wfEscapeEntitiesInArrays === true ) {
             $array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
