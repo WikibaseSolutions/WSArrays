@@ -92,7 +92,7 @@ class ComplexArrayPrinter extends ResultPrinter {
     /**
      * @var bool
      */
-    private $simple = false;
+    private $detailed = false;
 
     /**
      * @var array
@@ -125,9 +125,9 @@ class ComplexArrayPrinter extends ResultPrinter {
         ];
 
         $definitions[] = [
-            'name' => 'simple',
-            'message' => 'ca-smw-paramdesc-simple',
-            'default' => 'true'
+            'name' => 'detailed',
+            'message' => 'ca-smw-paramdesc-detailed',
+            'default' => 'false'
         ];
 
         $definitions[] = [
@@ -157,7 +157,7 @@ class ComplexArrayPrinter extends ResultPrinter {
 
         $this->name = $this->params[ 'name' ];
         $this->delimiter = $this->params[ 'valuesep' ];
-        $this->simple = filter_var( $this->params[ 'simple' ], FILTER_VALIDATE_BOOLEAN );
+        $this->detailed = filter_var( $this->params[ 'detailed' ], FILTER_VALIDATE_BOOLEAN );
 
         if ( !$this->name ) {
             $json = json_encode( $this->buildResultArray( $queryResult ) );
@@ -279,7 +279,7 @@ class ComplexArrayPrinter extends ResultPrinter {
      * @return string|array
      */
     private function formatPropertyOfType_wpg( $property ) {
-        if ( $this->simple === true && isset ( $property['fulltext'] ) ) {
+        if ( $this->detailed === true && isset ( $property['fulltext'] ) ) {
             return $property['fulltext'];
         }
 
