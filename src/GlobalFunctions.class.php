@@ -370,37 +370,88 @@ class GlobalFunctions {
      * @param string $array_name
      * @return bool
      */
-    public static function arrayExists( $array_name ) {
-        if ( isset( WSArrays::$arrays[ $array_name ] ) ) {
+    public static function arrayExists( $array_name )
+    {
+        if (isset(WSArrays::$arrays[$array_name])) {
             return true;
         }
 
         return false;
     }
 
-    public static function getValue($arg, $frame, $parser = '', $noparse = false ) {
-        if ( $noparse === true ) {
-            if ( empty( $parser ) ) {
-                return null;
-            } else {
-                return GlobalFunctions::rawValue( $arg, $frame, $parser );
-            }
+    /**
+     * @param $arg
+     * @param $frame
+     * @param string $parser
+     * @param int $noparse
+     * @return string
+     * @throws Exception
+     */
+    public static function getValue($arg, $frame, $parser = '', $noparse = '' ) {
+        if ( !isset( $arg ) || empty ( $arg ) ) {
+            return null;
+        }
+
+        if ( empty( $noparse ) || !( ctype_digit( $noparse ) && is_numeric( $noparse ) ) ) {
+            $noparse = 0;
+        } else {
+            $noparse = intval( $noparse );
+        }
+
+        if ( $noparse > 0 ) {
+            return GlobalFunctions::rawValue( $arg, $frame, $noparse );
         } else {
             return GlobalFunctions::getSFHValue( $arg, $frame );
         }
     }
 
-    public static function rawValue( $arg, $frame, $parser = '' ) {
-        $expanded_frame = $frame->expand( $arg, PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES | PPFrame::NO_TAGS | PPFrame::NO_IGNORE );
+    /**
+     * @param $arg
+     * @param $frame
+     * @param string $parser
+     * @return string
+     */
+    public static function rawValue( $arg, $frame, $noparse_level = 1 ) {
+        switch ( $noparse_level ) {
+            case 1:
+                $expanded_frame = $frame->expand( $arg,
+                    PPFrame::NO_IGNORE );
+                break;
+            case 2:
+                $expanded_frame = $frame->expand( $arg,
+                    PPFrame::NO_IGNORE | PPFrame::NO_ARGS );
+                break;
+            case 3:
+                $expanded_frame = $frame->expand( $arg,
+                    PPFrame::NO_IGNORE | PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES );
+                break;
+            case 4:
+                $expanded_frame = $frame->expand( $arg,
+                    PPFrame::NO_IGNORE | PPFrame::NO_ARGS | PPFrame::NO_TAGS );
+                break;
+             default:
+                $expanded_frame = $frame->expand( $arg,
+                    PPFrame::NO_IGNORE | PPFrame::NO_ARGS | PPFrame::NO_TAGS | PPFrame::NO_TEMPLATES );
+                break;
+        }
+
         $trimmed_frame  = trim( $expanded_frame );
 
         return $trimmed_frame;
     }
 
+    /**
+     * @param $arg
+     * @param $frame
+     * @return string
+     */
     public static function getSFHValue( $arg, $frame ) {
         return trim( $frame->expand( $arg ) );
     }
 
+    /**
+     * @param $value
+     */
     public static function toArrayIfValid( &$value ) {
         GlobalFunctions::WSONtoJSON( $value );
 
