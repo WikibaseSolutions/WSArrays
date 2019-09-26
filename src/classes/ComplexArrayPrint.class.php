@@ -81,29 +81,11 @@ class ComplexArrayPrint extends ResultPrinter {
     public static function getResult( Parser $parser, $frame, $args ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( isset( $args[ 0 ] ) ) {
-            $name = GlobalFunctions::getValue($args[ 0 ], $frame );
-        } else {
-            $name = '';
-        }
-
-        if ( isset( $args[ 1 ] ) ) {
-            $options = GlobalFunctions::getValue( $args[ 1 ], $frame );
-        } else {
-            $options = '';
-        }
-
-        if ( isset( $args[ 2 ] ) ) {
-            $map = GlobalFunctions::getValue( $args[ 2 ], $frame );
-        } else {
-            $map = '';
-        }
-
-        if ( isset( $args[ 3 ] ) ) {
-            $subject = GlobalFunctions::getValue( $args[ 3 ], $frame, $parser, true );
-        } else {
-            $subject = '';
-        }
+        $name = GlobalFunctions::getValue($args[ 0 ], $frame );
+        $options = GlobalFunctions::getValue( $args[ 1 ], $frame );
+        $map = GlobalFunctions::getValue( $args[ 2 ], $frame );
+        $noparse = GlobalFunctions::getValue( $args[ 4 ], $frame );
+        $subject = GlobalFunctions::getValue( $args[ 3 ], $frame, $parser, $noparse );
 
         if ( empty( $name ) ) {
             $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
