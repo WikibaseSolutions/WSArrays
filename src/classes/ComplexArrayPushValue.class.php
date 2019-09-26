@@ -67,7 +67,7 @@ class ComplexArrayPushValue extends ResultPrinter {
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        $noparse = trim( $frame->expand( $args[ 2 ] ) );
+        $noparse = GlobalFunctions::getValue( $args[ 2 ], $frame );
         $array_name = GlobalFunctions::getValue( $args[ 0 ], $frame );
         $value = GlobalFunctions::getValue( $args[ 1 ], $frame, $parser, $noparse );
 

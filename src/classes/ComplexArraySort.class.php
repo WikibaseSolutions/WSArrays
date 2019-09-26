@@ -338,7 +338,7 @@ class ComplexArraySort extends ResultPrinter {
             ComplexArraySort::$array = array_reverse( ComplexArraySort::$array );
         }
 
-        WSArrays::$arrays[ ComplexArraySort::$name ] = new SafeComplexArray( ComplexArraySort::$array );
+        WSArrays::$arrays[ ComplexArraySort::$array_name ] = new SafeComplexArray( ComplexArraySort::$array );
 
         return true;
     }
