@@ -82,14 +82,14 @@ class ComplexArrayExtract extends ResultPrinter {
      */
     private static function arrayExtract( $name, $array_name ) {
         // If no subarray is provided, show an error.
-        if( !strpos( $subarray, "[" ) ||
-            !strpos( $subarray, "]" ) ) {
+        if( !strpos( $array_name, "[" ) ||
+            !strpos( $array_name, "]" ) ) {
             $ca_subarray_not_provided = wfMessage( 'ca-subarray-not-provided' );
 
             return GlobalFunctions::error( $ca_subarray_not_provided );
         }
 
-        $array = GlobalFunctions::getArrayFromArrayName( $subarray, true );
+        $array = GlobalFunctions::getArrayFromArrayName( $array_name, true );
 
         if( !$array ) {
             // Array does not exist
