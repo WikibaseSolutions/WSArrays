@@ -322,6 +322,8 @@ class GlobalFunctions {
         if ( $wfDefinedArraysGlobal !== null ) {
             WSArrays::$arrays = array_merge( WSArrays::$arrays, $wfDefinedArraysGlobal );
         }
+
+        $wfDefinedArraysGlobal = [];
     }
 
     /**

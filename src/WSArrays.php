@@ -24,7 +24,7 @@
  * Initialization file for WSArrays.
  *
  * @license GPL-2.0-or-later
- * @version: 1.7
+ * @version: 1.7.2
  *
  * @author Xxmarijnw <marijn@wikibase.nl>
  *
@@ -59,8 +59,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
     }
 }
 
-require_once 'GlobalFunctions.class.php';
-
 global $wfEnableResultPrinter;
 
 if ( $wfEnableResultPrinter ) {
@@ -75,7 +73,7 @@ if ( $wfEnableResultPrinter ) {
  * @extends GlobalFunctions
  */
 class WSArrays extends SafeComplexArray {
-    const VERSION = '1.7';
+    const VERSION = '1.7.2';
 
     /**
      * This variable holds all defined arrays. If an array is defined called "array", the array will be stored in WSArrays::$arrays["array"].
