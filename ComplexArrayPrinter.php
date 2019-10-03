@@ -183,6 +183,7 @@ class ComplexArrayPrinter extends ResultPrinter {
         $this->res = array_merge( $res->serializeToArray() );
 
         foreach ( $this->res['results'] as $result ) {
+            $this->r = [];
             $this->formatResult( $result );
         }
 
