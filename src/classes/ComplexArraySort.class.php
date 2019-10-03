@@ -60,7 +60,7 @@ class ComplexArraySort extends ResultPrinter {
      * Define all allowed parameters.
      *
      * @param Parser $parser
-     * @param string $name
+     * @param string $array_name
      * @param string $options
      * @param string $key
      * @return array|null
@@ -92,36 +92,26 @@ class ComplexArraySort extends ResultPrinter {
             return null;
         }
 
+        ComplexArraySort::$array      = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
         ComplexArraySort::$array_name = $array_name;
-        ComplexArraySort::$array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
-
-        if ( !empty( $key ) ) {
-            ComplexArraySort::$key = $key;
-        }
 
         if ( empty( $options ) ) {
             $result = ComplexArraySort::sortArray( "sort" );
         } else {
-            GlobalFunctions::serializeOptions( $options );
-
-            if ( count( $options ) === 1 ) {
-                $result = ComplexArraySort::sortArray( $options[ 0 ] );
-            } else {
-                if ( $options[ 0 ] !== "keysort" ) {
-                    $result = ComplexArraySort::sortArray( $options[ 0 ] );
-                } else {
-                    $result = ComplexArraySort::keysort( $options[ 1 ] );
-                }
+            if ( !empty( $key ) ) {
+                ComplexArraySort::$key = $key;
             }
+
+            $result = ComplexArraySort::sortArray( $options );
         }
 
         if( $result === true ) {
             WSArrays::$arrays[ $array_name ] = new SafeComplexArray( ComplexArraySort::$array );
 
             return null;
-        } else {
-            return GlobalFunctions::error( $result );
         }
+
+        return GlobalFunctions::error( $result );
     }
 
     /**
@@ -156,6 +146,9 @@ class ComplexArraySort extends ResultPrinter {
                 break;
             case 'keysort':
                 $array = ComplexArraySort::keysort(null);
+                break;
+            case 'keysort,desc':
+                $array = ComplexArraySort::keysort('desc');
                 break;
             case 'sort':
             default:

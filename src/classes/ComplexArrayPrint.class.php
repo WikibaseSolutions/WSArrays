@@ -81,6 +81,8 @@ class ComplexArrayPrint extends ResultPrinter {
     public static function getResult( Parser $parser, $frame, $args ) {
         GlobalFunctions::fetchSemanticArrays();
 
+        ComplexArrayPrint::$array = [];
+
         $name = GlobalFunctions::getValue($args[ 0 ], $frame );
         $options = GlobalFunctions::getValue( $args[ 1 ], $frame );
         $map = GlobalFunctions::getValue( $args[ 2 ], $frame );
