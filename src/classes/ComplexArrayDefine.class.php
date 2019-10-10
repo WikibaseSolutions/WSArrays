@@ -99,14 +99,21 @@ class ComplexArrayDefine extends ResultPrinter {
 
         // If it's not WSON, assume it is a simple array
         if ( !$array ) {
-            if ( !$sep ) $sep = ",";
-            $array = explode( $sep, $wson );
-
-            WSArrays::$arrays[$name] = new SafeComplexArray( $array );
+            ComplexArrayDefine::defineSimpleArray( $name, $wson, $sep );
         } else {
             WSArrays::$arrays[$name] = new SafeComplexArray( $array );
         }
 
         return null;
+    }
+
+    private static function defineSimpleArray( $name, $wson, $sep = null ) {
+        if ( !$sep ) {
+            $sep = ",";
+        }
+
+        $array = array_map('trim', explode( $sep, $wson ) );
+
+        WSArrays::$arrays[$name] = new SafeComplexArray( $array );
     }
 }

@@ -114,6 +114,7 @@ class ComplexArraySearchArray extends ResultPrinter {
     private static function findValues( $value, $key ) {
         $array = GlobalFunctions::getArrayFromArrayName( $key, true );
 
+        ComplexArraySearchArray::$found = [];
         ComplexArraySearchArray::i( $array, $value, $key );
     }
 

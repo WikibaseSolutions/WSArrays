@@ -88,9 +88,21 @@ class ComplexArrayMerge extends ResultPrinter {
         $arrays = ComplexArrayMerge::iterate( $args );
 
         if ( ComplexArrayMerge::$last_element === "recursive" ) {
-            WSArrays::$arrays[ ComplexArrayMerge::$new_array ] = new SafeComplexArray( call_user_func_array( 'array_merge_recursive', $arrays ) );
+            $array = call_user_func_array( 'array_merge_recursive', $arrays );
+
+            if ( !is_array( $array ) ) {
+                return null;
+            }
+
+            WSArrays::$arrays[ ComplexArrayMerge::$new_array ] = new SafeComplexArray( $array );
         } else {
-            WSArrays::$arrays[ ComplexArrayMerge::$new_array ] = new SafeComplexArray( call_user_func_array( 'array_merge', $arrays ) );
+            $array = call_user_func_array( 'array_merge', $arrays );
+
+            if ( !is_array( $array ) ) {
+                return null;
+            }
+
+            WSArrays::$arrays[ ComplexArrayMerge::$new_array ] = new SafeComplexArray( $array );
         }
 
         return null;

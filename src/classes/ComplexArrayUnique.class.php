@@ -45,7 +45,7 @@ class ComplexArrayUnique extends ResultPrinter {
      * Define parameters and initialize parser.
      *
      * @param Parser $parser
-     * @param string $name
+     * @param string $array_name
      * @return array|null
      *
      * @throws Exception

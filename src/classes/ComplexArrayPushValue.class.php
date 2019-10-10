@@ -82,10 +82,10 @@ class ComplexArrayPushValue extends ResultPrinter {
      * @throws Exception
      */
     private static function arrayPushValue( $array_name, $value ) {
-        $base_array = ComplexArrayPushValue::calculateBaseArray( $array_name );
+        $base_array = GlobalFunctions::calculateBaseArray( $array_name );
 
         // If the array doesn't exist yet, create it
-        if ( !GlobalFunctions::arrayExists( $array_name ) ) {
+        if ( !GlobalFunctions::arrayExists( $base_array ) ) {
             if ( !GlobalFunctions::isValidArrayName( $base_array ) ) {
                 $ca_invalid_name = wfMessage( 'ca-invalid-name' );
 
@@ -95,6 +95,7 @@ class ComplexArrayPushValue extends ResultPrinter {
             WSArrays::$arrays[ $base_array ] = new SafeComplexArray();
         }
 
+        $matches = array();
         preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches );
 
         global $wfEscapeEntitiesInArrays;
@@ -137,26 +138,32 @@ class ComplexArrayPushValue extends ResultPrinter {
      */
     private static function add( $path, &$array = array(), $value = null ) {
         $temp =& $array;
-
         $depth = count( $path );
-
-        $current_depth = 1;
+        $current_depth = 0;
 
         foreach ( $path as $key ) {
             $current_depth++;
 
-            if ( !array_key_exists( $key, $temp ) ) {
-                $ca_nonexistent_subarray = wfMessage( 'ca-nonexistent-subarray' );
-
-                return GlobalFunctions::error( $ca_nonexistent_subarray );
+            if ( !array_key_exists( $key, (array)$temp ) ) {
+                $temp[$key] = array();
             }
 
             if( $current_depth !== $depth ) {
+                if ( !is_array( $temp[ $key ] ) ) {
+                    $temp[ $key ] = [ $temp[ $key ] ];
+                }
+
                 $temp =& $temp[ $key ];
+            } else {
+                if ( !is_array( $temp[ $key ] ) ) {
+                    $temp[ $key ] = [ $temp[ $key ] ];
+                }
+
+                array_push( $temp[ $key ], $value );
+
+                break;
             }
         }
-
-        array_push( $temp, $value );
 
         return true;
     }
