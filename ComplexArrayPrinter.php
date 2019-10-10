@@ -47,10 +47,10 @@ class SafeComplexArray {
 
     /**
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
     public function getArray() {
-        if ( !isset( $this->safe_array ) ) throw new Exception( "No array has been declared" );
+        if ( !isset( $this->safe_array ) ) throw new \Exception( "No array has been declared" );
 
         return $this->safe_array;
     }
