@@ -66,7 +66,10 @@ class GlobalFunctions {
     public static function WSONtoJSON( &$wson ) {
         $wson = preg_replace( "/(?!\B\"[^\"]*)\(\((?![^\"]*\"\B)/i", "{", $wson );
         $wson = preg_replace( "/(?!\B\"[^\"]*)\)\)(?![^\"]*\"\B)/i", "}", $wson );
+<<<<<<< HEAD
         //$wson = preg_replace( "~[\r\n]+~", '\\n', $wson);
+=======
+>>>>>>> ecd4fc235a192b703e30e80c1c2fcc28be22fa80
     }
 
     /**
