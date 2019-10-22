@@ -201,7 +201,7 @@ class ComplexArrayPrint extends ResultPrinter {
      * @return array|null|string
      */
     private static function createList( $type = "unordered" ) {
-        if ( is_array( ComplexArrayPrint::$array ) && count( ComplexArrayPrint::$array ) === 1 && !GlobalFunctions::containsArray( ComplexArrayPrint::$array ) ) {
+        if ( count( ComplexArrayPrint::$array ) === 1 && !GlobalFunctions::containsArray( ComplexArrayPrint::$array ) ) {
             if ( is_array( ComplexArrayPrint::$array ) ) {
                 $last_el = reset( ComplexArrayPrint::$array );
                 $return  = key( ComplexArrayPrint::$array ) . ": " . $last_el;
