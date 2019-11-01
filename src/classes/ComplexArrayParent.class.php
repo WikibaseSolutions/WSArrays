@@ -56,9 +56,7 @@ class ComplexArrayParent extends ResultPrinter {
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        ComplexArrayParent::arrayParent( $key );
-
-        return null;
+        return ComplexArrayParent::arrayParent( $key );
     }
 
     private static function arrayParent( $key ) {
