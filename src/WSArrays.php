@@ -24,7 +24,7 @@
  * Initialization file for WSArrays.
  *
  * @license GPL-2.0-or-later
- * @version: 1.8.4.2
+ * @version: 1.9
  *
  * @author Xxmarijnw <marijn@wikibase.nl>
  *
@@ -75,7 +75,7 @@ if ( $wfEnableResultPrinter ) {
  * @extends GlobalFunctions
  */
 class WSArrays extends SafeComplexArray {
-    const VERSION = '1.8.4.2';
+    const VERSION = '1.9';
 
     /**
      * This variable holds all defined arrays. If an array is defined called "array", the array will be stored in WSArrays::$arrays["array"].
