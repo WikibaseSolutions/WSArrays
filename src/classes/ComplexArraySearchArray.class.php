@@ -127,7 +127,7 @@ class ComplexArraySearchArray extends ResultPrinter {
         foreach ( $array as $current_key => $current_item ) {
             $key .= "[$current_key]";
 
-            if ( $value == $current_item ) {
+            if ( $value === $current_item ) {
                 array_push( ComplexArraySearchArray::$found, $key );
             } else {
                 if ( is_array( $current_item ) ) {
