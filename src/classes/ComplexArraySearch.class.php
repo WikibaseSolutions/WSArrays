@@ -89,6 +89,9 @@ class ComplexArraySearch extends ResultPrinter {
             return null;
         }
 
+        ComplexArraySearch::$found = 0;
+        ComplexArraySearch::$array_name = null;
+
         ComplexArraySearch::findValue( $value, $array_name );
 
         return htmlspecialchars(ComplexArraySearch::$array_name);
