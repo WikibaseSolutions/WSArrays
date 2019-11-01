@@ -56,12 +56,6 @@ class ComplexArrayParent extends ResultPrinter {
             return GlobalFunctions::error( $ca_omitted );
         }
 
-        if ( !GlobalFunctions::isValidArrayName( $key ) ) {
-            $ca_invalid_name = wfMessage( 'ca-invalid-name' );
-
-            return GlobalFunctions::error( $ca_invalid_name );
-        }
-
         ComplexArrayParent::arrayParent( $key );
 
         return null;
