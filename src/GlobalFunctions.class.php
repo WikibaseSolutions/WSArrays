@@ -27,6 +27,10 @@ require_once ('SafeComplexArray.class.php');
  * Grandfather class. These functions are available in all other classes.
  */
 class GlobalFunctions {
+    const CA_MARKUP_SIMPLE = 1;
+    const CA_MARKUP_ARCHI  = 2;
+    const CA_MARKUP_LEGACY = 3;
+
     /**
      * Print an error message.
      *
@@ -62,54 +66,129 @@ class GlobalFunctions {
      * Convert WSON (custom JSON) to JSON.
      *
      * @param string $wson
+     * @return string
      */
     public static function WSONtoJSON( &$wson ) {
         $wson = preg_replace( "/(?!\B\"[^\"]*)\(\((?![^\"]*\"\B)/i", "{", $wson );
         $wson = preg_replace( "/(?!\B\"[^\"]*)\)\)(?![^\"]*\"\B)/i", "}", $wson );
-        //$wson = preg_replace( "~[\r\n]+~", '\\n', $wson);
+
+        return $wson;
     }
 
     /**
      * Convert JSON to WSON.
      *
      * @param string $json
+     * @return string
      */
     public static function JSONtoWSON( &$json ) {
         $json = preg_replace( "/(?!\B\"[^\"]*){(?![^\"]*\"\B)/i", "((", $json );
         $json = preg_replace( "/(?!\B\"[^\"]*)}(?![^\"]*\"\B)/i", "))", $json );
+
+        return $json;
     }
 
-    /**
-     * Convert an array to WSON.
-     *
-     * @param array $array
-     * @return null|string|string[]
-     */
-    public static function ArrayToWSON( $array ) {
+    public static function arrayToMarkup( $array ) {
+        if ( !is_array( $array ) ) {
+            return false;
+        }
+
         $json = json_encode( $array );
+        GlobalFunctions::JSONtoWSON( $json );
 
-        $wson = preg_replace( "/(?!\B\"[^\"]*){(?![^\"]*\"\B)/i", "((", $json );
-        return preg_replace( "/(?!\B\"[^\"]*)}(?![^\"]*\"\B)/i", "))", $wson );
+        return $json;
     }
 
     /**
-     * Convert WSON to an array.
+     * Convert markup to an array.
      *
-     * @param string $wson
-     * @return bool|mixed
+     * @param string $markup
+     * @param string $separator
+     * @return array|null
      */
-    public static function WSONtoArray( $wson ) {
-        GlobalFunctions::WSONtoJSON( $wson );
+    public static function markupToArray( $markup, $separator = null ) {
+        if ( $markup === null || $markup === '' ) {
+            return null;
+        }
 
-        if ( !GlobalFunctions::isValidJSON( $wson ) ) {
+        $markup_type = GlobalFunctions::determineMarkup( $markup, $separator );
+
+        switch( $markup_type ) {
+            case GlobalFunctions::CA_MARKUP_LEGACY:
+                GlobalFunctions::WSONtoJSON($markup);
+                $array = json_decode($markup, true);
+
+                return $array;
+            case GlobalFunctions::CA_MARKUP_SIMPLE:
+                if ( !$separator ) {
+                    $separator = ',';
+                }
+
+                $array = explode( $separator, $markup );
+                $array = array_map( 'trim', $array );
+
+                return $array;
+            case GlobalFunctions::CA_MARKUP_ARCHI:
+                try {
+                    require_once('classes/lib/ArchieMLParser.php');
+                    $array = ArchieML::load($markup);
+                } catch ( Exception $exception ) {
+                    return null;
+                }
+
+                return $array;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * @param $markup
+     * @param null $separator
+     * @return int
+     */
+    public static function determineMarkup( $markup, $separator = null ) {
+        $json_markup = $markup;
+        GlobalFunctions::WSONtoJSON( $json_markup );
+
+        if ( GlobalFunctions::isValidJSON( $json_markup ) ) {
+            return GlobalFunctions::CA_MARKUP_LEGACY;
+        }
+
+        if ( $separator !== null || GlobalFunctions::isCommaSeparatedList( $markup ) ) {
+            return GlobalFunctions::CA_MARKUP_SIMPLE;
+        }
+
+        return GlobalFunctions::CA_MARKUP_ARCHI;
+    }
+
+    /**
+     * Simple function to check if a string is a comma-separated list. This function is conservative.
+     *
+     * @param $markup
+     * @return bool
+     */
+    public static function isCommaSeparatedList( $markup ) {
+        $exploded_list = explode( ',', $markup );
+
+        if ( count( $exploded_list ) < 2 ) {
+            // A comma separated list with one item does not make sense.
             return false;
         }
 
-        try {
-            return json_decode( $wson, true );
-        } catch (Exception $e) {
+        if ( !strpos( $markup, '[' ) && !strpos( $markup, ']' ) && !strpos( $markup, ':' ) ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function getKeys( $array_name ) {
+        if ( preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches ) === 0 ) {
             return false;
         }
+
+        return $matches[0];
     }
 
     /**
@@ -448,16 +527,5 @@ class GlobalFunctions {
      */
     public static function getSFHValue( $arg, $frame ) {
         return trim( $frame->expand( $arg ) );
-    }
-
-    /**
-     * @param $value
-     */
-    public static function toArrayIfValid( &$value ) {
-        GlobalFunctions::WSONtoJSON( $value );
-
-        if ( GlobalFunctions::isValidJSON( $value ) ) {
-            $value = json_decode( $value, true );
-        }
     }
 }
