@@ -20,7 +20,7 @@
  */
 
 /**
- * Class ComplexArrayParent
+ * Class ComplexArrayParent.class
  *
  * Defines the parser function {{#complexarrayparent:}}, which returns the parent of the given key.
  *
@@ -47,6 +47,7 @@ class ComplexArrayParent extends ResultPrinter {
      * Define all allowed parameters.
      *
      * @param Parser $parser
+     * @param string $key
      * @return array|null
      */
     public static function getResult( Parser $parser, $key = null ) {

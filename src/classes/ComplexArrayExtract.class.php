@@ -46,7 +46,7 @@ class ComplexArrayExtract extends ResultPrinter {
      *
      * @param Parser $parser
      * @param string $name
-     * @param string $subarray
+     * @param string $array_name
      * @return array|bool
      *
      * @throws Exception

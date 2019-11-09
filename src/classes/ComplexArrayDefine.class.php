@@ -64,9 +64,9 @@ class ComplexArrayDefine extends ResultPrinter {
             $name = GlobalFunctions::getValue( $args[ 0 ], $frame );
         }
 
-        $noparse = GlobalFunctions::getValue( $args[ 3 ], $frame );
-        $wson = GlobalFunctions::getValue( $args[ 1 ], $frame, $parser, $noparse );
-        $sep = GlobalFunctions::getValue( $args[ 2 ], $frame );
+        $noparse = GlobalFunctions::getValue( @$args[ 3 ], $frame );
+        $markup = GlobalFunctions::getValue( @$args[ 1 ], $frame, $parser, $noparse );
+        $sep = GlobalFunctions::getValue( @$args[ 2 ], $frame );
 
         if ( !GlobalFunctions::isValidArrayName( $name ) ) {
             $ca_invalid_name = wfMessage( 'ca-invalid-name' );
@@ -75,45 +75,35 @@ class ComplexArrayDefine extends ResultPrinter {
         }
 
         // Define an empty array
-        if ( empty( $wson ) ) {
+        if ( empty( $markup ) ) {
             WSArrays::$arrays[ $name ] = new SafeComplexArray();
 
             return null;
         }
 
-        return ComplexArrayDefine::arrayDefine( $name, $wson, $sep );
+        return ComplexArrayDefine::arrayDefine( $name, $markup, $sep );
     }
 
     /**
      * Define array and store it in WSArrays::$arrays as a SafeComplexArray object.
      *
      * @param string $name
-     * @param string $wson
-     * @param string $sep
+     * @param string $markup
+     * @param string $separator
      * @return array|null
      * @throws Exception
      */
-    private static function arrayDefine( $name, $wson, $sep = null ) {
-        // Convert the WSON to an array
-        $array = GlobalFunctions::WSONtoArray( $wson );
+    private static function arrayDefine( $name, $markup, $separator = null ) {
+        $array = GlobalFunctions::markupToArray( $markup, $separator );
 
-        // If it's not WSON, assume it is a simple array
         if ( !$array ) {
-            ComplexArrayDefine::defineSimpleArray( $name, $wson, $sep );
-        } else {
-            WSArrays::$arrays[$name] = new SafeComplexArray( $array );
+            GlobalFunctions::error( "Invalid markup language" );
+
+            return null;
         }
-
-        return null;
-    }
-
-    private static function defineSimpleArray( $name, $wson, $sep = null ) {
-        if ( !$sep ) {
-            $sep = ",";
-        }
-
-        $array = array_map('trim', explode( $sep, $wson ) );
 
         WSArrays::$arrays[$name] = new SafeComplexArray( $array );
+
+        return null;
     }
 }

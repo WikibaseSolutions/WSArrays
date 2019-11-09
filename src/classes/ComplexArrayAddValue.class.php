@@ -98,10 +98,9 @@ class ComplexArrayAddValue extends ResultPrinter {
             return null;
         }
 
-        /*
-         * This function creates an array $matches[0] of all the subarrays in the name.
-         */
-        if ( preg_match_all( "/(?<=\[).+?(?=\])/", $array, $matches ) === 0 ) {
+        $keys = GlobalFunctions::getKeys( $array );
+
+        if ( !$keys ) {
             $ca_invalid_name = wfMessage( 'ca-invalid-name' );
 
             return GlobalFunctions::error( $ca_invalid_name );
@@ -116,7 +115,7 @@ class ComplexArrayAddValue extends ResultPrinter {
         }
 
 
-        ComplexArrayAddValue::set( $matches[ 0 ], $wsarray, $value );
+        ComplexArrayAddValue::set( $keys, $wsarray, $value );
 
         WSArrays::$arrays[ $base_array ] = new SafeComplexArray( $wsarray );
 
@@ -129,11 +128,7 @@ class ComplexArrayAddValue extends ResultPrinter {
      * @param null $value
      */
     private static function set( $path, &$array = array(), $value = null ) {
-        GlobalFunctions::WSONtoJSON( $value );
-
-        if ( GlobalFunctions::isValidJSON( $value ) ) {
-            $value = json_decode( $value, true );
-        }
+        $value = GlobalFunctions::markupToArray( $value );
 
         $temp =& $array;
 

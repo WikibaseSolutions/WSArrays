@@ -105,7 +105,9 @@ class ComplexArrayPushValue extends ResultPrinter {
             $array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
         }
 
-        GlobalFunctions::toArrayIfValid( $value );
+        if ( $parsed_array = GlobalFunctions::markupToArray( $value ) ) {
+            $value = $parsed_array;
+        }
 
         if ( !strpos( $array_name, "[" ) ) {
             ComplexArrayPushValue::replace( $value, $array, $base_array );
