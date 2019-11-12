@@ -99,7 +99,7 @@ $magicWords['en'] = [
     'capapa' => [ 0, 'capapa' ],
     'camama' => [ 0, 'camama' ],
 
-    'ComplexArrayUnset.class' => [ 0, 'ComplexArrayUnset.class'],
+    'complexarrayunset' => [ 0, 'complexarrayunset'],
     'caunset' => [ 0, 'caunset' ],
     'caremove' => [ 0, 'caremove' ]
 ];
