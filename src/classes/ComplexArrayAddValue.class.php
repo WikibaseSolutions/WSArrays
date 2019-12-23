@@ -118,7 +118,11 @@ class ComplexArrayAddValue extends ResultPrinter {
         $temp =& $array;
 
         foreach( $path as $key ) {
-            $temp =& $temp[ $key ];
+            if( !isset($temp[$key]) ) {
+                $temp[$key] = [];
+            }
+
+            $temp =& $temp[$key];
         }
 
         $temp = $value;
