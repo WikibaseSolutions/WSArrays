@@ -35,7 +35,8 @@ class ComplexArrayAddValue extends ResultPrinter {
         return [
             'caaddvalue',
             'caadd',
-            'caaddv'
+            'caaddv',
+            'caset'
         ];
     }
 
