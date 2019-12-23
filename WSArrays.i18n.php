@@ -101,5 +101,8 @@ $magicWords['en'] = [
 
     'complexarrayunset' => [ 0, 'complexarrayunset'],
     'caunset' => [ 0, 'caunset' ],
-    'caremove' => [ 0, 'caremove' ]
+    'caremove' => [ 0, 'caremove' ],
+
+    'complexarrayset' => [ 0, 'complexarrayset' ],
+    'caset' => [ 0, 'caset' ]
 ];
