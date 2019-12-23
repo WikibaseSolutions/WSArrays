@@ -24,7 +24,7 @@
  * Initialization file for WSArrays.
  *
  * @license GPL-2.0-or-later
- * @version: 1.9
+ * @version: 3.0
  *
  * @author Xxmarijnw <marijn@wikibase.nl>
  *
@@ -33,10 +33,10 @@
 if ( !defined( 'MEDIAWIKI' ) ) {
     die();
 } else {
-    global $wgVersion;
     global $wfSkipVersionControl;
 
     if (!$wfSkipVersionControl) {
+        global $wgVersion;
         if (version_compare($wgVersion, 1.27) < 0) {
             if (function_exists('wfMessage')) {
                 $ca_unsupported_version = wfMessage('ca-unsopported-version', 'MediaWiki', $wgVersion, '1.27');
@@ -47,7 +47,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
             throw new Exception($ca_unsupported_version);
         }
 
-        if (version_compare(PHP_VERSION, 5.0) < 0) {
+        if (version_compare(PHP_VERSION, 5.3) < 0) {
             if (function_exists('wfMessage')) {
                 $ca_unsupported_version = wfMessage('ca-unsopported-version', 'PHP', PHP_VERSION, '5.3');
             } else {
@@ -62,7 +62,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 require_once 'GlobalFunctions.class.php';
 
 global $wfEnableResultPrinter;
-
 if ( $wfEnableResultPrinter ) {
     $GLOBALS[ 'smwgResultFormats' ][ 'complexarray' ] = 'SMW\Query\ResultPrinters\ComplexArrayPrinter';
 }
@@ -74,8 +73,8 @@ if ( $wfEnableResultPrinter ) {
  *
  * @extends GlobalFunctions
  */
-class WSArrays extends SafeComplexArray {
-    const VERSION = '2.0';
+class WSArrays extends ComplexArray {
+    const VERSION = '3.0';
 
     /**
      * This variable holds all defined arrays. If an array is defined called "array", the array will be stored in WSArrays::$arrays["array"].
