@@ -50,6 +50,7 @@ $magicWords['en'] = [
     'caaddvalue' => [ 0, 'caaddvalue' ],
     'caadd' => [ 0, 'caadd' ],
     'caaddv' => [ 0, 'caaddv' ],
+    'caset' => [ 0, 'caset' ],
 
     'complexarrayslice' => [ 0, 'complexarrayslice' ],
     'caslice' => [ 0, 'caslice' ],
@@ -101,8 +102,5 @@ $magicWords['en'] = [
 
     'complexarrayunset' => [ 0, 'complexarrayunset'],
     'caunset' => [ 0, 'caunset' ],
-    'caremove' => [ 0, 'caremove' ],
-
-    'complexarrayset' => [ 0, 'complexarrayset' ],
-    'caset' => [ 0, 'caset' ]
+    'caremove' => [ 0, 'caremove' ]
 ];
