@@ -23,6 +23,7 @@
   "ca-smw-paramdesc-name": "Description of the SMW printer parameter 'name'",
   "ca-smw-paramdesc-hide": "Description of the SMW printer parameter 'hide'",
   "ca-smw-paramdesc-unassociative": "Description of the SMW printer parameter 'unassociative'",
-  "ca-smw-paramdesc-simple": "Description of the SMW printer parameter 'simple'",
-  "ca-smw-paramdesc-valuesep": "Description of the SMW printer parameter 'valuesep'"
+  "ca-smw-paramdesc-detailed": "Description of the SMW printer parameter 'simple'",
+  "ca-smw-paramdesc-valuesep": "Description of the SMW printer parameter 'valuesep'",
+  "ca-invalid-markup": "Error message shown when the markup used is not recognized"
 }
