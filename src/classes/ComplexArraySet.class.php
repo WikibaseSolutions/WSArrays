@@ -20,26 +20,25 @@
  */
 
 /**
- * Class ComplexArrayUnset.class
+ * Class ComplexArraySet
  *
  * Unsets a value from an existing array.
  *
  * @extends WSArrays
  */
-class ComplexArrayUnset extends ResultPrinter {
+class ComplexArraySet extends ResultPrinter {
     public function getName() {
-        return 'complexarrayunset';
+        return 'complexarrayset';
     }
 
     public function getAliases() {
         return [
-            'caunset',
-            'caremove'
+            'caset'
         ];
     }
 
     public function getType() {
-        return 'normal';
+        return 'sfh';
     }
 
     /**
@@ -51,14 +50,29 @@ class ComplexArrayUnset extends ResultPrinter {
      *
      * @throws Exception
      */
-    public static function getResult( Parser $parser, $array_name = '' ) {
+    public static function getResult( Parser $parser, $frame, $args ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
+        $array_name = GlobalFunctions::getValue(
+            @$args[0],
+            $frame
+        );
+
+        $value = GlobalFunctions::getValue(
+            @$args[1],
+            $frame,
+            $parser,
+            GlobalFunctions::getValue(
+                @$args[2],
+                $frame
+            )
+        );
+
+        if( !$array_name || !$value ) {
+            return;
         }
 
-        return ComplexArrayUnset::arrayUnset( $array_name );
+        return ComplexArraySet::arraySet( $array_name, $value );
     }
 
     /**
@@ -66,11 +80,11 @@ class ComplexArrayUnset extends ResultPrinter {
      * @return null|bool|array
      * @throws Exception
      */
-    private static function arrayUnset( $array_name ) {
+    private static function arraySet( $array_name, $value ) {
         $base_array_name = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
 
         if ( $base_array_name === $array_name ) {
-            // The user is trying to unset the entire array, which is not supported.
+            // The user is trying to set the entire array, which is not supported.
             return false;
         }
 
@@ -81,7 +95,7 @@ class ComplexArrayUnset extends ResultPrinter {
         $array = GlobalFunctions::getArrayFromArrayName( $base_array_name );
         $keys  = GlobalFunctions::getKeys( $array_name );
 
-        if ( !$array || !GlobalFunctions::getArrayFromArrayName( $array_name ) ) {
+        if ( !$array  ) {
             return false;
         }
 
@@ -89,23 +103,26 @@ class ComplexArrayUnset extends ResultPrinter {
             return false;
         }
 
-        ComplexArrayUnset::unsetValueFromKeys( $array, $keys );
+        ComplexArraySet::setValueAtKey( $value, $array, $keys );
 
         WSArrays::$arrays[$base_array_name] = new ComplexArray( $array );
 
         return null;
     }
 
-    private static function unsetValueFromKeys( &$array, $keys ) {
+    private static function setValueAtKey( $value, &$array, $keys ) {
         $depth = count( $keys ) - 1;
 
         $temp =& $array;
         for ( $i = 0; $i <= $depth; $i++ ) {
             if ( $i === $depth ) {
-                // Last key, delete it.
-                unset( $temp[$keys[$i]] );
+                $temp[$keys[$i]] = $value;
 
                 return;
+            }
+
+            if(!$temp[$keys[$i]] || !is_array($temp[$keys[$i]])) {
+                $temp[$keys[$i]] = [];
             }
 
             $temp =& $temp[$keys[$i]];

@@ -70,20 +70,16 @@ class ComplexArrayPushArray extends ResultPrinter {
         ComplexArrayPushArray::parseFunctionArguments( $args );
 
         if ( !GlobalFunctions::isValidArrayName( ComplexArrayPushArray::$new_array ) ) {
-            $ca_invalid_name = wfMessage( 'ca-invalid-name' );
-
-            return GlobalFunctions::error( $ca_invalid_name );
+            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
         }
 
         if( count( $args ) < 2 ) {
-            $ca_too_little_arrays = wfMessage( 'ca-too-little-arrays' );
-
-            return GlobalFunctions::error( $ca_too_little_arrays );
+            return GlobalFunctions::error( wfMessage( 'ca-too-little-arrays' ) );
         }
 
         $arrays = ComplexArrayPushArray::iterate( $args );
 
-        WSArrays::$arrays[ComplexArrayPushArray::$new_array] = new SafeComplexArray( $arrays );
+        WSArrays::$arrays[ComplexArrayPushArray::$new_array] = new ComplexArray( $arrays );
 
         return null;
     }
@@ -95,19 +91,13 @@ class ComplexArrayPushArray extends ResultPrinter {
      * @throws Exception
      */
     private static function iterate( $array ) {
-        global $wfEscapeEntitiesInArrays;
-
         $arrays = [];
         foreach ( $array as $array_name ) {
             if ( !GlobalFunctions::arrayExists( $array_name ) ) {
                 continue;
             }
 
-            if ( $wfEscapeEntitiesInArrays === true ) {
-                $push_array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
-            } else {
-                $push_array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
-            }
+            $push_array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array_name ] );
 
             array_push( $arrays, $push_array );
         }

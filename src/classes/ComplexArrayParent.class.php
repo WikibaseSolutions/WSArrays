@@ -52,9 +52,7 @@ class ComplexArrayParent extends ResultPrinter {
      */
     public static function getResult( Parser $parser, $key = null ) {
         if ( empty( $key ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Key' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Key' ) );
         }
 
         return ComplexArrayParent::arrayParent( $key );

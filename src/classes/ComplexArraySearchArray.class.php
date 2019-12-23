@@ -57,27 +57,19 @@ class ComplexArraySearchArray extends ResultPrinter {
         GlobalFunctions::fetchSemanticArrays();
 
         if ( empty( $new_array_name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'New array key' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'New array key' ) );
         }
 
         if ( !GlobalFunctions::isValidArrayName( $new_array_name ) ) {
-            $ca_invalid_name = wfMessage( 'ca-invalid-name' );
-
-            return GlobalFunctions::error($ca_invalid_name);
+            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
         }
 
         if ( empty( $array_name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Array key' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
         }
 
         if ( empty( $value ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Value' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Value' ) );
         }
 
         return ComplexArraySearchArray::arraySearchArray( $new_array_name, $array_name, $value );
@@ -99,7 +91,7 @@ class ComplexArraySearchArray extends ResultPrinter {
         ComplexArraySearchArray::findValues( $value, $name );
 
         if ( count( ComplexArraySearchArray::$found ) > 0 ) {
-            WSArrays::$arrays[ $new_array ] = new SafeComplexArray( ComplexArraySearchArray::$found );
+            WSArrays::$arrays[ $new_array ] = new ComplexArray( ComplexArraySearchArray::$found );
         }
 
         return null;
@@ -112,7 +104,7 @@ class ComplexArraySearchArray extends ResultPrinter {
      * @throws Exception
      */
     private static function findValues( $value, $key ) {
-        $array = GlobalFunctions::getArrayFromArrayName( $key, true );
+        $array = GlobalFunctions::getArrayFromArrayName( $key );
 
         ComplexArraySearchArray::$found = [];
         ComplexArraySearchArray::i( $array, $value, $key );

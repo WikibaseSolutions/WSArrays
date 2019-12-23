@@ -47,29 +47,27 @@ class ComplexArrayDefinedArrays extends ResultPrinter {
      * Define all allowed parameters.
      *
      * @param Parser $parser
+     * @param string $array_name
+     *
      * @return array|null
      */
-    public static function getResult( Parser $parser, $key = null ) {
-        if ( empty( $key ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'New array' );
-
-            return GlobalFunctions::error( $ca_omitted );
+    public static function getResult(Parser $parser, $array_name = null ) {
+        if ( empty( $array_name ) ) {
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'New array' ) );
         }
 
-        if ( !GlobalFunctions::isValidArrayName( $key ) ) {
-            $ca_invalid_name = wfMessage( 'ca-invalid-name' );
-
-            return GlobalFunctions::error( $ca_invalid_name );
+        if ( !GlobalFunctions::isValidArrayName( $array_name ) ) {
+            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
         }
 
-        ComplexArrayDefinedArrays::arrayDefinedArrays( $key );
+        ComplexArrayDefinedArrays::arrayDefinedArrays( $array_name );
 
         return null;
     }
 
-    private static function arrayDefinedArrays( $key ) {
+    private static function arrayDefinedArrays( $array_name ) {
         $array = array_keys( WSArrays::$arrays );
 
-        WSArrays::$arrays[ $key ] = new SafeComplexArray( $array );
+        WSArrays::$arrays[ $array_name ] = new ComplexArray( $array );
     }
 }

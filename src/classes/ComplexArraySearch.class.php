@@ -63,15 +63,11 @@ class ComplexArraySearch extends ResultPrinter {
         GlobalFunctions::fetchSemanticArrays();
 
         if ( empty( $array_name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
         }
 
         if ( empty( $value ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Value' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Value' ) );
         }
 
         return ComplexArraySearch::arraySearch( $array_name, $value );
@@ -92,21 +88,11 @@ class ComplexArraySearch extends ResultPrinter {
         ComplexArraySearch::$found = 0;
         ComplexArraySearch::$array_name = null;
 
-        ComplexArraySearch::findValue( $value, $array_name );
+        $array = GlobalFunctions::getArrayFromArrayName( $array_name );
 
-        return htmlspecialchars(ComplexArraySearch::$array_name);
-    }
+        ComplexArraySearch::findValue( $array, $value, $array_name );
 
-    /**
-     * @param string $value
-     * @param string $array_name
-     *
-     * @throws Exception
-     */
-    private static function findValue( $value, $array_name ) {
-        $array = GlobalFunctions::getArrayFromArrayName( $array_name, true );
-
-        ComplexArraySearch::i( $array, $value, $array_name );
+        return ComplexArraySearch::$array_name;
     }
 
     /**
@@ -114,7 +100,7 @@ class ComplexArraySearch extends ResultPrinter {
      * @param string $value
      * @param string $array_name
      */
-    private static function i( $array, $value, &$array_name ) {
+    private static function findValue( $array, $value, &$array_name ) {
         if ( ComplexArraySearch::$found === 1 ) {
             return;
         }
@@ -128,7 +114,7 @@ class ComplexArraySearch extends ResultPrinter {
                 ComplexArraySearch::$found = 1;
             } else {
                 if( is_array( $current_item ) ) {
-                    ComplexArraySearch::i( $current_item, $value, $array_name );
+                    ComplexArraySearch::findValue( $current_item, $value, $array_name );
                 }
 
                 $array_name = substr( $array_name, 0, strrpos( $array_name, '[' ) );

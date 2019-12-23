@@ -56,53 +56,49 @@ class ComplexArrayDefine extends ResultPrinter {
         GlobalFunctions::fetchSemanticArrays();
 
         // Name
-        if ( !isset( $args[ 0 ] ) || empty( $args[ 0 ] ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
-
-            return GlobalFunctions::error( $ca_omitted );
-        } else {
-            $name = GlobalFunctions::getValue( $args[ 0 ], $frame );
+        if ( !isset( $args[0] ) || empty( $args[0] ) ) {
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
         }
 
-        $noparse = GlobalFunctions::getValue( @$args[ 3 ], $frame );
-        $markup = GlobalFunctions::getValue( @$args[ 1 ], $frame, $parser, $noparse );
-        $sep = GlobalFunctions::getValue( @$args[ 2 ], $frame );
+        $array_name = GlobalFunctions::getValue( $args[0], $frame );
 
-        if ( !GlobalFunctions::isValidArrayName( $name ) ) {
-            $ca_invalid_name = wfMessage( 'ca-invalid-name' );
+        $noparse = GlobalFunctions::getValue( @$args[3], $frame );
+        $array_markup = GlobalFunctions::getValue( @$args[1], $frame, $parser, $noparse );
+        $sep = GlobalFunctions::getValue( @$args[2], $frame );
 
-            return GlobalFunctions::error( $ca_invalid_name );
+        if ( !GlobalFunctions::isValidArrayName( $array_name ) ) {
+            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
         }
 
         // Define an empty array
-        if ( empty( $markup ) ) {
-            WSArrays::$arrays[ $name ] = new SafeComplexArray();
+        if ( empty( $array_markup ) ) {
+            WSArrays::$arrays[ $array_name ] = new ComplexArray();
 
             return null;
         }
 
-        return ComplexArrayDefine::arrayDefine( $name, $markup, $sep );
+        return ComplexArrayDefine::arrayDefine( $array_name, $array_markup, $sep );
     }
 
     /**
      * Define array and store it in WSArrays::$arrays as a SafeComplexArray object.
      *
-     * @param string $name
-     * @param string $markup
+     * @param string $array_name
+     * @param string $array_markup
      * @param string $separator
      * @return array|null
      * @throws Exception
      */
-    private static function arrayDefine( $name, $markup, $separator = null ) {
-        $array = GlobalFunctions::markupToArray( $markup, $separator );
+    private static function arrayDefine($array_name, $array_markup, $separator = null ) {
+        $array = GlobalFunctions::markupToArray( $array_markup, $separator );
 
         if ( !$array ) {
-            GlobalFunctions::error( "Invalid markup language" );
+            GlobalFunctions::error( wfMesage('ca-invalid-markup') );
 
             return null;
         }
 
-        WSArrays::$arrays[$name] = new SafeComplexArray( $array );
+        WSArrays::$arrays[$array_name] = new ComplexArray( $array );
 
         return null;
     }

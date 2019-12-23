@@ -56,16 +56,12 @@ class ComplexArrayAddValue extends ResultPrinter {
     public static function getResult( Parser $parser, $name = '', $value = '' ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
-
-            return GlobalFunctions::error( $ca_omitted );
+        if ( empty( $name ) )  {
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
         }
 
         if ( empty( $value ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Value' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Value' ) );
         }
 
         if ( !strpos( $name, "[" ) ||
@@ -82,42 +78,30 @@ class ComplexArrayAddValue extends ResultPrinter {
      * This function first calculates the name of the base array, then fetches that array and adds a value to the array.
      * The array is then saved again under the same name with the value added.
      *
-     * @param $array
+     * @param $array_name
      * @param $value
      * @return array|null
      *
      * @throws Exception
      */
-    private static function arrayAddValue( $array, $value ) {
-        $base_array = GlobalFunctions::calculateBaseArray( $array );
+    private static function arrayAddValue( $array_name, $value ) {
+        $base_array_name = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
 
-        /*
-         * The array has not been found, return.
-         */
-        if ( !GlobalFunctions::arrayExists( $base_array ) ) {
+        if ( !GlobalFunctions::arrayExists( $base_array_name ) ) {
             return null;
         }
 
-        $keys = GlobalFunctions::getKeys( $array );
+        $keys = GlobalFunctions::getKeys( $array_name );
 
         if ( !$keys ) {
-            $ca_invalid_name = wfMessage( 'ca-invalid-name' );
-
-            return GlobalFunctions::error( $ca_invalid_name );
+            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
         }
 
-        global $wfEscapeEntitiesInArrays;
+        $array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $base_array_name ] );
 
-        if ( $wfEscapeEntitiesInArrays === true ) {
-            $wsarray = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
-        } else {
-            $wsarray = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
-        }
+        ComplexArrayAddValue::set( $keys, $array, $value );
 
-
-        ComplexArrayAddValue::set( $keys, $wsarray, $value );
-
-        WSArrays::$arrays[ $base_array ] = new SafeComplexArray( $wsarray );
+        WSArrays::$arrays[ $base_array_name ] = new ComplexArray( $array );
 
         return null;
     }

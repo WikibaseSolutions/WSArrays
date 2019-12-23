@@ -58,15 +58,11 @@ class ComplexArrayMapTemplate extends ResultPrinter {
         GlobalFunctions::fetchSemanticArrays();
 
         if ( empty( $name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
         }
 
         if ( empty( $template ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Template' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Template' ) );
         }
 
         return ComplexArrayMapTemplate::arrayMapTemplate( $name, $template, $options );
@@ -81,20 +77,25 @@ class ComplexArrayMapTemplate extends ResultPrinter {
      * @throws Exception
      */
     private static function arrayMapTemplate( $name, $template, $options = '' ) {
-        $base_array = GlobalFunctions::calculateBaseArray( $name );
+        $base_array = GlobalFunctions::getBaseArrayFromArrayName( $name );
         $array = GlobalFunctions::getArrayFromArrayName( $name );
 
         if ( !GlobalFunctions::arrayExists( $base_array ) || !$array) {
             return null;
         }
 
-        $return = ComplexArrayMapTemplate::mapToArray( $array, $template, $options );
-
-        return array( $return, "noparse" => false );
+        return array( ComplexArrayMapTemplate::mapToArray( $array, $template, $options ), "noparse" => false );
     }
 
+    /**
+     * @param $array
+     * @param $template
+     * @param $options
+     * @return string|null
+     */
     private static function mapToArray( $array, $template, $options ) {
         $return = null;
+
         if ( GlobalFunctions::containsArray( $array ) && $options !== "condensed" ) {
             foreach ( $array as $value ) {
                 ComplexArrayMapTemplate::map( $value, $return, $template );

@@ -54,9 +54,7 @@ class ComplexArrayUnique extends ResultPrinter {
         GlobalFunctions::fetchSemanticArrays();
 
         if ( empty( $array_name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Array key' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
         }
 
         return ComplexArrayUnique::arrayUnique( $array_name );
@@ -71,16 +69,16 @@ class ComplexArrayUnique extends ResultPrinter {
      * @throws Exception
      */
     private static function arrayUnique( $array_name ) {
-        $array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $array_name ] );
+        $array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[$array_name] );
 
         if ( GlobalFunctions::containsArray( $array ) ) {
             $array = array_unique( $array, SORT_REGULAR );
 
-            WSArrays::$arrays[ $array_name ] = new SafeComplexArray( $array );
+            WSArrays::$arrays[$array_name] = new ComplexArray( $array );
         } else {
             $array = array_unique( $array );
 
-            WSArrays::$arrays[ $array_name ] = new SafeComplexArray( $array );
+            WSArrays::$arrays[$array_name] = new ComplexArray( $array );
         }
 
         return null;

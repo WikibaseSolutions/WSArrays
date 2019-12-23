@@ -55,21 +55,17 @@ class ComplexArrayPushValue extends ResultPrinter {
     public static function getResult( Parser $parser, $frame, $args ) {
         GlobalFunctions::fetchSemanticArrays();
 
-        if ( !isset( $args[ 0 ] ) || empty( $args[ 0 ] ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Name' );
-
-            return GlobalFunctions::error( $ca_omitted );
+        if ( !isset( $args[0] ) || empty( $args[0] ) ) {
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
         }
 
-        if ( !isset( $args[ 1 ] ) || empty( $args[ 1 ] ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Value' );
-
-            return GlobalFunctions::error( $ca_omitted );
+        if ( !isset( $args[1] ) || empty( $args[1] ) ) {
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Value' ) );
         }
 
-        $noparse = GlobalFunctions::getValue( $args[ 2 ], $frame );
-        $array_name = GlobalFunctions::getValue( $args[ 0 ], $frame );
-        $value = GlobalFunctions::getValue( $args[ 1 ], $frame, $parser, $noparse );
+        $noparse = GlobalFunctions::getValue( @$args[2], $frame );
+        $array_name = GlobalFunctions::getValue( @$args[0], $frame );
+        $value = GlobalFunctions::getValue( @$args[1],  $frame, $parser, $noparse );
 
         return ComplexArrayPushValue::arrayPushValue( $array_name, $value );
     }
@@ -82,28 +78,21 @@ class ComplexArrayPushValue extends ResultPrinter {
      * @throws Exception
      */
     private static function arrayPushValue( $array_name, $value ) {
-        $base_array = GlobalFunctions::calculateBaseArray( $array_name );
+        $base_array = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
 
         // If the array doesn't exist yet, create it
         if ( !GlobalFunctions::arrayExists( $base_array ) ) {
             if ( !GlobalFunctions::isValidArrayName( $base_array ) ) {
-                $ca_invalid_name = wfMessage( 'ca-invalid-name' );
-
-                return GlobalFunctions::error( $ca_invalid_name );
+                return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
             }
 
-            WSArrays::$arrays[ $base_array ] = new SafeComplexArray();
+            WSArrays::$arrays[ $base_array ] = new ComplexArray();
         }
 
         $matches = array();
         preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches );
 
-        global $wfEscapeEntitiesInArrays;
-        if ( $wfEscapeEntitiesInArrays === true ) {
-            $array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
-        } else {
-            $array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
-        }
+        $array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[$base_array] );
 
         if ( $parsed_array = GlobalFunctions::markupToArray( $value ) ) {
             $value = $parsed_array;
@@ -118,7 +107,7 @@ class ComplexArrayPushValue extends ResultPrinter {
                 return $result;
             }
 
-            WSArrays::$arrays[ $base_array ] = new SafeComplexArray( $array );
+            WSArrays::$arrays[$base_array] = new ComplexArray( $array );
         }
 
         return null;
@@ -127,7 +116,7 @@ class ComplexArrayPushValue extends ResultPrinter {
     private static function replace( $value, $array, $base_array ) {
         array_push( $array, $value );
 
-        WSArrays::$arrays[ $base_array ] = new SafeComplexArray( $array );
+        WSArrays::$arrays[ $base_array ] = new ComplexArray( $array );
     }
 
     /**
@@ -151,17 +140,17 @@ class ComplexArrayPushValue extends ResultPrinter {
             }
 
             if( $current_depth !== $depth ) {
-                if ( !is_array( $temp[ $key ] ) ) {
-                    $temp[ $key ] = [ $temp[ $key ] ];
+                if ( !is_array( $temp[$key] ) ) {
+                    $temp[$key] = [ $temp[$key] ];
                 }
 
-                $temp =& $temp[ $key ];
+                $temp =& $temp[$key];
             } else {
-                if ( !is_array( $temp[ $key ] ) ) {
-                    $temp[ $key ] = [ $temp[ $key ] ];
+                if ( !is_array( $temp[$key] ) ) {
+                    $temp[$key] = [$temp[$key]];
                 }
 
-                array_push( $temp[ $key ], $value );
+                array_push( $temp[$key], $value );
 
                 break;
             }

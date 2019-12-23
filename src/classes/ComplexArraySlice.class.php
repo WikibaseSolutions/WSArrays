@@ -43,8 +43,8 @@ class ComplexArraySlice extends ResultPrinter {
 
     /**
      * @param Parser $parser
-     * @param string $new_array
-     * @param string $array
+     * @param string $new_array_name
+     * @param string $array_name
      * @param string $offset
      * @param string $length
      * @return array|null
@@ -55,21 +55,15 @@ class ComplexArraySlice extends ResultPrinter {
         GlobalFunctions::fetchSemanticArrays();
 
         if ( empty( $new_array_name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'New array key' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'New array key' ) );
         }
 
         if ( !GlobalFunctions::isValidArrayName( $new_array_name ) ) {
-            $ca_invalid_name = wfMessage( 'ca-invalid-name' );
-
-            return GlobalFunctions::error( $ca_invalid_name );
+            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
         }
 
         if ( empty( $array_name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Array key' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
         }
 
         return ComplexArraySlice::arraySlice( $new_array_name, $array_name, $offset, $length );
@@ -85,16 +79,16 @@ class ComplexArraySlice extends ResultPrinter {
      * @throws Exception
      */
     private static function arraySlice( $new_array_name, $array_name, $offset = 0, $length = 0 ) {
-        $array = GlobalFunctions::getArrayFromArrayName( $array_name, true );
+        $array = GlobalFunctions::getArrayFromArrayName( $array_name );
 
         if ( !$array ) {
             return null;
         }
 
         if ( !empty( $length ) ) {
-            WSArrays::$arrays[ $new_array_name ] = new SafeComplexArray( array_slice( $array, $offset, $length ) );
+            WSArrays::$arrays[$new_array_name] = new ComplexArray( array_slice( $array, $offset, $length ) );
         } else {
-            WSArrays::$arrays[ $new_array_name ] = new SafeComplexArray( array_slice( $array, $offset ) );
+            WSArrays::$arrays[$new_array_name] = new ComplexArray( array_slice( $array, $offset ) );
         }
 
         return null;

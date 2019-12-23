@@ -45,63 +45,50 @@ class ComplexArrayExtract extends ResultPrinter {
      * Define all allowed parameters.
      *
      * @param Parser $parser
-     * @param string $name
+     * @param string $new_name
      * @param string $array_name
      * @return array|bool
      *
      * @throws Exception
      */
-    public static function getResult( Parser $parser, $name = '', $array_name = '' ) {
-        if ( !$name ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'New array' );
-
-            return GlobalFunctions::error( $ca_omitted );
+    public static function getResult(Parser $parser, $new_name = '', $array_name = '' ) {
+        if ( !$new_name ) {
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'New array' ) );
         }
 
-        if ( !GlobalFunctions::isValidArrayName( $name ) ) {
-            $ca_invalid_name = wfMessage( 'ca-invalid-name' );
-
-            return GlobalFunctions::error( $ca_invalid_name );
+        if ( !GlobalFunctions::isValidArrayName( $new_name ) ) {
+            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
         }
 
         if ( !$array_name ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Array key' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
         }
 
-        return ComplexArrayExtract::arrayExtract( $name, $array_name );
+        return ComplexArrayExtract::arrayExtract( $new_name, $array_name );
     }
 
     /**
-     * @param $name
+     * @param $new_name
      * @param $subarray
      * @return array|bool
      *
      * @throws Exception
      */
-    private static function arrayExtract( $name, $array_name ) {
+    private static function arrayExtract( $new_name, $array_name ) {
         // If no subarray is provided, show an error.
         if( !strpos( $array_name, "[" ) ||
             !strpos( $array_name, "]" ) ) {
-            $ca_subarray_not_provided = wfMessage( 'ca-subarray-not-provided' );
-
-            return GlobalFunctions::error( $ca_subarray_not_provided );
+            return GlobalFunctions::error( wfMessage( 'ca-subarray-not-provided' ) );
         }
 
-        $array = GlobalFunctions::getArrayFromArrayName( $array_name, true );
+        $array = GlobalFunctions::getArrayFromArrayName( $array_name );
 
         if( !$array ) {
             // Array does not exist
             return null;
         }
 
-        // If the array is a single value, convert it back to a single value array.
-        if( is_string( $array ) ) {
-            $array = [$array];
-        }
-
-        WSArrays::$arrays[ $name ] = new SafeComplexArray( $array );
+        WSArrays::$arrays[ $new_name ] = new ComplexArray( (array)$array );
 
         return null;
     }

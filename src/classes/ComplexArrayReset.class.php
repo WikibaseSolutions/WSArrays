@@ -45,7 +45,7 @@ class ComplexArrayReset extends ResultPrinter {
      * Define all allowed parameters.
      *
      * @param Parser $parser
-     * @param string $array
+     * @param string $array_name
      */
     public static function getResult( Parser $parser, $array_name = '' ) {
         GlobalFunctions::fetchSemanticArrays();
@@ -56,14 +56,14 @@ class ComplexArrayReset extends ResultPrinter {
     /**
      * Reset all or one array.
      *
-     * @param string $array
+     * @param string $array_name
      */
     private static function arrayReset( $array_name = '' ) {
         if ( empty( $array_name ) ) {
             WSArrays::$arrays = [];
         } else {
-            if ( isset( WSArrays::$arrays[ $array_name ] ) ) {
-                unset( WSArrays::$arrays[ $array_name ] );
+            if ( isset( WSArrays::$arrays[$array_name] ) ) {
+                unset( WSArrays::$arrays[$array_name] );
             }
         }
     }

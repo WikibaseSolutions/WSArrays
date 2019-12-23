@@ -55,41 +55,41 @@ class ComplexArrayArrayMap extends ResultPrinter {
         GlobalFunctions::fetchSemanticArrays();
 
         $value = GlobalFunctions::getValue(
-            $args[ 0 ],
+            @$args[ 0 ],
             $frame,
             $parser,
             GlobalFunctions::getValue(
-                $args[ 5 ],
+                @$args[ 5 ],
                 $frame
             )
         );
 
         $delimiter = GlobalFunctions::getValue(
-            $args[ 1 ],
+            @$args[ 1 ],
             $frame
         );
 
         $variable = GlobalFunctions::getValue(
-            $args[ 2 ],
+            @$args[ 2 ],
             $frame
         );
 
         $formula = GlobalFunctions::getValue(
-            $args[ 3 ],
+            @$args[ 3 ],
             $frame,
             $parser,
-            '5'
+            'NO_IGNORE, NO_ARGS, NO_TAGS, NO_TEMPLATES'
         );
 
         $new_delimiter = GlobalFunctions::getValue(
-            $args[ 4 ],
+            @$args[ 4 ],
             $frame
         );
 
         return array( ComplexArrayArrayMap::arrayArrayMap( $value, $variable, $formula, $delimiter, $new_delimiter ), 'noparse' => false );
     }
 
-    private static function arrayArrayMap( $value, $variable, $formula, $delimiter = ',', $new_delimiter = null ) {
+    private static function arrayArrayMap( $value, $variable, $formula, $delimiter, $new_delimiter ) {
         if ( $delimiter === null ) {
             $delimiter = ',';
         }
@@ -98,16 +98,22 @@ class ComplexArrayArrayMap extends ResultPrinter {
             $new_delimiter = "\r\n";
         }
 
-        ComplexArrayArrayMap::$array = explode( $delimiter, $value );
-        ComplexArrayArrayMap::$variable = $variable;
-        ComplexArrayArrayMap::$formula = $formula;
+        if ( !$value ) {
+            return null;
+        }
+
+        ComplexArrayArrayMap::$array         = explode( $delimiter, $value );
+        ComplexArrayArrayMap::$variable      = $variable;
+        ComplexArrayArrayMap::$formula       = $formula;
         ComplexArrayArrayMap::$new_delimiter = $new_delimiter;
 
-        return ComplexArrayArrayMap::iterate();
+        $haystack = ComplexArrayArrayMap::iterate();
+
+        return $haystack;
     }
 
     private static function iterate() {
-        $haystack = '';
+        $haystack = [];
 
         foreach (ComplexArrayArrayMap::$array as $item ) {
             $replaced_formula = str_replace( ComplexArrayArrayMap::$variable, $item, ComplexArrayArrayMap::$formula );
@@ -116,9 +122,9 @@ class ComplexArrayArrayMap extends ResultPrinter {
                 continue;
             }
 
-            $haystack .= $replaced_formula . ComplexArrayArrayMap::$new_delimiter;
+            array_push($haystack,$replaced_formula);
         }
 
-        return $haystack;
+        return implode(ComplexArrayArrayMap::$new_delimiter, $haystack);
     }
 }

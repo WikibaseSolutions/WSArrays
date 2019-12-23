@@ -55,9 +55,7 @@ class ComplexArraySize extends ResultPrinter {
         GlobalFunctions::fetchSemanticArrays();
 
         if ( empty( $array_name ) ) {
-            $ca_omitted = wfMessage( 'ca-omitted', 'Array key' );
-
-            return GlobalFunctions::error( $ca_omitted );
+            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
         }
 
         return ComplexArraySize::arraySize( $array_name, $options );
@@ -73,29 +71,11 @@ class ComplexArraySize extends ResultPrinter {
      * @throws Exception
      */
     private static function arraySize( $name, $options = '' ) {
-        $base_array = GlobalFunctions::calculateBaseArray( $name );
-
-        if ( !GlobalFunctions::arrayExists( $base_array ) ) {
+        if ( !GlobalFunctions::arrayExists( GlobalFunctions::getBaseArrayFromArrayName( $name ) ) ) {
             return null;
         }
 
-        $array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $base_array ] );
-
-        if ( !strpos( $name, "[" ) && empty( $options ) ) {
-            $count = count( $array, COUNT_RECURSIVE );
-
-            return $count;
-        }
-
-        if ( !strpos( $name, "[" ) && $options === "top" ) {
-            $count = count( $array );
-
-            return $count;
-        }
-
-        if ( !is_array( $array = GlobalFunctions::getArrayFromArrayName( $name ) ) ) {
-            return null;
-        }
+        $array = GlobalFunctions::getArrayFromArrayName( $name );
 
         if ( $options === "top" ) {
             return count( $array );

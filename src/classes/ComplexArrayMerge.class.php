@@ -74,15 +74,11 @@ class ComplexArrayMerge extends ResultPrinter {
         ComplexArrayMerge::parseFunctionArguments( $args );
 
         if ( !GlobalFunctions::isValidArrayName( ComplexArrayMerge::$new_array ) ) {
-            $ca_invalid_name = wfMessage( 'ca-invalid-name' );
-
-            return GlobalFunctions::error( $ca_invalid_name );
+            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
         }
 
         if ( count( $args ) < 2 ) {
-            $ca_too_little_arrays = wfMessage( 'ca-too-little-arrays' );
-
-            return GlobalFunctions::error( $ca_too_little_arrays );
+            return GlobalFunctions::error( wfMessage( 'ca-too-little-arrays' ) );
         }
 
         $arrays = ComplexArrayMerge::iterate( $args );
@@ -94,7 +90,7 @@ class ComplexArrayMerge extends ResultPrinter {
                 return null;
             }
 
-            WSArrays::$arrays[ ComplexArrayMerge::$new_array ] = new SafeComplexArray( $array );
+            WSArrays::$arrays[ ComplexArrayMerge::$new_array ] = new ComplexArray( $array );
         } else {
             $array = call_user_func_array( 'array_merge', $arrays );
 
@@ -102,7 +98,7 @@ class ComplexArrayMerge extends ResultPrinter {
                 return null;
             }
 
-            WSArrays::$arrays[ ComplexArrayMerge::$new_array ] = new SafeComplexArray( $array );
+            WSArrays::$arrays[ ComplexArrayMerge::$new_array ] = new ComplexArray( $array );
         }
 
         return null;
@@ -129,8 +125,6 @@ class ComplexArrayMerge extends ResultPrinter {
      * @throws Exception
      */
     private static function iterate( $arr ) {
-        global $wfEscapeEntitiesInArrays;
-
         $arrays = [];
         foreach( $arr as $array ) {
             // Check if the array exists
@@ -138,14 +132,9 @@ class ComplexArrayMerge extends ResultPrinter {
                 continue;
             }
 
-            // Convert the SafeComplexArray object to an actual array
-            if ( $wfEscapeEntitiesInArrays === true ) {
-                $safe_array = GlobalFunctions::getArrayFromSafeComplexArray( WSArrays::$arrays[ $array ] );
-            } else {
-                $safe_array = GlobalFunctions::getUnsafeArrayFromSafeComplexArray( WSArrays::$arrays[ $array ] );
-            }
+            $array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array ] );
 
-            array_push( $arrays, $safe_array );
+            array_push( $arrays, $array );
         }
 
         return $arrays;
