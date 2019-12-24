@@ -93,7 +93,7 @@ class ComplexArrayDefine extends ResultPrinter {
         $array = GlobalFunctions::markupToArray( $array_markup, $separator );
 
         if ( !$array ) {
-            GlobalFunctions::error( wfMesage('ca-invalid-markup') );
+            GlobalFunctions::error( wfMessage('ca-invalid-markup') );
 
             return null;
         }
