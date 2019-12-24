@@ -42,11 +42,6 @@ class ComplexArraySearch extends ResultPrinter {
     }
 
     /**
-     * @var int
-     */
-    private static $found = 0;
-
-    /**
      * @var string
      */
     private static $array_name = '';
@@ -85,11 +80,9 @@ class ComplexArraySearch extends ResultPrinter {
             return null;
         }
 
-        ComplexArraySearch::$found = 0;
         ComplexArraySearch::$array_name = null;
 
         $array = GlobalFunctions::getArrayFromArrayName( $array_name );
-
         ComplexArraySearch::findValue( $array, $value, $array_name );
 
         return ComplexArraySearch::$array_name;
@@ -101,17 +94,13 @@ class ComplexArraySearch extends ResultPrinter {
      * @param string $array_name
      */
     private static function findValue( $array, $value, &$array_name ) {
-        if ( ComplexArraySearch::$found === 1 ) {
-            return;
-        }
-
         foreach( $array as $current_key => $current_item ) {
             $array_name .= "[$current_key]";
 
             if( $value === $current_item ) {
                 ComplexArraySearch::$array_name = $array_name;
 
-                ComplexArraySearch::$found = 1;
+                return;
             } else {
                 if( is_array( $current_item ) ) {
                     ComplexArraySearch::findValue( $current_item, $value, $array_name );
