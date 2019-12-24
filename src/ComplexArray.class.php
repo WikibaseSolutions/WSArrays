@@ -20,7 +20,7 @@
  */
 
 /**
- * Class SafeComplexArray
+ * Class ComplexArray
  *
  * Great-grandfather class. This is the highest class. It defines the object arrays should be stored in. Arrays that are stored in this object, are always escaped and safe.
  */
