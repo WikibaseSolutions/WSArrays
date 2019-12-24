@@ -58,7 +58,7 @@ class ComplexArraySiblingValue extends ResultPrinter {
             return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Key' ) );
         }
 
-        if ( empty( $sibling_key ) ) {
+        if ( empty( $sibling_key ) && $sibling_key != "0" ) {
             return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Sibling key' ) );
         }
 
