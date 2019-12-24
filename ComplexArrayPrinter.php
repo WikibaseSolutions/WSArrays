@@ -28,47 +28,32 @@
 namespace SMW\Query\ResultPrinters;
 
 /**
- * Class SafeComplexArray
+ * Class ComplexArray
  *
  * It defines the object arrays should be stored in. Arrays that are stored in this object, are always escaped and safe. This class is a copy of the class in src/ComplexArray.class.php.
  *
  * @package SMW\Query\ResultPrinters
  * @alias src/ComplexArray.class.php
  */
-class SafeComplexArray {
-    private $safe_array = array();
-
+class ComplexArray extends GlobalFunctions {
+    /**
+     * @var array
+     */
+    private $array = array();
     /**
      * @param array $array
      */
-    public function __construct( array $array ) {
-        $this->cleanArray( $array );
+    public function __construct( array $array = array() ) {
+        $this->array = $array;
     }
-
     /**
+     * Return the array with escaped characters.
+     *
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function getArray() {
-        if ( !isset( $this->safe_array ) ) throw new \Exception( "No array has been declared" );
-
-        return $this->safe_array;
-    }
-
-    /**
-     * @param $array
-     */
-    private function cleanArray( &$array ) {
-        array_walk_recursive( $array, "SafeComplexArray::filter" );
-
-        $this->safe_array = $array;
-    }
-
-    /**
-     * @param $value
-     */
-    private static function filter( &$value ) {
-        $value = htmlspecialchars( $value, ENT_QUOTES, 'UTF-8' );
+        return $this->array;
     }
 }
 
