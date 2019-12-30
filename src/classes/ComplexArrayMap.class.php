@@ -119,7 +119,7 @@ class ComplexArrayMap extends ResultPrinter {
 
         $name = GlobalFunctions::getValue( @$args[0], $frame );
         $map_key = GlobalFunctions::getValue( @$args[1], $frame );
-        $map = GlobalFunctions::getValue( @$args[2], $frame, $parser, 'NO_IGNORE, NO_ARGS, NO_TAGS, NO_TEMPLATES' );
+        $map = GlobalFunctions::getValue( @$args[2], $frame, $parser, 'NO_IGNORE,NO_ARGS,NO_TAGS,NO_TEMPLATES' );
 
         return array( ComplexArrayMap::arrayMap( $name, $map_key, $map ), 'noparse' => false );
     }

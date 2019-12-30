@@ -426,6 +426,7 @@ class GlobalFunctions {
         }
 
         $noparse_arguments = GlobalFunctions::formatNoparse($noparse);
+        $noparse_arguments = array_map('trim', $noparse_arguments);
 
         if ( count($noparse_arguments) > 0 ) {
             return GlobalFunctions::rawValue( $arg, $frame, $noparse_arguments );
