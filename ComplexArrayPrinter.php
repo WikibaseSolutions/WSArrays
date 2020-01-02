@@ -35,7 +35,7 @@ namespace SMW\Query\ResultPrinters;
  * @package SMW\Query\ResultPrinters
  * @alias src/ComplexArray.class.php
  */
-class ComplexArray extends GlobalFunctions {
+class ComplexArray {
     /**
      * @var array
      */
