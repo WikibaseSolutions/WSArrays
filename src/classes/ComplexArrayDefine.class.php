@@ -98,6 +98,7 @@ class ComplexArrayDefine extends ResultPrinter {
             return null;
         }
 
+
         WSArrays::$arrays[$array_name] = new ComplexArray( $array );
 
         return null;

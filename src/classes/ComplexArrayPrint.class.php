@@ -54,24 +54,32 @@ class ComplexArrayPrint extends ResultPrinter {
     private static $indent_char = "*";
 
     /**
+     * @var null
+     */
+    private static $noparse = false;
+
+    /**
      * Define all allowed parameters. This parser is hooked with Parser::SFH_OBJECT_ARGS.
      *
      * @param Parser $parser
      *
      * @param null $array_name
      * @param null $options
+     * @param bool $noparse
      * @return array|mixed|null|string|string[]
      *
      * @throws Exception
      */
-    public static function getResult( Parser $parser, $array_name = null, $options = null ) {
+    public static function getResult( Parser $parser, $array_name = null, $options = null, $noparse = false ) {
         GlobalFunctions::fetchSemanticArrays();
-
         ComplexArrayPrint::$array = [];
 
         if ( empty( $array_name ) ) {
             return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
         }
+
+        $noparse = filter_var($noparse, FILTER_VALIDATE_BOOLEAN);
+        ComplexArrayPrint::$noparse = $noparse;
 
         return ComplexArrayPrint::arrayPrint( $array_name, $options );
     }
@@ -133,9 +141,9 @@ class ComplexArrayPrint extends ResultPrinter {
                 $last_el = reset( ComplexArrayPrint::$array );
                 $return  = key( ComplexArrayPrint::$array ) . ": " . $last_el;
 
-                return array( $return, 'noparse' => false, 'isHTML' => false );
+                return array( $return , 'noparse' => ComplexArrayPrint::$noparse, 'isHTML' => ComplexArrayPrint::$noparse );
             } else {
-                return array( ComplexArrayPrint::$array, 'noparse' => false, 'isHTML' => false );
+                return array( ComplexArrayPrint::$array, 'noparse' => ComplexArrayPrint::$noparse, 'isHTML' => ComplexArrayPrint::$noparse );
             }
         }
 
