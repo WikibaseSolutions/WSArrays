@@ -54,6 +54,10 @@ class ComplexArrayArrayMap extends ResultPrinter {
     public static function getResult( Parser $parser, $frame, $args ) {
         GlobalFunctions::fetchSemanticArrays();
 
+        if(!isset($args[5])) {
+            $args[5] = '';
+        }
+
         $value = GlobalFunctions::getValue(
             @$args[ 0 ],
             $frame,
@@ -78,7 +82,7 @@ class ComplexArrayArrayMap extends ResultPrinter {
             @$args[ 3 ],
             $frame,
             $parser,
-            'NO_IGNORE, NO_ARGS, NO_TAGS, NO_TEMPLATES'
+            'NO_IGNORE,NO_ARGS,NO_TAGS,NO_TEMPLATES'
         );
 
         $new_delimiter = GlobalFunctions::getValue(
