@@ -111,6 +111,7 @@ class GlobalFunctions {
             return null;
         }
 
+        $markup = str_replace("\n", '\n', $markup);
         $markup_type = GlobalFunctions::determineMarkup( $markup, $separator );
 
         switch( $markup_type ) {
