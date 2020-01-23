@@ -1,24 +1,25 @@
 <?php
 
-require_once 'WSArrays.php';
-
-final class ComplexArrayWrapper extends ComplexArray {
+/**
+ * Class ComplexArrayWrapper
+ */
+class ComplexArrayWrapper {
     /**
      * @var array
      */
-    private $arrays;
+    public $arrays;
 
     /**
      * @var array
      */
-    private $indices;
+    public $indices = array();
 
     /**
      * Name of the current array
      *
      * @var string
      */
-    private $array_name;
+    public $array_name;
 
     /**
      * Create a new ComplexArray class. Equivalent to $class = new ComplexArrayWrapper();.
@@ -31,23 +32,32 @@ final class ComplexArrayWrapper extends ComplexArray {
     }
 
     /**
+     * ComplexArrayWrapper constructor.
+     */
+    public function __construct() {
+        global $wfDefinedArraysGlobal;
+        $this->arrays =& $wfDefinedArraysGlobal;
+    }
+
+    /**
      * Set query array to $array_name. Returns false on failure.
      *
      * @signature $this|bool from( string $array_name );
      * @param $array_name
      * @return $this|bool
      */
-    public function from($array_name) {
+    public function on($array_name) {
         if(!is_string($array_name)) {
             return false;
         }
 
         if(!isset($this->arrays[$array_name])) {
-            return false;
+            $this->arrays[$array_name] = new ComplexArray([]);
         }
 
         $this->reset();
         $this->array_name = $array_name;
+        $this->indices = [];
 
         return $this;
     }
@@ -58,7 +68,7 @@ final class ComplexArrayWrapper extends ComplexArray {
      * @param array $indices
      * @return $this
      */
-    public function on(array $indices) {
+    public function in(array $indices) {
         $this->indices = $indices;
 
         return $this;
@@ -108,15 +118,12 @@ final class ComplexArrayWrapper extends ComplexArray {
             return false;
         }
 
-        $array = $this->arrays[$this->array_name]->getArray();
-
-        $temp =& $array;
         if(!$this->indices) {
-            $temp = $value;
-
+            $this->arrays[$this->array_name] = new ComplexArray( $value );
             return true;
         }
 
+        $temp =& $array;
         foreach($this->indices as $index) {
             if(!isset($temp[$index])) {
                 $temp[$index] = [];
@@ -132,6 +139,12 @@ final class ComplexArrayWrapper extends ComplexArray {
         return true;
     }
 
+    /**
+     * Resets values in class.
+     *
+     * @signature $this reset();
+     * @return $this
+     */
     public function reset() {
         unset($this->array_name);
         unset($this->indices);
