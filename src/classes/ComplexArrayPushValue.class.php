@@ -72,12 +72,12 @@ class ComplexArrayPushValue extends ResultPrinter {
 
     /**
      * @param $array_name
-     * @param $value
+     * @param $markup_value
      * @return array|bool|null
      *
      * @throws Exception
      */
-    private static function arrayPushValue( $array_name, $value ) {
+    private static function arrayPushValue($array_name, $markup_value ) {
         $base_array = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
 
         // If the array doesn't exist yet, create it
@@ -93,9 +93,10 @@ class ComplexArrayPushValue extends ResultPrinter {
         preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches );
 
         $array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[$base_array] );
+        $value = GlobalFunctions::markupToArray( $markup_value );
 
-        if ( $parsed_array = GlobalFunctions::markupToArray( $value ) ) {
-            $value = $parsed_array;
+        if(count($value) === 1) {
+            $value = $value[0];
         }
 
         if ( !strpos( $array_name, "[" ) ) {

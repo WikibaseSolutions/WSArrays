@@ -113,7 +113,7 @@ class ComplexArrayPrint extends ResultPrinter {
         switch ( $options ) {
             case 'markup':
             case 'wson':
-                return ComplexArrayPrint::arrayToMarkup( ComplexArrayPrint::$array );
+                return GlobalFunctions::arrayToMarkup( ComplexArrayPrint::$array );
                 break;
             default:
                 return ComplexArrayPrint::createList( $options );
