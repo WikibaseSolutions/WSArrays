@@ -123,6 +123,8 @@ class ComplexArrayPrint extends ResultPrinter {
             case 'wson':
                 return GlobalFunctions::arrayToMarkup( ComplexArrayPrint::$array );
                 break;
+            case 'json':
+                return json_encode( ComplexArrayPrint::$array );
             default:
                 return ComplexArrayPrint::createList( $options );
                 break;

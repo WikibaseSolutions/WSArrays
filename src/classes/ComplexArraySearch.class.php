@@ -76,7 +76,7 @@ class ComplexArraySearch extends ResultPrinter {
      * @throws Exception
      */
     private static function arraySearch( $array_name, $value ) {
-        if ( !WSArrays::$arrays[ $array_name ] ) {
+        if ( !isset( WSArrays::$arrays[ $array_name ] ) ) {
             return null;
         }
 

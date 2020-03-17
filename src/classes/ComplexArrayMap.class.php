@@ -102,9 +102,7 @@ class ComplexArrayMap extends ResultPrinter {
 
         // Hide
         if ( isset( $args[4] ) ) {
-            if ( GlobalFunctions::getValue( $args[4], $frame ) === "true" ) {
-                ComplexArrayMap::$hide = true;
-            }
+            ComplexArrayMap::$hide = !filter_var(GlobalFunctions::getValue( $args[4], $frame ), FILTER_VALIDATE_BOOLEAN);
         }
 
         if ( isset( $args[3] ) ) {
@@ -177,7 +175,7 @@ class ComplexArrayMap extends ResultPrinter {
             }
         }
 
-        $buffer = ComplexArrayMap::$sep ? implode($buffer, ComplexArrayMap::$sep) : implode($buffer);
+        $buffer = ComplexArrayMap::$sep ? implode(ComplexArrayMap::$sep, $buffer) : implode($buffer);
 
         return $buffer;
     }
