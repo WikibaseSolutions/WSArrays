@@ -109,5 +109,8 @@ $magicWords['en'] = [
 
     'complexarraysiblingvalue' => [ 0, 'complexarraysiblingvalue' ],
     'casiblingvalue' => [ 0, 'casiblingvalue' ],
-    'casiblingv' => [ 0, 'casiblingv' ]
+    'casiblingv' => [ 0, 'casiblingv' ],
+
+    'complexarraydiff' => [ 0, 'complexarraydiff' ],
+    'cadiff' => [ 0, 'cadiff' ]
 ];
