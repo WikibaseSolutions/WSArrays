@@ -24,7 +24,7 @@
  * Initialization file for WSArrays.
  *
  * @license GPL-2.0-or-later
- * @version: 3.3
+ * @version: 3.4.1
  *
  * @author Xxmarijnw <marijn@wikibase.nl>
  *
@@ -32,39 +32,51 @@
 
 if ( !defined( 'MEDIAWIKI' ) ) {
     die();
-} else {
-    global $wfSkipVersionControl;
+}
 
-    if (!$wfSkipVersionControl) {
-        global $wgVersion;
-        if (version_compare($wgVersion, 1.27) < 0) {
-            if (function_exists('wfMessage')) {
-                $ca_unsupported_version = wfMessage('ca-unsopported-version', 'MediaWiki', $wgVersion, '1.27');
-            } else {
-                $ca_unsupported_version = "This version of MediaWiki is not supported by WSArrays (has version " . $wgVersion . ", requires at least version 1.27)";
-            }
-
-            throw new Exception($ca_unsupported_version);
+if (!@$GLOBALS['wfSkipVersionControl']) {
+    global $wgVersion;
+    if (version_compare($wgVersion, 1.27) < 0) {
+        if (function_exists('wfMessage')) {
+            $ca_unsupported_version = wfMessage('ca-unsopported-version', 'MediaWiki', $wgVersion, '1.27');
+        } else {
+            $ca_unsupported_version = "This version of MediaWiki is not supported by WSArrays (has version " . $wgVersion . ", requires at least version 1.27)";
         }
 
-        if (version_compare(PHP_VERSION, 5.3) < 0) {
-            if (function_exists('wfMessage')) {
-                $ca_unsupported_version = wfMessage('ca-unsopported-version', 'PHP', PHP_VERSION, '5.3');
-            } else {
-                $ca_unsupported_version = "This version of PHP is not supported by WSArrays (has version " . PHP_VERSION . ", requires at least version 5.3)";
-            }
+        throw new Exception($ca_unsupported_version);
+    }
 
-            throw new Exception($ca_unsupported_version);
+    if (version_compare(PHP_VERSION, 5.3) < 0) {
+        if (function_exists('wfMessage')) {
+            $ca_unsupported_version = wfMessage('ca-unsopported-version', 'PHP', PHP_VERSION, '5.3');
+        } else {
+            $ca_unsupported_version = "This version of PHP is not supported by WSArrays (has version " . PHP_VERSION . ", requires at least version 5.3)";
+        }
+
+        throw new Exception($ca_unsupported_version);
+    }
+}
+
+$semantic_result_printer_link = $GLOBALS['wgExtensionDirectory'] . '/SemanticMediaWiki/src/Query/ResultPrinters/ComplexArrayPrinter.php';
+$semantic_result_printer_target = __DIR__ . '/../ComplexArrayPrinter.php';
+
+if (@$GLOBALS['wfEnableResultPrinter'] === true) {
+    if (file_exists($semantic_result_printer_link)) {
+        $GLOBALS[ 'smwgResultFormats' ][ 'complexarray' ] = 'SMW\Query\ResultPrinters\ComplexArrayPrinter';
+    } else {
+        if (file_exists($semantic_result_printer_target)) {
+            $result = symlink($semantic_result_printer_target, $semantic_result_printer_link);
+
+            if ($result) {
+                $GLOBALS[ 'smwgResultFormats' ][ 'complexarray' ] = 'SMW\Query\ResultPrinters\ComplexArrayPrinter';
+            } else {
+                wfDebugLog( 'WSArrays', 'Creation of symbolic link from target ' . $semantic_result_printer_target . ' to link ' . $semantic_result_printer_link . ' failed.' );
+            }
         }
     }
 }
 
 require_once 'GlobalFunctions.class.php';
-
-global $wfEnableResultPrinter;
-if ( $wfEnableResultPrinter ) {
-    $GLOBALS[ 'smwgResultFormats' ][ 'complexarray' ] = 'SMW\Query\ResultPrinters\ComplexArrayPrinter';
-}
 
 /**
  * Class WSArrays
@@ -74,7 +86,7 @@ if ( $wfEnableResultPrinter ) {
  * @extends GlobalFunctions
  */
 class WSArrays extends ComplexArray {
-    const VERSION = '3.3';
+    const VERSION = '3.4.1';
 
     /**
      * This variable holds all defined arrays. If an array is defined called "array", the array will be stored in WSArrays::$arrays["array"].
