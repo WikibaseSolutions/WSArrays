@@ -27,70 +27,70 @@
  * @extends WSArrays
  */
 class ComplexArraySlice extends ResultPrinter {
-    public function getName() {
-        return 'complexarrayslice';
-    }
+	public function getName() {
+		return 'complexarrayslice';
+	}
 
-    public function getAliases() {
-        return [
-            'caslice'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'caslice'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * @param Parser $parser
-     * @param string $new_array_name
-     * @param string $array_name
-     * @param string $offset
-     * @param string $length
-     * @return array|null
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser, $new_array_name = '', $array_name = '', $offset = '', $length = '') {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * @param Parser $parser
+	 * @param string $new_array_name
+	 * @param string $array_name
+	 * @param string $offset
+	 * @param string $length
+	 * @return array|null
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser, $new_array_name = '', $array_name = '', $offset = '', $length = '' ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $new_array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'New array key' ) );
-        }
+		if ( empty( $new_array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'New array key' ) );
+		}
 
-        if ( !GlobalFunctions::isValidArrayName( $new_array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
-        }
+		if ( !GlobalFunctions::isValidArrayName( $new_array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
+		}
 
-        if ( empty( $array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
-        }
+		if ( empty( $array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
+		}
 
-        return ComplexArraySlice::arraySlice( $new_array_name, $array_name, $offset, $length );
-    }
+		return self::arraySlice( $new_array_name, $array_name, $offset, $length );
+	}
 
-    /**
-     * @param string $new_array_name
-     * @param string $array_name
-     * @param integer $offset
-     * @param integer $length
-     * @return array|null
-     *
-     * @throws Exception
-     */
-    private static function arraySlice( $new_array_name, $array_name, $offset = 0, $length = 0 ) {
-        $array = GlobalFunctions::getArrayFromArrayName( $array_name );
+	/**
+	 * @param string $new_array_name
+	 * @param string $array_name
+	 * @param int $offset
+	 * @param int $length
+	 * @return array|null
+	 *
+	 * @throws Exception
+	 */
+	private static function arraySlice( $new_array_name, $array_name, $offset = 0, $length = 0 ) {
+		$array = GlobalFunctions::getArrayFromArrayName( $array_name );
 
-        if ( !$array ) {
-            return null;
-        }
+		if ( !$array ) {
+			return null;
+		}
 
-        if ( !empty( $length ) ) {
-            WSArrays::$arrays[$new_array_name] = new ComplexArray( array_slice( $array, $offset, $length ) );
-        } else {
-            WSArrays::$arrays[$new_array_name] = new ComplexArray( array_slice( $array, $offset ) );
-        }
+		if ( !empty( $length ) ) {
+			WSArrays::$arrays[$new_array_name] = new ComplexArray( array_slice( $array, $offset, $length ) );
+		} else {
+			WSArrays::$arrays[$new_array_name] = new ComplexArray( array_slice( $array, $offset ) );
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

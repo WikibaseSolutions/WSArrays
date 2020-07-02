@@ -27,336 +27,336 @@
  * @extends WSArrays
  */
 class ComplexArraySort extends ResultPrinter {
-    public function getName() {
-        return 'complexarraysort';
-    }
+	public function getName() {
+		return 'complexarraysort';
+	}
 
-    public function getAliases() {
-        return [
-            'casort'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'casort'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * @var
-     */
-    private static $key;
+	/**
+	 * @var
+	 */
+	private static $key;
 
-    /**
-     * @var
-     */
-    private static $array_name;
+	/**
+	 * @var
+	 */
+	private static $array_name;
 
-    /**
-     * @var
-     */
-    private static $array;
+	/**
+	 * @var
+	 */
+	private static $array;
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @param string $array_name
-     * @param string $options
-     * @param string $key
-     * @return array|null
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser, $array_name = '', $options = '', $key = '' ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @param string $array_name
+	 * @param string $options
+	 * @param string $key
+	 * @return array|null
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser, $array_name = '', $options = '', $key = '' ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
-        }
+		if ( empty( $array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
+		}
 
-        return ComplexArraySort::arraySort( $array_name, $options, $key );
-    }
+		return self::arraySort( $array_name, $options, $key );
+	}
 
-    /**
-     * @param string $array_name
-     * @param string $options
-     * @param string $key
-     * @return array|null
-     *
-     * @throws Exception
-     */
-    private static function arraySort( $array_name, $options = '', $key = '' ) {
-        if ( !GlobalFunctions::arrayExists( $array_name ) ) {
-            return null;
-        }
+	/**
+	 * @param string $array_name
+	 * @param string $options
+	 * @param string $key
+	 * @return array|null
+	 *
+	 * @throws Exception
+	 */
+	private static function arraySort( $array_name, $options = '', $key = '' ) {
+		if ( !GlobalFunctions::arrayExists( $array_name ) ) {
+			return null;
+		}
 
-        ComplexArraySort::$array      = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array_name ] );
-        ComplexArraySort::$array_name = $array_name;
+		self::$array      = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array_name ] );
+		self::$array_name = $array_name;
 
-        if ( empty( $options ) ) {
-            $result = ComplexArraySort::sortArray( "sort" );
-        } else {
-            if ( !empty( $key ) ) {
-                ComplexArraySort::$key = $key;
-            }
+		if ( empty( $options ) ) {
+			$result = self::sortArray( "sort" );
+		} else {
+			if ( !empty( $key ) ) {
+				self::$key = $key;
+			}
 
-            $result = ComplexArraySort::sortArray( $options );
-        }
+			$result = self::sortArray( $options );
+		}
 
-        if( $result === true ) {
-            WSArrays::$arrays[$array_name] = new ComplexArray( ComplexArraySort::$array );
+		if ( $result === true ) {
+			WSArrays::$arrays[$array_name] = new ComplexArray( self::$array );
 
-            return null;
-        }
+			return null;
+		}
 
-        return GlobalFunctions::error( $result );
-    }
+		return GlobalFunctions::error( $result );
+	}
 
-    /**
-     * @param $algo
-     * @return bool|string
-     */
-    private static function sortArray( $algo ) {
-        switch ( $algo ) {
-            case 'multisort':
-                $array = ComplexArraySort::multisort();
-                break;
-            case 'asort':
-                $array = ComplexArraySort::asort();
-                break;
-            case 'arsort':
-                $array = ComplexArraySort::arsort();
-                break;
-            case 'krsort':
-                $array = ComplexArraySort::krsort();
-                break;
-            case 'natcasesort':
-                $array = ComplexArraySort::natcasesort();
-                break;
-            case 'natsort':
-                $array = ComplexArraySort::natsort();
-                break;
-            case 'rsort':
-                $array = ComplexArraySort::rsort();
-                break;
-            case 'shuffle':
-                $array = ComplexArraySort::shuffle();
-                break;
-            case 'keysort':
-                $array = ComplexArraySort::keysort(null);
-                break;
-            case 'keysort,desc':
-                $array = ComplexArraySort::keysort('desc');
-                break;
-            case 'sort':
-            default:
-                $array = ComplexArraySort::sort();
-                break;
-        }
+	/**
+	 * @param $algo
+	 * @return bool|string
+	 */
+	private static function sortArray( $algo ) {
+		switch ( $algo ) {
+			case 'multisort':
+				$array = self::multisort();
+				break;
+			case 'asort':
+				$array = self::asort();
+				break;
+			case 'arsort':
+				$array = self::arsort();
+				break;
+			case 'krsort':
+				$array = self::krsort();
+				break;
+			case 'natcasesort':
+				$array = self::natcasesort();
+				break;
+			case 'natsort':
+				$array = self::natsort();
+				break;
+			case 'rsort':
+				$array = self::rsort();
+				break;
+			case 'shuffle':
+				$array = self::shuffle();
+				break;
+			case 'keysort':
+				$array = self::keysort( null );
+				break;
+			case 'keysort,desc':
+				$array = self::keysort( 'desc' );
+				break;
+			case 'sort':
+			default:
+				$array = self::sort();
+				break;
+		}
 
-        return $array;
-    }
+		return $array;
+	}
 
-    /**
-     * Sort array using multisort
-     *
-     * @return bool|string
-     */
-    private static function multisort() {
-        if ( !array_multisort( ComplexArraySort::$array ) ) {
-            $ca_sort_broken = wfMessage( 'ca-sort-broken', 'multisort' );
+	/**
+	 * Sort array using multisort
+	 *
+	 * @return bool|string
+	 */
+	private static function multisort() {
+		if ( !array_multisort( self::$array ) ) {
+			$ca_sort_broken = wfMessage( 'ca-sort-broken', 'multisort' );
 
-            return $ca_sort_broken;
-        }
+			return $ca_sort_broken;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sort array using asort
-     *
-     * @return bool|string
-     */
-    private static function asort() {
-        if ( !asort( ComplexArraySort::$array ) ) {
-            $ca_sort_broken = wfMessage( 'ca-sort-broken', 'asort' );
+	/**
+	 * Sort array using asort
+	 *
+	 * @return bool|string
+	 */
+	private static function asort() {
+		if ( !asort( self::$array ) ) {
+			$ca_sort_broken = wfMessage( 'ca-sort-broken', 'asort' );
 
-            return $ca_sort_broken;
-        }
+			return $ca_sort_broken;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sort array using arsort
-     *
-     * @return bool|string
-     */
-    private static function arsort() {
-        if ( !arsort( ComplexArraySort::$array ) ) {
-            $ca_sort_broken = wfMessage( 'ca-sort-broken', 'arsort' );
+	/**
+	 * Sort array using arsort
+	 *
+	 * @return bool|string
+	 */
+	private static function arsort() {
+		if ( !arsort( self::$array ) ) {
+			$ca_sort_broken = wfMessage( 'ca-sort-broken', 'arsort' );
 
-            return $ca_sort_broken;
-        }
+			return $ca_sort_broken;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sort array using krsort
-     *
-     * @return bool|string
-     */
-    private static function krsort() {
-        if ( !krsort( ComplexArraySort::$array ) ) {
-            $ca_sort_broken = wfMessage( 'ca-sort-broken', 'krsort' );
+	/**
+	 * Sort array using krsort
+	 *
+	 * @return bool|string
+	 */
+	private static function krsort() {
+		if ( !krsort( self::$array ) ) {
+			$ca_sort_broken = wfMessage( 'ca-sort-broken', 'krsort' );
 
-            return $ca_sort_broken;
-        }
+			return $ca_sort_broken;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sort array using natcasesort
-     *
-     * @return bool|string
-     */
-    private static function natcasesort() {
-        if ( !natcasesort( ComplexArraySort::$array ) ) {
-            $ca_sort_broken = wfMessage( 'ca-sort-broken', 'natcasesort' );
+	/**
+	 * Sort array using natcasesort
+	 *
+	 * @return bool|string
+	 */
+	private static function natcasesort() {
+		if ( !natcasesort( self::$array ) ) {
+			$ca_sort_broken = wfMessage( 'ca-sort-broken', 'natcasesort' );
 
-            return $ca_sort_broken;
-        }
+			return $ca_sort_broken;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sort array using natsort
-     *
-     * @return bool|string
-     */
-    private static function natsort() {
-        if ( !natsort( ComplexArraySort::$array ) ) {
-            $ca_sort_broken = wfMessage( 'ca-sort-broken', 'natsort' );
+	/**
+	 * Sort array using natsort
+	 *
+	 * @return bool|string
+	 */
+	private static function natsort() {
+		if ( !natsort( self::$array ) ) {
+			$ca_sort_broken = wfMessage( 'ca-sort-broken', 'natsort' );
 
-            return $ca_sort_broken;
-        }
+			return $ca_sort_broken;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sort array using rsort
-     *
-     * @return bool|string
-     */
-    private static function rsort() {
-        if ( !rsort( ComplexArraySort::$array ) ) {
-            $ca_sort_broken = wfMessage( 'ca-sort-broken', 'rsort' );
+	/**
+	 * Sort array using rsort
+	 *
+	 * @return bool|string
+	 */
+	private static function rsort() {
+		if ( !rsort( self::$array ) ) {
+			$ca_sort_broken = wfMessage( 'ca-sort-broken', 'rsort' );
 
-            return $ca_sort_broken;
-        }
+			return $ca_sort_broken;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sort array using shuffle
-     *
-     * @return bool|string
-     */
-    private static function shuffle() {
-        if ( !shuffle( ComplexArraySort::$array ) ) {
-            $ca_sort_broken = wfMessage( 'ca-sort-broken', 'shuffle' );
+	/**
+	 * Sort array using shuffle
+	 *
+	 * @return bool|string
+	 */
+	private static function shuffle() {
+		if ( !shuffle( self::$array ) ) {
+			$ca_sort_broken = wfMessage( 'ca-sort-broken', 'shuffle' );
 
-            return $ca_sort_broken;
-        }
+			return $ca_sort_broken;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sort array using sort
-     *
-     * @return bool|string
-     */
-    private static function sort() {
-        if ( !sort( ComplexArraySort::$array ) ) {
-            $ca_sort_broken = wfMessage( 'ca-sort-broken', 'sort' );
+	/**
+	 * Sort array using sort
+	 *
+	 * @return bool|string
+	 */
+	private static function sort() {
+		if ( !sort( self::$array ) ) {
+			$ca_sort_broken = wfMessage( 'ca-sort-broken', 'sort' );
 
-            return $ca_sort_broken;
-        }
+			return $ca_sort_broken;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Sort array using keysort
-     *
-     * @param $order
-     *
-     * @return bool|string
-     */
-    private static function keysort( $order ) {
-        if ( !ComplexArraySort::$key ) {
-            $ca_sort_missing_key = wfMessage( 'ca-sort-missing-key' );
+	/**
+	 * Sort array using keysort
+	 *
+	 * @param $order
+	 *
+	 * @return bool|string
+	 */
+	private static function keysort( $order ) {
+		if ( !self::$key ) {
+			$ca_sort_missing_key = wfMessage( 'ca-sort-missing-key' );
 
-            return $ca_sort_missing_key;
-        }
+			return $ca_sort_missing_key;
+		}
 
-        foreach ( ComplexArraySort::$array as $value ) {
-            if ( is_array( $value[ ComplexArraySort::$key ] ) ) {
-                $ca_sort_array_too_deep = wfMessage( 'ca-sort-array-too-deep' );
+		foreach ( self::$array as $value ) {
+			if ( is_array( $value[ self::$key ] ) ) {
+				$ca_sort_array_too_deep = wfMessage( 'ca-sort-array-too-deep' );
 
-                return $ca_sort_array_too_deep;
-            }
-        }
+				return $ca_sort_array_too_deep;
+			}
+		}
 
-        ComplexArraySort::ksort( ComplexArraySort::$array, ComplexArraySort::$key );
+		self::ksort( self::$array, self::$key );
 
-        $i = 0;
-        $temp = [];
-        foreach ( ComplexArraySort::$array as $key => $item ) {
-            $temp[ $i ] = $item;
-            $i++;
-        }
+		$i = 0;
+		$temp = [];
+		foreach ( self::$array as $key => $item ) {
+			$temp[ $i ] = $item;
+			$i++;
+		}
 
-        ComplexArraySort::$array = $temp;
+		self::$array = $temp;
 
-        if ( $order == "desc" ) {
-            ComplexArraySort::$array = array_reverse( ComplexArraySort::$array );
-        }
+		if ( $order == "desc" ) {
+			self::$array = array_reverse( self::$array );
+		}
 
-        WSArrays::$arrays[ ComplexArraySort::$array_name ] = new ComplexArray( ComplexArraySort::$array );
+		WSArrays::$arrays[ self::$array_name ] = new ComplexArray( self::$array );
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * User-defined sorting function which sorts based on key.
-     *
-     * @param $array
-     * @param $key
-     * @return bool|string
-     */
-    private static function ksort( &$array, $key ) {
-        $sorter = array();
-        $ret = array();
+	/**
+	 * User-defined sorting function which sorts based on key.
+	 *
+	 * @param &$array
+	 * @param $key
+	 * @return bool|string
+	 */
+	private static function ksort( &$array, $key ) {
+		$sorter = [];
+		$ret = [];
 
-        reset( $array );
+		reset( $array );
 
-        foreach ( $array as $ii => $va ) {
-            $sorter[ $ii ] = $va[ $key ];
-        }
+		foreach ( $array as $ii => $va ) {
+			$sorter[ $ii ] = $va[ $key ];
+		}
 
-        asort( $sorter );
+		asort( $sorter );
 
-        foreach ( $sorter as $ii => $va ) {
-            $ret[ $ii ] = $array[ $ii ];
-        }
+		foreach ( $sorter as $ii => $va ) {
+			$ret[ $ii ] = $array[ $ii ];
+		}
 
-        $array = $ret;
-    }
+		$array = $ret;
+	}
 }

@@ -27,60 +27,60 @@
  * @extends WSArrays
  */
 class ComplexArraySize extends ResultPrinter {
-    public function getName() {
-        return 'complexarraysize';
-    }
+	public function getName() {
+		return 'complexarraysize';
+	}
 
-    public function getAliases() {
-        return [
-          'casize'
-        ];
-    }
+	public function getAliases() {
+		return [
+		  'casize'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @param string $array_name
-     * @param string $options
-     * @return array|int
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser, $array_name = '', $options = '' ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @param string $array_name
+	 * @param string $options
+	 * @return array|int
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser, $array_name = '', $options = '' ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
-        }
+		if ( empty( $array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
+		}
 
-        return ComplexArraySize::arraySize( $array_name, $options );
-    }
+		return self::arraySize( $array_name, $options );
+	}
 
-    /**
-     * Calculate size of array.
-     *
-     * @param $name
-     * @param string $options
-     * @return array|int
-     *
-     * @throws Exception
-     */
-    private static function arraySize( $name, $options = '' ) {
-        if ( !GlobalFunctions::arrayExists( GlobalFunctions::getBaseArrayFromArrayName( $name ) ) ) {
-            return null;
-        }
+	/**
+	 * Calculate size of array.
+	 *
+	 * @param $name
+	 * @param string $options
+	 * @return array|int
+	 *
+	 * @throws Exception
+	 */
+	private static function arraySize( $name, $options = '' ) {
+		if ( !GlobalFunctions::arrayExists( GlobalFunctions::getBaseArrayFromArrayName( $name ) ) ) {
+			return null;
+		}
 
-        $array = GlobalFunctions::getArrayFromArrayName( $name );
+		$array = GlobalFunctions::getArrayFromArrayName( $name );
 
-        if ( $options === "top" ) {
-            return count( $array );
-        }
+		if ( $options === "top" ) {
+			return count( $array );
+		}
 
-        return count( $array, COUNT_RECURSIVE );
-    }
+		return count( $array, COUNT_RECURSIVE );
+	}
 }

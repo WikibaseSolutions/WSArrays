@@ -27,40 +27,40 @@
  * @extends WSArrays
  */
 class ComplexArrayParent extends ResultPrinter {
-    public function getName() {
-        return 'complexarrayparent';
-    }
+	public function getName() {
+		return 'complexarrayparent';
+	}
 
-    public function getAliases() {
-        return [
-            'caparent',
-            'capapa',
-            'camama'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'caparent',
+			'capapa',
+			'camama'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @param string $key
-     * @return array|null
-     */
-    public static function getResult( Parser $parser, $key = null ) {
-        if ( empty( $key ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Key' ) );
-        }
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @param string|null $key
+	 * @return array|null
+	 */
+	public static function getResult( Parser $parser, $key = null ) {
+		if ( empty( $key ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Key' ) );
+		}
 
-        return ComplexArrayParent::arrayParent( $key );
-    }
+		return self::arrayParent( $key );
+	}
 
-    private static function arrayParent( $key ) {
-        $regex = '/\[[^\[\]]+\]$/m';
+	private static function arrayParent( $key ) {
+		$regex = '/\[[^\[\]]+\]$/m';
 
-        return preg_replace($regex, '', $key);
-    }
+		return preg_replace( $regex, '', $key );
+	}
 }

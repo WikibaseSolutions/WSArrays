@@ -27,112 +27,112 @@
  * @extends WSArrays
  */
 class ComplexArrayDiff extends ResultPrinter {
-    /**
-     * @var string
-     */
-    private static $new_array;
+	/**
+	 * @var string
+	 */
+	private static $new_array;
 
-    public function getName() {
-        return 'complexarraydiff';
-    }
+	public function getName() {
+		return 'complexarraydiff';
+	}
 
-    public function getAliases() {
-        return [
-            'cadiff'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'cadiff'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @return array|int
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @return array|int
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        return ComplexArrayDiff::arrayDiff( func_get_args() );
-    }
+		return self::arrayDiff( func_get_args() );
+	}
 
-    /**
-     * Calculate difference between arrays.
-     *
-     * @param $args
-     * @return null
-     *
-     * @throws Exception
-     */
-    private static function arrayDiff( $args ) {
-        ComplexArrayDiff::parseFunctionArguments($args);
+	/**
+	 * Calculate difference between arrays.
+	 *
+	 * @param $args
+	 * @return null
+	 *
+	 * @throws Exception
+	 */
+	private static function arrayDiff( $args ) {
+		self::parseFunctionArguments( $args );
 
-        if ( !GlobalFunctions::isValidArrayName( ComplexArrayDiff::$new_array ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
-        }
+		if ( !GlobalFunctions::isValidArrayName( self::$new_array ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
+		}
 
-        if( count( $args ) < 2 ) {
-            return GlobalFunctions::error( wfMessage( 'ca-too-little-arrays' ) );
-        }
+		if ( count( $args ) < 2 ) {
+			return GlobalFunctions::error( wfMessage( 'ca-too-little-arrays' ) );
+		}
 
-        $arrays = ComplexArrayDiff::pushArrays( $args );
+		$arrays = self::pushArrays( $args );
 
-        $array_diff = call_user_func_array('array_diff_assoc', $arrays);
+		$array_diff = call_user_func_array( 'array_diff_assoc', $arrays );
 
-        if ( !is_array( $array_diff ) ) {
-            return null;
-        }
+		if ( !is_array( $array_diff ) ) {
+			return null;
+		}
 
-        WSArrays::$arrays[ ComplexArrayDiff::$new_array ] = new ComplexArray( $array_diff );
+		WSArrays::$arrays[ self::$new_array ] = new ComplexArray( $array_diff );
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * @param $arr
-     * @return array
-     * @throws Exception
-     */
-    private static function pushArrays( $arr ) {
-        $arrays = [];
-        foreach( $arr as $array ) {
-            // Check if the array exists
-            if ( !isset( WSArrays::$arrays[ $array ] ) ) {
-                continue;
-            }
+	/**
+	 * @param $arr
+	 * @return array
+	 * @throws Exception
+	 */
+	private static function pushArrays( $arr ) {
+		$arrays = [];
+		foreach ( $arr as $array ) {
+			// Check if the array exists
+			if ( !isset( WSArrays::$arrays[ $array ] ) ) {
+				continue;
+			}
 
-            $array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array ] );
+			$array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array ] );
 
-            array_push( $arrays, $array );
-        }
+			array_push( $arrays, $array );
+		}
 
-        return $arrays;
-    }
+		return $arrays;
+	}
 
-    /**
-     * @param $args
-     */
-    private static function parseFunctionArguments( &$args ) {
-        ComplexArrayDiff::removeFirstItemFromArray( $args );
-        ComplexArrayDiff::getFirstItemFromArray( $args );
-        ComplexArrayDiff::removeFirstItemFromArray( $args );
-    }
+	/**
+	 * @param &$args
+	 */
+	private static function parseFunctionArguments( &$args ) {
+		self::removeFirstItemFromArray( $args );
+		self::getFirstItemFromArray( $args );
+		self::removeFirstItemFromArray( $args );
+	}
 
-    /**
-     * @param $array
-     */
-    private static function removeFirstItemFromArray( &$array ) {
-        array_shift( $array );
-    }
+	/**
+	 * @param &$array
+	 */
+	private static function removeFirstItemFromArray( &$array ) {
+		array_shift( $array );
+	}
 
-    /**
-     * @param $array
-     */
-    private static function getFirstItemFromArray( &$array ) {
-        ComplexArrayDiff::$new_array = reset( $array );
-    }
+	/**
+	 * @param &$array
+	 */
+	private static function getFirstItemFromArray( &$array ) {
+		self::$new_array = reset( $array );
+	}
 }

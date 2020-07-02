@@ -27,60 +27,60 @@
  * @extends WSArrays
  */
 class ComplexArrayUnique extends ResultPrinter {
-    public function getName() {
-        return 'complexarrayunique';
-    }
+	public function getName() {
+		return 'complexarrayunique';
+	}
 
-    public function getAliases() {
-        return [
-            'caunique'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'caunique'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * Define parameters and initialize parser.
-     *
-     * @param Parser $parser
-     * @param string $array_name
-     * @return array|null
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser, $array_name = '' ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define parameters and initialize parser.
+	 *
+	 * @param Parser $parser
+	 * @param string $array_name
+	 * @return array|null
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser, $array_name = '' ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
-        }
+		if ( empty( $array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
+		}
 
-        return ComplexArrayUnique::arrayUnique( $array_name );
-    }
+		return self::arrayUnique( $array_name );
+	}
 
-    /**
-     * Apply array_unique onto the array and safe it again as SafeComplexArray
-     *
-     * @param string $array_name
-     * @return array|null
-     *
-     * @throws Exception
-     */
-    private static function arrayUnique( $array_name ) {
-        $array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[$array_name] );
+	/**
+	 * Apply array_unique onto the array and safe it again as SafeComplexArray
+	 *
+	 * @param string $array_name
+	 * @return array|null
+	 *
+	 * @throws Exception
+	 */
+	private static function arrayUnique( $array_name ) {
+		$array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[$array_name] );
 
-        if ( GlobalFunctions::containsArray( $array ) ) {
-            $array = array_unique( $array, SORT_REGULAR );
+		if ( GlobalFunctions::containsArray( $array ) ) {
+			$array = array_unique( $array, SORT_REGULAR );
 
-            WSArrays::$arrays[$array_name] = new ComplexArray( $array );
-        } else {
-            $array = array_unique( $array );
+			WSArrays::$arrays[$array_name] = new ComplexArray( $array );
+		} else {
+			$array = array_unique( $array );
 
-            WSArrays::$arrays[$array_name] = new ComplexArray( $array );
-        }
+			WSArrays::$arrays[$array_name] = new ComplexArray( $array );
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

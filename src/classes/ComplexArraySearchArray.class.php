@@ -27,107 +27,107 @@
  * @extends WSArrays
  */
 class ComplexArraySearchArray extends ResultPrinter {
-    public function getName() {
-        return 'complexarraysearcharray';
-    }
+	public function getName() {
+		return 'complexarraysearcharray';
+	}
 
-    public function getAliases() {
-        return [
-            'casearcharray',
-            'casearcha'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'casearcharray',
+			'casearcha'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    private static $found = [];
+	private static $found = [];
 
-    /**
-     * @param Parser $parser
-     * @param string $new_array_name
-     * @param string $array_name
-     * @param string $value
-     * @return array
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser, $new_array_name = '', $array_name = '', $value = '' ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * @param Parser $parser
+	 * @param string $new_array_name
+	 * @param string $array_name
+	 * @param string $value
+	 * @return array
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser, $new_array_name = '', $array_name = '', $value = '' ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $new_array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'New array key' ) );
-        }
+		if ( empty( $new_array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'New array key' ) );
+		}
 
-        if ( !GlobalFunctions::isValidArrayName( $new_array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
-        }
+		if ( !GlobalFunctions::isValidArrayName( $new_array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
+		}
 
-        if ( empty( $array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
-        }
+		if ( empty( $array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
+		}
 
-        if ( empty( $value ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Value' ) );
-        }
+		if ( empty( $value ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Value' ) );
+		}
 
-        return ComplexArraySearchArray::arraySearchArray( $new_array_name, $array_name, $value );
-    }
+		return self::arraySearchArray( $new_array_name, $array_name, $value );
+	}
 
-    /**
-     * @param $name
-     * @param $value
-     * @param $new_array
-     * @return array|int
-     *
-     * @throws Exception
-     */
-    private static function arraySearchArray( $new_array, $name, $value ) {
-        if ( !GlobalFunctions::arrayExists( $name ) ) {
-            return null;
-        }
+	/**
+	 * @param $name
+	 * @param $value
+	 * @param $new_array
+	 * @return array|int
+	 *
+	 * @throws Exception
+	 */
+	private static function arraySearchArray( $new_array, $name, $value ) {
+		if ( !GlobalFunctions::arrayExists( $name ) ) {
+			return null;
+		}
 
-        ComplexArraySearchArray::findValues( $value, $name );
+		self::findValues( $value, $name );
 
-        if ( count( ComplexArraySearchArray::$found ) > 0 ) {
-            WSArrays::$arrays[ $new_array ] = new ComplexArray( ComplexArraySearchArray::$found );
-        }
+		if ( count( self::$found ) > 0 ) {
+			WSArrays::$arrays[ $new_array ] = new ComplexArray( self::$found );
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * @param $value
-     * @param $key
-     *
-     * @throws Exception
-     */
-    private static function findValues( $value, $key ) {
-        $array = GlobalFunctions::getArrayFromArrayName( $key );
+	/**
+	 * @param $value
+	 * @param $key
+	 *
+	 * @throws Exception
+	 */
+	private static function findValues( $value, $key ) {
+		$array = GlobalFunctions::getArrayFromArrayName( $key );
 
-        ComplexArraySearchArray::$found = [];
-        ComplexArraySearchArray::i( $array, $value, $key );
-    }
+		self::$found = [];
+		self::i( $array, $value, $key );
+	}
 
-    /**
-     * @param $array
-     * @param $value
-     * @param $key
-     */
-    private static function i( $array, $value, &$key ) {
-        foreach ( $array as $current_key => $current_item ) {
-            $key .= "[$current_key]";
+	/**
+	 * @param $array
+	 * @param $value
+	 * @param &$key
+	 */
+	private static function i( $array, $value, &$key ) {
+		foreach ( $array as $current_key => $current_item ) {
+			$key .= "[$current_key]";
 
-            if ( $value === $current_item ) {
-                array_push( ComplexArraySearchArray::$found, $key );
-            } else {
-                if ( is_array( $current_item ) ) {
-                    ComplexArraySearchArray::i( $current_item, $value, $key );
-                }
-            }
+			if ( $value === $current_item ) {
+				array_push( self::$found, $key );
+			} else {
+				if ( is_array( $current_item ) ) {
+					self::i( $current_item, $value, $key );
+				}
+			}
 
-            $key = substr( $key, 0, strrpos( $key, '[' ) );
-        }
-    }
+			$key = substr( $key, 0, strrpos( $key, '[' ) );
+		}
+	}
 }

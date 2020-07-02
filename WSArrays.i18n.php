@@ -30,87 +30,87 @@ $magicWords = [];
  * @author Marijn van Wezel (xxmarijnw)
  */
 $magicWords['en'] = [
-    'complexarraydefine' => [ 0, 'complexarraydefine' ],
-    'cadefine' => [ 0, 'cadefine' ],
+	'complexarraydefine' => [ 0, 'complexarraydefine' ],
+	'cadefine' => [ 0, 'cadefine' ],
 
-    'complexarrayprint' => [ 0, 'complexarrayprint' ],
-    'caprint' => [ 0, 'caprint' ],
+	'complexarrayprint' => [ 0, 'complexarrayprint' ],
+	'caprint' => [ 0, 'caprint' ],
 
-    'complexarraysize' => [ 0, 'complexarraysize' ],
-    'casize' => [ 0, 'casize' ],
+	'complexarraysize' => [ 0, 'complexarraysize' ],
+	'casize' => [ 0, 'casize' ],
 
-    'complexarraysearch' => [ 0, 'complexarraysearch' ],
-    'casearch' => [ 0, 'casearch' ],
+	'complexarraysearch' => [ 0, 'complexarraysearch' ],
+	'casearch' => [ 0, 'casearch' ],
 
-    'complexarraysearcharray' => [ 0, 'complexarraysearcharray' ],
-    'casearcharray' => [ 0, 'casearcharray' ],
-    'casearcha' => [ 0, 'casearcha' ],
+	'complexarraysearcharray' => [ 0, 'complexarraysearcharray' ],
+	'casearcharray' => [ 0, 'casearcharray' ],
+	'casearcha' => [ 0, 'casearcha' ],
 
-    'complexarrayaddvalue' => [ 0, 'complexarrayaddvalue' ],
-    'caaddvalue' => [ 0, 'caaddvalue' ],
-    'caadd' => [ 0, 'caadd' ],
-    'caaddv' => [ 0, 'caaddv' ],
-    'caset' => [ 0, 'caset' ],
+	'complexarrayaddvalue' => [ 0, 'complexarrayaddvalue' ],
+	'caaddvalue' => [ 0, 'caaddvalue' ],
+	'caadd' => [ 0, 'caadd' ],
+	'caaddv' => [ 0, 'caaddv' ],
+	'caset' => [ 0, 'caset' ],
 
-    'complexarrayslice' => [ 0, 'complexarrayslice' ],
-    'caslice' => [ 0, 'caslice' ],
+	'complexarrayslice' => [ 0, 'complexarrayslice' ],
+	'caslice' => [ 0, 'caslice' ],
 
-    'complexarrayunique' => [ 0, 'complexarrayunique' ],
-    'caunique' => [ 0, 'caunique' ],
+	'complexarrayunique' => [ 0, 'complexarrayunique' ],
+	'caunique' => [ 0, 'caunique' ],
 
-    'complexarrayreset' => [ 0, 'complexarrayreset' ],
-    'careset' => [ 0, 'careset' ],
-    'caclear' => [ 0, 'caclear' ],
+	'complexarrayreset' => [ 0, 'complexarrayreset' ],
+	'careset' => [ 0, 'careset' ],
+	'caclear' => [ 0, 'caclear' ],
 
-    'complexarraymerge' => [ 0, 'complexarraymerge' ],
-    'camerge' => [ 0, 'camerge' ],
+	'complexarraymerge' => [ 0, 'complexarraymerge' ],
+	'camerge' => [ 0, 'camerge' ],
 
-    'complexarraysort' => [ 0, 'complexarraysort' ],
-    'casort' => [ 0, 'casort' ],
+	'complexarraysort' => [ 0, 'complexarraysort' ],
+	'casort' => [ 0, 'casort' ],
 
-    'complexarraymaptemplate' => [ 0, 'complexarraymaptemplate' ],
-    'camaptemplate' => [ 0, 'camaptemplate' ],
-    'camapt' => [ 0, 'camapt' ],
-    'catemplate' => [ 0, 'catemplate' ],
+	'complexarraymaptemplate' => [ 0, 'complexarraymaptemplate' ],
+	'camaptemplate' => [ 0, 'camaptemplate' ],
+	'camapt' => [ 0, 'camapt' ],
+	'catemplate' => [ 0, 'catemplate' ],
 
-    'complexarraypushvalue' => [ 0, 'complexarraypushvalue' ],
-    'complexarraypush' => [ 0, 'complexarraypush' ],
-    'capush' => [ 0, 'capush' ],
+	'complexarraypushvalue' => [ 0, 'complexarraypushvalue' ],
+	'complexarraypush' => [ 0, 'complexarraypush' ],
+	'capush' => [ 0, 'capush' ],
 
-    'complexarrayextract' => [ 0, 'complexarrayextract' ],
-    'caextract' => [ 0, 'caextract' ],
+	'complexarrayextract' => [ 0, 'complexarrayextract' ],
+	'caextract' => [ 0, 'caextract' ],
 
-    'complexarraypusharray' => [ 0, 'complexarraypusharray' ],
-    'capusharray' => [ 0, 'capusharray' ],
+	'complexarraypusharray' => [ 0, 'complexarraypusharray' ],
+	'capusharray' => [ 0, 'capusharray' ],
 
-    'complexarraymap' => [ 0, 'complexarraymap' ],
-    'camap' => [ 0, 'camap' ],
+	'complexarraymap' => [ 0, 'complexarraymap' ],
+	'camap' => [ 0, 'camap' ],
 
-    'complexarrayarraymap' => [ 0, 'complexarrayarraymap' ],
-    'caamap' => [ 0, 'caamap' ],
-    'camapa' => [ 0, 'camapa' ],
+	'complexarrayarraymap' => [ 0, 'complexarrayarraymap' ],
+	'caamap' => [ 0, 'caamap' ],
+	'camapa' => [ 0, 'camapa' ],
 
-    'complexarraydefinedarrays' => [ 0, 'complexarraydefinedarrays' ],
-    'cadefinedarrays' => [ 0, 'cadefinedarrays' ],
-    'cadefined' => [ 0, 'cadefined' ],
-    'cad' => [ 0, 'cad' ],
+	'complexarraydefinedarrays' => [ 0, 'complexarraydefinedarrays' ],
+	'cadefinedarrays' => [ 0, 'cadefinedarrays' ],
+	'cadefined' => [ 0, 'cadefined' ],
+	'cad' => [ 0, 'cad' ],
 
-    'complexarrayparent' => [ 0, 'complexarrayparent' ],
-    'caparent' => [ 0, 'caparent'],
-    'capapa' => [ 0, 'capapa' ],
-    'camama' => [ 0, 'camama' ],
+	'complexarrayparent' => [ 0, 'complexarrayparent' ],
+	'caparent' => [ 0, 'caparent' ],
+	'capapa' => [ 0, 'capapa' ],
+	'camama' => [ 0, 'camama' ],
 
-    'complexarrayunset' => [ 0, 'complexarrayunset'],
-    'caunset' => [ 0, 'caunset' ],
-    'caremove' => [ 0, 'caremove' ],
+	'complexarrayunset' => [ 0, 'complexarrayunset' ],
+	'caunset' => [ 0, 'caunset' ],
+	'caremove' => [ 0, 'caremove' ],
 
-    'complexarraysibling' => [ 0, 'complexarraysibling' ],
-    'casibling' => [ 0, 'casibling' ],
+	'complexarraysibling' => [ 0, 'complexarraysibling' ],
+	'casibling' => [ 0, 'casibling' ],
 
-    'complexarraysiblingvalue' => [ 0, 'complexarraysiblingvalue' ],
-    'casiblingvalue' => [ 0, 'casiblingvalue' ],
-    'casiblingv' => [ 0, 'casiblingv' ],
+	'complexarraysiblingvalue' => [ 0, 'complexarraysiblingvalue' ],
+	'casiblingvalue' => [ 0, 'casiblingvalue' ],
+	'casiblingv' => [ 0, 'casiblingv' ],
 
-    'complexarraydiff' => [ 0, 'complexarraydiff' ],
-    'cadiff' => [ 0, 'cadiff' ]
+	'complexarraydiff' => [ 0, 'complexarraydiff' ],
+	'cadiff' => [ 0, 'cadiff' ]
 ];

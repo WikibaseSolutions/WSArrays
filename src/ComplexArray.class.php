@@ -25,25 +25,25 @@
  * Great-grandfather class. This is the highest class. It defines the object arrays should be stored in. Arrays that are stored in this object, are always escaped and safe.
  */
 class ComplexArray {
-    /**
-     * @var array
-     */
-    private $array = array();
+	/**
+	 * @var array
+	 */
+	private $array = [];
 
-    /**
-     * @param array $array
-     */
-    public function __construct( array $array = array() ) {
-        $this->array = $array;
-    }
+	/**
+	 * @param array $array
+	 */
+	public function __construct( array $array = [] ) {
+		$this->array = $array;
+	}
 
-    /**
-     * Return the array with escaped characters.
-     *
-     * @return array
-     * @throws Exception
-     */
-    public function getArray() {
-        return $this->array;
-    }
+	/**
+	 * Return the array with escaped characters.
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	public function getArray() {
+		return $this->array;
+	}
 }

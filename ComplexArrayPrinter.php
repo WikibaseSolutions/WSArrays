@@ -19,12 +19,6 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-/*
- *
- * PLACE THIS FILE IN THE FOLDER "{mediawiki_dir}/extensions/SemanticMediaWiki/src/Query/ResultPrinters"
- *
- */
-
 namespace SMW\Query\ResultPrinters;
 
 use Exception;
@@ -38,25 +32,27 @@ use Exception;
  * @alias src/ComplexArray.class.php
  */
 class ComplexArray {
-    /**
-     * @var array
-     */
-    private $array = array();
-    /**
-     * @param array $array
-     */
-    public function __construct( array $array = array() ) {
-        $this->array = $array;
-    }
-    /**
-     * Return the array with escaped characters.
-     *
-     * @return array
-     * @throws Exception
-     */
-    public function getArray() {
-        return $this->array;
-    }
+	/**
+	 * @var array
+	 */
+	private $array = [];
+
+	/**
+	 * @param array $array
+	 */
+	public function __construct( array $array = [] ) {
+		$this->array = $array;
+	}
+
+	/**
+	 * Return the array with escaped characters.
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+	public function getArray() {
+		return $this->array;
+	}
 }
 
 /**
@@ -66,278 +62,304 @@ class ComplexArray {
  * @extends ResultPrinter
  */
 class ComplexArrayPrinter extends ResultPrinter {
-    /**
-     * @var string
-     */
-    private $name = '';
+	/**
+	 * @var string
+	 */
+	private $name = '';
 
-    /**
-     * @var string
-     */
-    private $delimiter = ',';
+	/**
+	 * @var string
+	 */
+	private $delimiter = ',';
 
-    /**
-     * @var bool
-     */
-    private $detailed = false;
+	/**
+	 * @var bool
+	 */
+	private $detailed = false;
 
-    /**
-     * @var array
-     */
-    private $r = [];
-    private $v = [];
-    private $res = [];
-    private $return = [];
+	/**
+	 * @var array
+	 */
+	private $r = [];
+	private $v = [];
+	private $res = [];
+	private $return = [];
 
-    /**
-     * Define the name of the format.
-     *
-     * @return string
-     */
-    public function getName() {
-        return 'complexarray';
-    }
+	/**
+	 * Define the name of the format.
+	 *
+	 * @return string
+	 */
+	public function getName() {
+		return "ComplexArray";
+	}
 
-    /**
-     * @param array $definitions
-     * @return array
-     */
-    public function getParamDefinitions( array $definitions ) {
-        $definitions = parent::getParamDefinitions( $definitions );
+	/**
+	 * @param array $definitions
+	 * @return array
+	 */
+	public function getParamDefinitions( array $definitions ) {
+		$definitions = parent::getParamDefinitions( $definitions );
 
-        $definitions[] = [
-            'name' => 'name',
-            'message' => 'ca-smw-paramdesc-name',
-            'default' => ''
-        ];
+		$definitions[] = [
+			'name' => 'name',
+			'message' => 'ca-smw-paramdesc-name',
+			'default' => ''
+		];
 
-        $definitions[] = [
-            'name' => 'detailed',
-            'message' => 'ca-smw-paramdesc-detailed',
-            'default' => 'false'
-        ];
+		$definitions[] = [
+			'name' => 'detailed',
+			'message' => 'ca-smw-paramdesc-detailed',
+			'default' => 'false'
+		];
 
-        $definitions[] = [
-            'name' => 'valuesep',
-            'message' => 'ca-smw-paramdesc-valuesep',
-            'default' => ','
-        ];
+		$definitions[] = [
+			'name' => 'valuesep',
+			'message' => 'ca-smw-paramdesc-valuesep',
+			'default' => ','
+		];
 
-        return $definitions;
-    }
+		return $definitions;
+	}
 
-    /**
-     * @param \SMWQueryResult $queryResult
-     * @param $outputMode
-     * @return bool|string
-     */
-    protected function getResultText( \SMWQueryResult $queryResult, $outputMode ) {
-        return $this->buildContents( $queryResult );
-    }
+	/**
+	 * Creates an empty array with the specified name before the result is passed to getResultText().
+	 *
+	 * @inheritDoc
+	 */
+	protected function handleParameters( array $params, $outputMode ) {
+		$name = $params['name'];
 
-    /**
-     * @param \SMWQueryResult $queryResult
-     * @return bool|string
-     */
-    private function buildContents( \SMWQueryResult $queryResult ) {
-        global $wfDefinedArraysGlobal;
+		global $wfDefinedArraysGlobal;
+		$wfDefinedArraysGlobal[ $name ] = new \ComplexArray( [] );
+	}
 
-        $this->name = $this->params[ 'name' ];
-        $this->delimiter = $this->params[ 'valuesep' ];
-        $this->detailed = filter_var( $this->params[ 'detailed' ], FILTER_VALIDATE_BOOLEAN );
+	/**
+	 * @param \SMWQueryResult $queryResult
+	 * @param $outputMode
+	 * @return bool|string
+	 */
+	protected function getResultText( \SMWQueryResult $queryResult, $outputMode ) {
+		return $this->buildContents( $queryResult );
+	}
 
-        if ( !$this->name ) {
-            $json = json_encode( $this->buildResultArray( $queryResult ) );
+	/**
+	 * @param \SMWQueryResult $queryResult
+	 * @return bool|string
+	 */
+	private function buildContents( \SMWQueryResult $queryResult ) {
+		global $wfDefinedArraysGlobal;
 
-            $json = preg_replace( "/(?!\B\"[^\"]*){(?![^\"]*\"\B)/i", "((", $json );
-            $json = preg_replace( "/(?!\B\"[^\"]*)}(?![^\"]*\"\B)/i", "))", $json );
+		$this->name = $this->params[ 'name' ];
+		$this->delimiter = $this->params[ 'valuesep' ];
+		$this->detailed = filter_var( $this->params[ 'detailed' ], FILTER_VALIDATE_BOOLEAN );
 
-            return $json;
-        }
+		if ( !$this->name ) {
+			$json = json_encode( $this->buildResultArray( $queryResult ) );
 
-        $result = $this->buildResultArray( $queryResult );
+			$json = preg_replace( "/(?!\B\"[^\"]*){(?![^\"]*\"\B)/i", "((", $json );
+			$json = preg_replace( "/(?!\B\"[^\"]*)}(?![^\"]*\"\B)/i", "))", $json );
 
-        $wfDefinedArraysGlobal[ $this->name ] = new \ComplexArray( $result );
+			return $json;
+		}
 
-        return null;
-    }
+		$result = $this->buildResultArray( $queryResult );
 
-    /**
-     * @param \SMWQueryResult $res
-     * @return array
-     */
-    private function buildResultArray( \SMWQueryResult $res ) {
-        $this->res = array_merge( $res->serializeToArray() );
+		$wfDefinedArraysGlobal[ $this->name ] = new \ComplexArray( $result );
 
-        foreach ( $this->res['results'] as $result ) {
-            $this->r = [];
-            $this->formatResult( $result );
-        }
+		return null;
+	}
 
-        return $this->return;
-    }
+	/**
+	 * @param \SMWQueryResult $res
+	 * @return array
+	 */
+	private function buildResultArray( \SMWQueryResult $res ) {
+		$this->res = array_merge( $res->serializeToArray() );
 
-    private function formatResult( $result ) {
-        foreach ( $result["printouts"] as $key => $printout ) {
-            $this->formatPrintout( $key, $printout );
-        }
+		foreach ( $this->res['results'] as $result ) {
+			$this->r = [];
+			$this->formatResult( $result );
+		}
 
-        if ( isset( $result[ 'fulltext' ] ) ) $this->r[ 'catitle' ] = $result[ 'fulltext' ];
-        if ( isset( $result[ 'fullurl' ] ) ) $this->r[ 'cafullurl' ] = $result[ 'fullurl' ];
-        if ( isset( $result[ 'namespace' ] ) ) $this->r[ 'canamespace' ] = $result[ 'namespace' ];
-        if ( isset( $result[ 'exists' ] ) ) $this->r[ 'caexists' ] = $result[ 'exists' ];
-        if ( isset( $result[ 'displaytitle' ] ) ) $this->r[ 'cadisplaytitle' ] = $result[ 'displaytitle' ];
+		return $this->return;
+	}
 
-        array_push( $this->return, $this->r );
-    }
+	private function formatResult( $result ) {
+		foreach ( $result["printouts"] as $key => $printout ) {
+			$this->formatPrintout( $key, $printout );
+		}
 
-    /**
-     * @param $key
-     * @param $printout
-     */
-    private function formatPrintout( $key, $printout ) {
-        $this->v = [];
+		if ( isset( $result[ 'fulltext' ] ) ) {
+		    $this->r[ 'catitle' ] = $result[ 'fulltext' ];
+		}
 
-        $prop_type = $this->fetchPropType( $key );
-        foreach ( $printout as $property ) {
-            $this->formatProperty( $prop_type, $property );
-        }
+		if ( isset( $result[ 'fullurl' ] ) ) {
+		    $this->r[ 'cafullurl' ] = $result[ 'fullurl' ];
+		}
 
-        $this->addPrintout( $key );
-    }
+		if ( isset( $result[ 'namespace' ] ) ) {
+		    $this->r[ 'canamespace' ] = $result[ 'namespace' ];
+		}
 
-    /**
-     * @param $key
-     */
-    private function addPrintout( $key ) {
-        if ( !empty( $this->v ) ) {
-            if ( $this->isOneDimensional() ) {
-                $this->r[$key] = implode( $this->delimiter, $this->v );
-            } else {
-                if ( count( $this->v ) === 1 ) {
-                    $this->r[$key] = $this->v[0];
-                } else {
-                    $this->r[$key] = $this->v;
-                }
-            }
-        }
-    }
+		if ( isset( $result[ 'exists' ] ) ) {
+		    $this->r[ 'caexists' ] = $result[ 'exists' ];
+		}
 
-    /**
-     * @return bool
-     */
-    private function isOneDimensional() {
-        foreach ( $this->v as $value ) {
-            if ( is_array( $value ) ) {
-                return false;
-            }
-        }
+		if ( isset( $result[ 'displaytitle' ] ) ) {
+		    $this->r[ 'cadisplaytitle' ] = $result[ 'displaytitle' ];
+		}
 
-        return true;
-    }
+		array_push( $this->return, $this->r );
+	}
 
-    /**
-     * @param $prop_type
-     * @param $property
-     */
-    private function formatProperty( $prop_type, $property ) {
-        switch ( $prop_type ) {
-            case "_wpg":
-                array_push( $this->v, $this->formatPropertyOfType_wpg( $property ) );
-                break;
-            case "_dat":
-                array_push( $this->v, $this->formatPropertyOfType_dat( $property ) );
-                break;
-            case "_ema":
-                array_push( $this->v, $this->formatPropertyOfType_ema( $property ) );
-                break;
-            case "_boo":
-                array_push( $this->v, $this->formatPropertyOfType_boo( $property ) );
-                break;
-            default:
-                array_push( $this->v, $this->formatPropertyOfType_txt( $property ) );
-                break;
-        }
-    }
+	/**
+	 * @param $key
+	 * @param $printout
+	 */
+	private function formatPrintout( $key, $printout ) {
+		$this->v = [];
 
-    /**
-     * Format property values of type _wpg (page).
-     *
-     * @param $property
-     * @return string|array
-     */
-    private function formatPropertyOfType_wpg( $property ) {
-        if ( $this->detailed === true && isset ( $property['fulltext'] ) ) {
-            return $property['fulltext'];
-        }
+		$prop_type = $this->fetchPropType( $key );
+		foreach ( $printout as $property ) {
+			$this->formatProperty( $prop_type, $property );
+		}
 
-        return $property;
-    }
+		$this->addPrintout( $key );
+	}
 
-    /**
-     * Format property values of type _dat (date).
-     *
-     * @param $property
-     * @return string
-     */
-    private function formatPropertyOfType_dat( $property ) {
-        $unix_timestamp = $property["timestamp"];
+	/**
+	 * @param $key
+	 */
+	private function addPrintout( $key ) {
+		if ( !empty( $this->v ) ) {
+			if ( $this->isOneDimensional() ) {
+				$this->r[$key] = implode( $this->delimiter, $this->v );
+			} else {
+				if ( count( $this->v ) === 1 ) {
+					$this->r[$key] = $this->v[0];
+				} else {
+					$this->r[$key] = $this->v;
+				}
+			}
+		}
+	}
 
-        // Return ISO 8601 timestamp
-        return date( 'c', $unix_timestamp );
-    }
+	/**
+	 * @return bool
+	 */
+	private function isOneDimensional() {
+		foreach ( $this->v as $value ) {
+			if ( is_array( $value ) ) {
+				return false;
+			}
+		}
 
-    /**
-     * Format property values of type _ema (email).
-     *
-     * @param $property
-     * @return string
-     */
-    private function formatPropertyOfType_ema( $property ) {
-        return str_replace( "mailto:", "", $property );
-    }
+		return true;
+	}
 
-    /**
-     * Format property values of type _boo (boolean).
-     *
-     * @param $property
-     * @return string
-     */
-    private function formatPropertyOfType_boo( $property ) {
-        switch ( $property ) {
-            case 't':
-                return '1';
-            case 'f':
-                return '0';
-        }
+	/**
+	 * @param $prop_type
+	 * @param $property
+	 */
+	private function formatProperty( $prop_type, $property ) {
+		switch ( $prop_type ) {
+			case "_wpg":
+				array_push( $this->v, $this->formatPropertyOfType_wpg( $property ) );
+				break;
+			case "_dat":
+				array_push( $this->v, $this->formatPropertyOfType_dat( $property ) );
+				break;
+			case "_ema":
+				array_push( $this->v, $this->formatPropertyOfType_ema( $property ) );
+				break;
+			case "_boo":
+				array_push( $this->v, $this->formatPropertyOfType_boo( $property ) );
+				break;
+			default:
+				array_push( $this->v, $this->formatPropertyOfType_txt( $property ) );
+				break;
+		}
+	}
 
-        return $property;
-    }
+	/**
+	 * Format property values of type _wpg (page).
+	 *
+	 * @param $property
+	 * @return string|array
+	 */
+	private function formatPropertyOfType_wpg( $property ) {
+		if ( $this->detailed === true && isset( $property['fulltext'] ) ) {
+			return $property['fulltext'];
+		}
 
-    /**
-     * This function is not really necessary, it is just here for proper semantics.
-     *
-     * @param $property
-     * @return string
-     */
-    private function formatPropertyOfType_txt( $property ) {
-        return $property;
-    }
+		return $property;
+	}
 
-    /**
-     * @param $key
-     * @return string
-     */
-    private function fetchPropType( $key ) {
-        $print_requests = $this->res["printrequests"];
+	/**
+	 * Format property values of type _dat (date).
+	 *
+	 * @param $property
+	 * @return string
+	 */
+	private function formatPropertyOfType_dat( $property ) {
+		$unix_timestamp = $property["timestamp"];
 
-        foreach ( $print_requests as $print_request ) {
-            if ( $print_request["label"] === $key ) {
-                return $print_request["typeid"];
-            }
-        }
+		// Return ISO 8601 timestamp
+		return date( 'c', $unix_timestamp );
+	}
 
-        // When the property isn't found (should never happen) assume _txt.
-        return "_txt";
-    }
+	/**
+	 * Format property values of type _ema (email).
+	 *
+	 * @param $property
+	 * @return string
+	 */
+	private function formatPropertyOfType_ema( $property ) {
+		return str_replace( "mailto:", "", $property );
+	}
+
+	/**
+	 * Format property values of type _boo (boolean).
+	 *
+	 * @param $property
+	 * @return string
+	 */
+	private function formatPropertyOfType_boo( $property ) {
+		switch ( $property ) {
+			case 't':
+				return '1';
+			case 'f':
+				return '0';
+		}
+
+		return $property;
+	}
+
+	/**
+	 * This function is not really necessary, it is just here for proper semantics.
+	 *
+	 * @param $property
+	 * @return string
+	 */
+	private function formatPropertyOfType_txt( $property ) {
+		return $property;
+	}
+
+	/**
+	 * @param $key
+	 * @return string
+	 */
+	private function fetchPropType( $key ) {
+		$print_requests = $this->res["printrequests"];
+
+		foreach ( $print_requests as $print_request ) {
+			if ( $print_request["label"] === $key ) {
+				return $print_request["typeid"];
+			}
+		}
+
+		// When the property isn't found (should never happen) assume _txt.
+		return "_txt";
+	}
 }

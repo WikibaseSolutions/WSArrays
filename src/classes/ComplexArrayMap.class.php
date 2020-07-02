@@ -27,212 +27,212 @@
  * @extends WSArrays
  */
 class ComplexArrayMap extends ResultPrinter {
-    public function getName() {
-        return 'complexarraymap';
-    }
+	public function getName() {
+		return 'complexarraymap';
+	}
 
-    public function getAliases() {
-        return [
-            'camap'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'camap'
+		];
+	}
 
-    public function getType() {
-        return 'sfh';
-    }
+	public function getType() {
+		return 'sfh';
+	}
 
-    /**
-     * Buffer containing items to be returned.
-     *
-     * @var string
-     */
-    private static $buffer = '';
+	/**
+	 * Buffer containing items to be returned.
+	 *
+	 * @var string
+	 */
+	private static $buffer = '';
 
-    /**
-     * Variable containing the name of the array that needs to be mapped.
-     *
-     * @var string
-     */
-    private static $array = '';
+	/**
+	 * Variable containing the name of the array that needs to be mapped.
+	 *
+	 * @var string
+	 */
+	private static $array = '';
 
-    /**
-     * Dynamic variable containing the key currently being worked on.
-     *
-     * @var string
-     */
-    private static $array_key = '';
+	/**
+	 * Dynamic variable containing the key currently being worked on.
+	 *
+	 * @var string
+	 */
+	private static $array_key = '';
 
-    /**
-     * @var bool
-     */
-    private static $hide = false;
+	/**
+	 * @var bool
+	 */
+	private static $hide = false;
 
-    /**
-     * @var string
-     */
-    private static $sep = "";
+	/**
+	 * @var string
+	 */
+	private static $sep = "";
 
-    /**
-     * Define parameters and initialize parser. This parser is hooked with Parser::SFH_OBJECT_ARGS.
-     *
-     * @param Parser $parser
-     * @param string $frame
-     * @param string $args
-     * @return array|null
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser, $frame, $args ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define parameters and initialize parser. This parser is hooked with Parser::SFH_OBJECT_ARGS.
+	 *
+	 * @param Parser $parser
+	 * @param string $frame
+	 * @param string $args
+	 * @return array|null
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser, $frame, $args ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        // Name
-        if ( !isset( $args[0] ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
-        }
+		// Name
+		if ( !isset( $args[0] ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
+		}
 
-        // Map key
-        if ( !isset( $args[1] ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Map key' ) );
-        }
+		// Map key
+		if ( !isset( $args[1] ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Map key' ) );
+		}
 
-        // Map
-        if ( !isset( $args[2] ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Map' ) );
-        }
+		// Map
+		if ( !isset( $args[2] ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Map' ) );
+		}
 
-        // Hide
-        if ( isset( $args[4] ) ) {
-            ComplexArrayMap::$hide = !filter_var(GlobalFunctions::getValue( $args[4], $frame ), FILTER_VALIDATE_BOOLEAN);
-        }
+		// Hide
+		if ( isset( $args[4] ) ) {
+			self::$hide = !filter_var( GlobalFunctions::getValue( $args[4], $frame ), FILTER_VALIDATE_BOOLEAN );
+		}
 
-        if ( isset( $args[3] ) ) {
-            $sep = GlobalFunctions::getValue( $args[3], $frame );
+		if ( isset( $args[3] ) ) {
+			$sep = GlobalFunctions::getValue( $args[3], $frame );
 
-            if($sep === '\n') {
-                $sep = "\r\n";
-            }
+			if ( $sep === '\n' ) {
+				$sep = "\r\n";
+			}
 
-            ComplexArrayMap::$sep = $sep;
-        }
+			self::$sep = $sep;
+		}
 
-        $name = GlobalFunctions::getValue( @$args[0], $frame );
-        $map_key = GlobalFunctions::getValue( @$args[1], $frame );
-        $map = GlobalFunctions::getValue( @$args[2], $frame, $parser, 'NO_IGNORE,NO_ARGS,NO_TAGS,NO_TEMPLATES' );
+		$name = GlobalFunctions::getValue( @$args[0], $frame );
+		$map_key = GlobalFunctions::getValue( @$args[1], $frame );
+		$map = GlobalFunctions::getValue( @$args[2], $frame, $parser, 'NO_IGNORE,NO_TAGS,NO_TEMPLATES' );
 
-        return array( ComplexArrayMap::arrayMap( $name, $map_key, $map ), 'noparse' => false );
-    }
+		return [ self::arrayMap( $name, $map_key, $map ), 'noparse' => false ];
+	}
 
-    /**
-     * @param $array_name
-     * @param $map_key
-     * @param $map
-     * @return array|string
-     *
-     * @throws Exception
-     */
-    private static function arrayMap( $array_name, $map_key, $map ) {
-        ComplexArrayMap::$buffer = '';
+	/**
+	 * @param $array_name
+	 * @param $map_key
+	 * @param $map
+	 * @return array|string
+	 *
+	 * @throws Exception
+	 */
+	private static function arrayMap( $array_name, $map_key, $map ) {
+		self::$buffer = '';
 
-        $base_array = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
-        $array = GlobalFunctions::getArrayFromArrayName( $array_name );
+		$base_array = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
+		$array = GlobalFunctions::getArrayFromArrayName( $array_name );
 
-        if ( !isset( WSArrays::$arrays[$base_array] ) || !$array ) {
-            return null;
-        }
+		if ( !isset( WSArrays::$arrays[$base_array] ) || !$array ) {
+			return null;
+		}
 
-        return ComplexArrayMap::iterate( $array, $map_key, $map, $array_name );
-    }
+		return self::iterate( $array, $map_key, $map, $array_name );
+	}
 
-    /**
-     * @param $array
-     * @param $map_key
-     * @param $map
-     * @param $array_name
-     * @return string
-     *
-     * @throws Exception
-     */
-    private static function iterate( $array, $map_key, $map, $array_name ) {
-        ComplexArrayMap::$array = $array_name;
+	/**
+	 * @param $array
+	 * @param $map_key
+	 * @param $map
+	 * @param $array_name
+	 * @return string
+	 *
+	 * @throws Exception
+	 */
+	private static function iterate( $array, $map_key, $map, $array_name ) {
+		self::$array = $array_name;
 
-        $buffer = [];
-        foreach ( $array as $array_key => $subarray ) {
-            ComplexArrayMap::$array_key = $array_key;
+		$buffer = [];
+		foreach ( $array as $array_key => $subarray ) {
+			self::$array_key = $array_key;
 
-            $type = gettype( $subarray );
+			$type = gettype( $subarray );
 
-            if ( $type !== "array" ) {
-                switch( $type ) {
-                    case 'string':
-                    case 'integer':
-                    case 'float':
-                        $buffer[] = str_replace( $map_key, $subarray, $map );
-                }
-            } else {
-                $preg_quote = preg_quote( $map_key );
+			if ( $type !== "array" ) {
+				switch ( $type ) {
+					case 'string':
+					case 'integer':
+					case 'float':
+						$buffer[] = str_replace( $map_key, $subarray, $map );
+				}
+			} else {
+				$preg_quote = preg_quote( $map_key );
 
-                $buffer[] = preg_replace_callback( "/($preg_quote(\[[^\[\]]+\])+)/", 'ComplexArrayMap::replaceCallback', $map );
-            }
-        }
+				$buffer[] = preg_replace_callback( "/($preg_quote(\[[^\[\]]+\])+)/", 'ComplexArrayMap::replaceCallback', $map );
+			}
+		}
 
-        $buffer = ComplexArrayMap::$sep ? implode(ComplexArrayMap::$sep, $buffer) : implode($buffer);
+		$buffer = self::$sep ? implode( self::$sep, $buffer ) : implode( $buffer );
 
-        return $buffer;
-    }
+		return $buffer;
+	}
 
-    /**
-     * @param $matches
-     * @return array|bool
-     *
-     * @throws Exception
-     */
-    public static function replaceCallback( $matches ) {
-        $value = ComplexArrayMap::getValueFromMatch( $matches[0] );
+	/**
+	 * @param $matches
+	 * @return array|bool
+	 *
+	 * @throws Exception
+	 */
+	public static function replaceCallback( $matches ) {
+		$value = self::getValueFromMatch( $matches[0] );
 
-        switch( gettype( $value ) ) {
-            case 'integer':
-            case 'float':
-            case 'string':
-                return $value;
-                break;
-            default:
-                if( !ComplexArrayMap::$hide ) {
-                    return $matches[ 0 ];
-                }
+		switch ( gettype( $value ) ) {
+			case 'integer':
+			case 'float':
+			case 'string':
+				return $value;
+				break;
+			default:
+				if ( !self::$hide ) {
+					return $matches[ 0 ];
+				}
 
-                break;
-        }
+				break;
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * @param $match
-     * @return array|bool
-     *
-     * @throws Exception
-     */
-    private static function getValueFromMatch( $match ) {
-        $pointer = ComplexArrayMap::getPointerFromArrayName( $match );
-        $array_name = ComplexArrayMap::getArrayNameFromPointer( $pointer );
-        $value = GlobalFunctions::getArrayFromArrayName( $array_name );
+	/**
+	 * @param $match
+	 * @return array|bool
+	 *
+	 * @throws Exception
+	 */
+	private static function getValueFromMatch( $match ) {
+		$pointer = self::getPointerFromArrayName( $match );
+		$array_name = self::getArrayNameFromPointer( $pointer );
+		$value = GlobalFunctions::getArrayFromArrayName( $array_name );
 
-        return $value;
-    }
+		return $value;
+	}
 
-    /**
-     * @param $pointer
-     * @return string
-     */
-    private static function getArrayNameFromPointer( $pointer ) {
-        return ComplexArrayMap::$array . '[' . ComplexArrayMap::$array_key . ']' . $pointer;
-    }
+	/**
+	 * @param $pointer
+	 * @return string
+	 */
+	private static function getArrayNameFromPointer( $pointer ) {
+		return self::$array . '[' . self::$array_key . ']' . $pointer;
+	}
 
-    /**
-     * @param $array_key
-     * @return null|string|string[]
-     */
-    private static function getPointerFromArrayName( $array_key ) {
-        return preg_replace( "/[^\[]*/", "", $array_key, 1 );
-    }
+	/**
+	 * @param $array_key
+	 * @return null|string|string[]
+	 */
+	private static function getPointerFromArrayName( $array_key ) {
+		return preg_replace( "/[^\[]*/", "", $array_key, 1 );
+	}
 }

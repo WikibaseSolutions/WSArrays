@@ -27,136 +27,136 @@
  * @extends WSArrays
  */
 class ComplexArrayPushValue extends ResultPrinter {
-    public function getName() {
-        return 'complexarraypushvalue';
-    }
+	public function getName() {
+		return 'complexarraypushvalue';
+	}
 
-    public function getAliases() {
-        return [
-            'complexarraypush',
-            'capush'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'complexarraypush',
+			'capush'
+		];
+	}
 
-    public function getType() {
-        return 'sfh';
-    }
+	public function getType() {
+		return 'sfh';
+	}
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @param string $frame
-     * @param string $args
-     * @return array|bool|null
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser, $frame, $args ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @param string $frame
+	 * @param string $args
+	 * @return array|bool|null
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser, $frame, $args ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        if ( !isset( $args[0] ) || empty( $args[0] ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
-        }
+		if ( !isset( $args[0] ) || empty( $args[0] ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
+		}
 
-        if ( !isset( $args[1] ) || empty( $args[1] ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Value' ) );
-        }
+		if ( !isset( $args[1] ) || empty( $args[1] ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Value' ) );
+		}
 
-        $noparse = GlobalFunctions::getValue( @$args[2], $frame );
-        $array_name = GlobalFunctions::getValue( @$args[0], $frame );
-        $value = GlobalFunctions::getValue( @$args[1],  $frame, $parser, $noparse );
+		$noparse = GlobalFunctions::getValue( @$args[2], $frame );
+		$array_name = GlobalFunctions::getValue( @$args[0], $frame );
+		$value = GlobalFunctions::getValue( @$args[1],  $frame, $parser, $noparse );
 
-        return ComplexArrayPushValue::arrayPushValue( $array_name, $value );
-    }
+		return self::arrayPushValue( $array_name, $value );
+	}
 
-    /**
-     * @param $array_name
-     * @param $markup_value
-     * @return array|bool|null
-     *
-     * @throws Exception
-     */
-    private static function arrayPushValue($array_name, $markup_value ) {
-        $base_array = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
+	/**
+	 * @param $array_name
+	 * @param $markup_value
+	 * @return array|bool|null
+	 *
+	 * @throws Exception
+	 */
+	private static function arrayPushValue( $array_name, $markup_value ) {
+		$base_array = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
 
-        // If the array doesn't exist yet, create it
-        if ( !GlobalFunctions::arrayExists( $base_array ) ) {
-            if ( !GlobalFunctions::isValidArrayName( $base_array ) ) {
-                return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
-            }
+		// If the array doesn't exist yet, create it
+		if ( !GlobalFunctions::arrayExists( $base_array ) ) {
+			if ( !GlobalFunctions::isValidArrayName( $base_array ) ) {
+				return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
+			}
 
-            WSArrays::$arrays[ $base_array ] = new ComplexArray();
-        }
+			WSArrays::$arrays[ $base_array ] = new ComplexArray();
+		}
 
-        $matches = array();
-        preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches );
+		$matches = [];
+		preg_match_all( "/(?<=\[).+?(?=\])/", $array_name, $matches );
 
-        $array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[$base_array] );
-        $value = GlobalFunctions::markupToArray( $markup_value );
+		$array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[$base_array] );
+		$value = GlobalFunctions::markupToArray( $markup_value );
 
-        if(count($value) === 1) {
-            $value = $value[0];
-        }
+		if ( count( $value ) === 1 ) {
+			$value = $value[0];
+		}
 
-        if ( !strpos( $array_name, "[" ) ) {
-            ComplexArrayPushValue::replace( $value, $array, $base_array );
-        } else {
-            $result = ComplexArrayPushValue::add( $matches[0], $array, $value );
+		if ( !strpos( $array_name, "[" ) ) {
+			self::replace( $value, $array, $base_array );
+		} else {
+			$result = self::add( $matches[0], $array, $value );
 
-            if ( $result !== true ) {
-                return $result;
-            }
+			if ( $result !== true ) {
+				return $result;
+			}
 
-            WSArrays::$arrays[$base_array] = new ComplexArray( $array );
-        }
+			WSArrays::$arrays[$base_array] = new ComplexArray( $array );
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    private static function replace( $value, $array, $base_array ) {
-        array_push( $array, $value );
+	private static function replace( $value, $array, $base_array ) {
+		array_push( $array, $value );
 
-        WSArrays::$arrays[ $base_array ] = new ComplexArray( $array );
-    }
+		WSArrays::$arrays[ $base_array ] = new ComplexArray( $array );
+	}
 
-    /**
-     * Push value to location defined in $path.
-     *
-     * @param $path
-     * @param array $array
-     * @param null $value
-     * @return array|bool
-     */
-    private static function add( $path, &$array = array(), $value = null ) {
-        $temp =& $array;
-        $depth = count( $path );
-        $current_depth = 0;
+	/**
+	 * Push value to location defined in $path.
+	 *
+	 * @param $path
+	 * @param array &$array
+	 * @param null $value
+	 * @return array|bool
+	 */
+	private static function add( $path, &$array = [], $value = null ) {
+		$temp =& $array;
+		$depth = count( $path );
+		$current_depth = 0;
 
-        foreach ( $path as $key ) {
-            $current_depth++;
+		foreach ( $path as $key ) {
+			$current_depth++;
 
-            if ( !array_key_exists( $key, (array)$temp ) ) {
-                $temp[$key] = array();
-            }
+			if ( !array_key_exists( $key, (array)$temp ) ) {
+				$temp[$key] = [];
+			}
 
-            if( $current_depth !== $depth ) {
-                if ( !is_array( $temp[$key] ) ) {
-                    $temp[$key] = [ $temp[$key] ];
-                }
+			if ( $current_depth !== $depth ) {
+				if ( !is_array( $temp[$key] ) ) {
+					$temp[$key] = [ $temp[$key] ];
+				}
 
-                $temp =& $temp[$key];
-            } else {
-                if ( !is_array( $temp[$key] ) ) {
-                    $temp[$key] = [$temp[$key]];
-                }
+				$temp =& $temp[$key];
+			} else {
+				if ( !is_array( $temp[$key] ) ) {
+					$temp[$key] = [ $temp[$key] ];
+				}
 
-                array_push( $temp[$key], $value );
+				array_push( $temp[$key], $value );
 
-                break;
-            }
-        }
+				break;
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 }

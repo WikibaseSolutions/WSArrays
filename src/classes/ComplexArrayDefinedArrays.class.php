@@ -27,47 +27,47 @@
  * @extends WSArrays
  */
 class ComplexArrayDefinedArrays extends ResultPrinter {
-    public function getName() {
-        return 'complexarraydefinedarrays';
-    }
+	public function getName() {
+		return 'complexarraydefinedarrays';
+	}
 
-    public function getAliases() {
-        return [
-            'cadefinedarrays',
-            'cadefined',
-            'cad'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'cadefinedarrays',
+			'cadefined',
+			'cad'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @param string $array_name
-     *
-     * @return array|null
-     */
-    public static function getResult(Parser $parser, $array_name = null ) {
-        if ( empty( $array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'New array' ) );
-        }
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @param string|null $array_name
+	 *
+	 * @return array|null
+	 */
+	public static function getResult( Parser $parser, $array_name = null ) {
+		if ( empty( $array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'New array' ) );
+		}
 
-        if ( !GlobalFunctions::isValidArrayName( $array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
-        }
+		if ( !GlobalFunctions::isValidArrayName( $array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
+		}
 
-        ComplexArrayDefinedArrays::arrayDefinedArrays( $array_name );
+		self::arrayDefinedArrays( $array_name );
 
-        return null;
-    }
+		return null;
+	}
 
-    private static function arrayDefinedArrays( $array_name ) {
-        $array = array_keys( WSArrays::$arrays );
+	private static function arrayDefinedArrays( $array_name ) {
+		$array = array_keys( WSArrays::$arrays );
 
-        WSArrays::$arrays[ $array_name ] = new ComplexArray( $array );
-    }
+		WSArrays::$arrays[ $array_name ] = new ComplexArray( $array );
+	}
 }

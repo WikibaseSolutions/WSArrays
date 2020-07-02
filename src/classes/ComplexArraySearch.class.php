@@ -27,87 +27,87 @@
  * @extends WSArrays
  */
 class ComplexArraySearch extends ResultPrinter {
-    public function getName() {
-        return 'complexarraysearch';
-    }
+	public function getName() {
+		return 'complexarraysearch';
+	}
 
-    public function getAliases() {
-        return [
-          'casearch'
-        ];
-    }
+	public function getAliases() {
+		return [
+		  'casearch'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * @var string
-     */
-    private static $array_name = '';
+	/**
+	 * @var string
+	 */
+	private static $array_name = '';
 
-    /**
-     * @param Parser $parser
-     * @param string $array_name
-     * @param string $value
-     * @return array
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser, $array_name = '', $value = '' ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * @param Parser $parser
+	 * @param string $array_name
+	 * @param string $value
+	 * @return array
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser, $array_name = '', $value = '' ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
-        }
+		if ( empty( $array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
+		}
 
-        if ( empty( $value ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Value' ) );
-        }
+		if ( empty( $value ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Value' ) );
+		}
 
-        return ComplexArraySearch::arraySearch( $array_name, $value );
-    }
+		return self::arraySearch( $array_name, $value );
+	}
 
-    /**
-     * @param string $array_name
-     * @param $value
-     * @return array|int
-     *
-     * @throws Exception
-     */
-    private static function arraySearch( $array_name, $value ) {
-        if ( !isset( WSArrays::$arrays[ $array_name ] ) ) {
-            return null;
-        }
+	/**
+	 * @param string $array_name
+	 * @param $value
+	 * @return array|int
+	 *
+	 * @throws Exception
+	 */
+	private static function arraySearch( $array_name, $value ) {
+		if ( !isset( WSArrays::$arrays[ $array_name ] ) ) {
+			return null;
+		}
 
-        ComplexArraySearch::$array_name = null;
+		self::$array_name = null;
 
-        $array = GlobalFunctions::getArrayFromArrayName( $array_name );
-        ComplexArraySearch::findValue( $array, $value, $array_name );
+		$array = GlobalFunctions::getArrayFromArrayName( $array_name );
+		self::findValue( $array, $value, $array_name );
 
-        return ComplexArraySearch::$array_name;
-    }
+		return self::$array_name;
+	}
 
-    /**
-     * @param array $array
-     * @param string $value
-     * @param string $array_name
-     */
-    private static function findValue( $array, $value, &$array_name ) {
-        foreach( $array as $current_key => $current_item ) {
-            $array_name .= "[$current_key]";
+	/**
+	 * @param array $array
+	 * @param string $value
+	 * @param string &$array_name
+	 */
+	private static function findValue( $array, $value, &$array_name ) {
+		foreach ( $array as $current_key => $current_item ) {
+			$array_name .= "[$current_key]";
 
-            if( $value === $current_item ) {
-                ComplexArraySearch::$array_name = $array_name;
+			if ( $value === $current_item ) {
+				self::$array_name = $array_name;
 
-                return;
-            } else {
-                if( is_array( $current_item ) ) {
-                    ComplexArraySearch::findValue( $current_item, $value, $array_name );
-                }
+				return;
+			} else {
+				if ( is_array( $current_item ) ) {
+					self::findValue( $current_item, $value, $array_name );
+				}
 
-                $array_name = substr( $array_name, 0, strrpos( $array_name, '[' ) );
-            }
-        }
-    }
+				$array_name = substr( $array_name, 0, strrpos( $array_name, '[' ) );
+			}
+		}
+	}
 }

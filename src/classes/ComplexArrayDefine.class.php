@@ -27,79 +27,79 @@
  * @extends WSArrays
  */
 class ComplexArrayDefine extends ResultPrinter {
-    public function getName() {
-        return 'complexarraydefine';
-    }
+	public function getName() {
+		return 'complexarraydefine';
+	}
 
-    public function getAliases() {
-        return [
-            'cadefine'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'cadefine'
+		];
+	}
 
-    public function getType() {
-        return 'sfh';
-    }
+	public function getType() {
+		return 'sfh';
+	}
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @param string $frame
-     * @param string $args
-     *
-     * @throws Exception
-     *
-     * @return null
-     */
-    public static function getResult( Parser $parser, $frame, $args ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @param string $frame
+	 * @param string $args
+	 *
+	 * @throws Exception
+	 *
+	 * @return null
+	 */
+	public static function getResult( Parser $parser, $frame, $args ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        // Name
-        if ( !isset( $args[0] ) || empty( $args[0] ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
-        }
+		// Name
+		if ( !isset( $args[0] ) || empty( $args[0] ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
+		}
 
-        $array_name = GlobalFunctions::getValue( $args[0], $frame );
+		$array_name = GlobalFunctions::getValue( $args[0], $frame );
 
-        $noparse = GlobalFunctions::getValue( @$args[3], $frame );
-        $array_markup = GlobalFunctions::getValue( @$args[1], $frame, $parser, $noparse );
-        $sep = GlobalFunctions::getValue( @$args[2], $frame );
+		$noparse = GlobalFunctions::getValue( @$args[3], $frame );
+		$array_markup = GlobalFunctions::getValue( @$args[1], $frame, $parser, $noparse );
+		$sep = GlobalFunctions::getValue( @$args[2], $frame );
 
-        if ( !GlobalFunctions::isValidArrayName( $array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
-        }
+		if ( !GlobalFunctions::isValidArrayName( $array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
+		}
 
-        // Define an empty array
-        if ( empty( $array_markup ) ) {
-            WSArrays::$arrays[ $array_name ] = new ComplexArray();
+		// Define an empty array
+		if ( empty( $array_markup ) ) {
+			WSArrays::$arrays[ $array_name ] = new ComplexArray();
 
-            return null;
-        }
+			return null;
+		}
 
-        return ComplexArrayDefine::arrayDefine( $array_name, $array_markup, $sep );
-    }
+		return self::arrayDefine( $array_name, $array_markup, $sep );
+	}
 
-    /**
-     * Define array and store it in WSArrays::$arrays as a SafeComplexArray object.
-     *
-     * @param string $array_name
-     * @param string $array_markup
-     * @param string $separator
-     * @return array|null
-     * @throws Exception
-     */
-    private static function arrayDefine($array_name, $array_markup, $separator = null ) {
-        $array = GlobalFunctions::markupToArray( $array_markup, $separator );
+	/**
+	 * Define array and store it in WSArrays::$arrays as a SafeComplexArray object.
+	 *
+	 * @param string $array_name
+	 * @param string $array_markup
+	 * @param string|null $separator
+	 * @return array|null
+	 * @throws Exception
+	 */
+	private static function arrayDefine( $array_name, $array_markup, $separator = null ) {
+		$array = GlobalFunctions::markupToArray( $array_markup, $separator );
 
-        if ( !$array ) {
-            GlobalFunctions::error( wfMessage('ca-invalid-markup') );
+		if ( !$array ) {
+			GlobalFunctions::error( wfMessage( 'ca-invalid-markup' ) );
 
-            return null;
-        }
+			return null;
+		}
 
-        WSArrays::$arrays[$array_name] = new ComplexArray( (array)$array );
+		WSArrays::$arrays[$array_name] = new ComplexArray( (array)$array );
 
-        return null;
-    }
+		return null;
+	}
 }

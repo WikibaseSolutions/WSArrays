@@ -27,44 +27,44 @@
  * @extends WSArrays
  */
 class ComplexArrayReset extends ResultPrinter {
-    public function getName() {
-        return 'complexarrayreset';
-    }
+	public function getName() {
+		return 'complexarrayreset';
+	}
 
-    public function getAliases() {
-        return [
-            'careset'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'careset'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @param string $array_name
-     */
-    public static function getResult( Parser $parser, $array_name = '' ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @param string $array_name
+	 */
+	public static function getResult( Parser $parser, $array_name = '' ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        ComplexArrayReset::arrayReset( $array_name );
-    }
+		self::arrayReset( $array_name );
+	}
 
-    /**
-     * Reset all or one array.
-     *
-     * @param string $array_name
-     */
-    private static function arrayReset( $array_name = '' ) {
-        if ( empty( $array_name ) ) {
-            WSArrays::$arrays = [];
-        } else {
-            if ( isset( WSArrays::$arrays[$array_name] ) ) {
-                unset( WSArrays::$arrays[$array_name] );
-            }
-        }
-    }
+	/**
+	 * Reset all or one array.
+	 *
+	 * @param string $array_name
+	 */
+	private static function arrayReset( $array_name = '' ) {
+		if ( empty( $array_name ) ) {
+			WSArrays::$arrays = [];
+		} else {
+			if ( isset( WSArrays::$arrays[$array_name] ) ) {
+				unset( WSArrays::$arrays[$array_name] );
+			}
+		}
+	}
 }

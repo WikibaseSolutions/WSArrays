@@ -27,104 +27,104 @@
  * @extends WSArrays
  */
 class ComplexArrayPushArray extends ResultPrinter {
-    public function getName() {
-        return 'complexarraypusharray';
-    }
+	public function getName() {
+		return 'complexarraypusharray';
+	}
 
-    public function getAliases() {
-        return [
-            'capusharray'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'capusharray'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * @var string
-     */
-    private static $new_array = '';
+	/**
+	 * @var string
+	 */
+	private static $new_array = '';
 
-    /**
-     * Define parameters and initialize parser.
-     *
-     * @param Parser $parser
-     * @return array|null
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define parameters and initialize parser.
+	 *
+	 * @param Parser $parser
+	 * @return array|null
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        return ComplexArrayPushArray::arrayPush( func_get_args() );
-    }
+		return self::arrayPush( func_get_args() );
+	}
 
-    /**
-     * @param $args
-     * @return array|null
-     *
-     * @throws Exception
-     */
-    private static function arrayPush( $args ) {
-        ComplexArrayPushArray::parseFunctionArguments( $args );
+	/**
+	 * @param $args
+	 * @return array|null
+	 *
+	 * @throws Exception
+	 */
+	private static function arrayPush( $args ) {
+		self::parseFunctionArguments( $args );
 
-        if ( !GlobalFunctions::isValidArrayName( ComplexArrayPushArray::$new_array ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
-        }
+		if ( !GlobalFunctions::isValidArrayName( self::$new_array ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
+		}
 
-        if( count( $args ) < 2 ) {
-            return GlobalFunctions::error( wfMessage( 'ca-too-little-arrays' ) );
-        }
+		if ( count( $args ) < 2 ) {
+			return GlobalFunctions::error( wfMessage( 'ca-too-little-arrays' ) );
+		}
 
-        $arrays = ComplexArrayPushArray::iterate( $args );
+		$arrays = self::iterate( $args );
 
-        WSArrays::$arrays[ComplexArrayPushArray::$new_array] = new ComplexArray( $arrays );
+		WSArrays::$arrays[self::$new_array] = new ComplexArray( $arrays );
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * @param array $array
-     * @return array|bool
-     *
-     * @throws Exception
-     */
-    private static function iterate( $array ) {
-        $arrays = [];
-        foreach ( $array as $array_name ) {
-            if ( !GlobalFunctions::arrayExists( $array_name ) ) {
-                continue;
-            }
+	/**
+	 * @param array $array
+	 * @return array|bool
+	 *
+	 * @throws Exception
+	 */
+	private static function iterate( $array ) {
+		$arrays = [];
+		foreach ( $array as $array_name ) {
+			if ( !GlobalFunctions::arrayExists( $array_name ) ) {
+				continue;
+			}
 
-            $push_array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array_name ] );
+			$push_array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array_name ] );
 
-            array_push( $arrays, $push_array );
-        }
+			array_push( $arrays, $push_array );
+		}
 
-        return $arrays;
-    }
+		return $arrays;
+	}
 
-    /**
-     * @param $args
-     */
-    private static function parseFunctionArguments( &$args ) {
-        ComplexArrayPushArray::removeFirstItemFromArray( $args );
-        ComplexArrayPushArray::getFirstItemFromArray( $args );
-        ComplexArrayPushArray::removeFirstItemFromArray( $args );
-    }
+	/**
+	 * @param &$args
+	 */
+	private static function parseFunctionArguments( &$args ) {
+		self::removeFirstItemFromArray( $args );
+		self::getFirstItemFromArray( $args );
+		self::removeFirstItemFromArray( $args );
+	}
 
-    /**
-     * @param $array
-     */
-    private static function removeFirstItemFromArray( &$array ) {
-        array_shift( $array );
-    }
+	/**
+	 * @param &$array
+	 */
+	private static function removeFirstItemFromArray( &$array ) {
+		array_shift( $array );
+	}
 
-    /**
-     * @param $array
-     */
-    private static function getFirstItemFromArray( &$array ) {
-        ComplexArrayPushArray::$new_array = reset( $array );
-    }
+	/**
+	 * @param &$array
+	 */
+	private static function getFirstItemFromArray( &$array ) {
+		self::$new_array = reset( $array );
+	}
 }

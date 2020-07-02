@@ -27,88 +27,88 @@
  * @extends WSArrays
  */
 class ComplexArrayUnset extends ResultPrinter {
-    public function getName() {
-        return 'complexarrayunset';
-    }
+	public function getName() {
+		return 'complexarrayunset';
+	}
 
-    public function getAliases() {
-        return [
-            'caunset',
-            'caremove'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'caunset',
+			'caremove'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * Define parameters and initialize parser.
-     *
-     * @param Parser $parser
-     * @param string $array_name
-     * @return array|null|bool
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser, $array_name = '' ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define parameters and initialize parser.
+	 *
+	 * @param Parser $parser
+	 * @param string $array_name
+	 * @return array|null|bool
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser, $array_name = '' ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $array_name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
-        }
+		if ( empty( $array_name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
+		}
 
-        return ComplexArrayUnset::arrayUnset( $array_name );
-    }
+		return self::arrayUnset( $array_name );
+	}
 
-    /**
-     * @param $array_name
-     * @return null|bool|array
-     * @throws Exception
-     */
-    private static function arrayUnset( $array_name ) {
-        $base_array_name = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
+	/**
+	 * @param $array_name
+	 * @return null|bool|array
+	 * @throws Exception
+	 */
+	private static function arrayUnset( $array_name ) {
+		$base_array_name = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
 
-        if ( $base_array_name === $array_name ) {
-            // The user is trying to unset the entire array, which is not supported.
-            return false;
-        }
+		if ( $base_array_name === $array_name ) {
+			// The user is trying to unset the entire array, which is not supported.
+			return false;
+		}
 
-        if ( !GlobalFunctions::arrayExists( $base_array_name ) ) {
-            return false;
-        }
+		if ( !GlobalFunctions::arrayExists( $base_array_name ) ) {
+			return false;
+		}
 
-        $array = GlobalFunctions::getArrayFromArrayName( $base_array_name );
-        $keys  = GlobalFunctions::getKeys( $array_name );
+		$array = GlobalFunctions::getArrayFromArrayName( $base_array_name );
+		$keys  = GlobalFunctions::getKeys( $array_name );
 
-        if ( !$array || !GlobalFunctions::getArrayFromArrayName( $array_name ) ) {
-            return false;
-        }
+		if ( !$array || !GlobalFunctions::getArrayFromArrayName( $array_name ) ) {
+			return false;
+		}
 
-        if ( !$keys ) {
-            return false;
-        }
+		if ( !$keys ) {
+			return false;
+		}
 
-        ComplexArrayUnset::unsetValueFromKeys( $array, $keys );
+		self::unsetValueFromKeys( $array, $keys );
 
-        WSArrays::$arrays[$base_array_name] = new ComplexArray( $array );
+		WSArrays::$arrays[$base_array_name] = new ComplexArray( $array );
 
-        return null;
-    }
+		return null;
+	}
 
-    private static function unsetValueFromKeys( &$array, $keys ) {
-        $depth = count( $keys ) - 1;
+	private static function unsetValueFromKeys( &$array, $keys ) {
+		$depth = count( $keys ) - 1;
 
-        $temp =& $array;
-        for ( $i = 0; $i <= $depth; $i++ ) {
-            if ( $i === $depth ) {
-                // Last key, delete it.
-                unset( $temp[$keys[$i]] );
+		$temp =& $array;
+		for ( $i = 0; $i <= $depth; $i++ ) {
+			if ( $i === $depth ) {
+				// Last key, delete it.
+				unset( $temp[$keys[$i]] );
 
-                return;
-            }
+				return;
+			}
 
-            $temp =& $temp[$keys[$i]];
-        }
-    }
+			$temp =& $temp[$keys[$i]];
+		}
+	}
 }

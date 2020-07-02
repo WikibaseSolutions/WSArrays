@@ -27,54 +27,54 @@
  * @extends WSArrays
  */
 class ComplexArraySibling extends ResultPrinter {
-    public function getName() {
-        return 'complexarraysibling';
-    }
+	public function getName() {
+		return 'complexarraysibling';
+	}
 
-    public function getAliases() {
-        return [
-            'casibling'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'casibling'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @param string $key
-     * @return string|array
-     */
-    public static function getResult(Parser $parser, $key = null, $sibling_key = null ) {
-        if ( empty( $key ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Key' ) );
-        }
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @param string|null $key
+	 * @return string|array
+	 */
+	public static function getResult( Parser $parser, $key = null, $sibling_key = null ) {
+		if ( empty( $key ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Key' ) );
+		}
 
-        if ( empty( $sibling_key ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Sibling key' ) );
-        }
+		if ( empty( $sibling_key ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Sibling key' ) );
+		}
 
-        return ComplexArraySibling::arraySibling( $key, $sibling_key );
-    }
+		return self::arraySibling( $key, $sibling_key );
+	}
 
-    /**
-     * @param string $key
-     * @param string $sibling_key
-     *
-     * @return string
-     */
-    private static function arraySibling( $key, $sibling_key ) {
-        $regex = '/\[[^\[\]]+\]$/m';
-        $parent = preg_replace($regex, '', $key);
+	/**
+	 * @param string $key
+	 * @param string $sibling_key
+	 *
+	 * @return string
+	 */
+	private static function arraySibling( $key, $sibling_key ) {
+		$regex = '/\[[^\[\]]+\]$/m';
+		$parent = preg_replace( $regex, '', $key );
 
-        // Check if this array is a base array
-        if ( $parent === $key ) {
-            return null;
-        }
+		// Check if this array is a base array
+		if ( $parent === $key ) {
+			return null;
+		}
 
-        return $parent . "[$sibling_key]";
-    }
+		return $parent . "[$sibling_key]";
+	}
 }

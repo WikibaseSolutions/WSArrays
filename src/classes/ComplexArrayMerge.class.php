@@ -27,145 +27,145 @@
  * @extends WSArrays
  */
 class ComplexArrayMerge extends ResultPrinter {
-    public function getName() {
-        return 'complexarraymerge';
-    }
+	public function getName() {
+		return 'complexarraymerge';
+	}
 
-    public function getAliases() {
-        return [
-            'camerge'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'camerge'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * @var string
-     */
-    private static $new_array = '';
+	/**
+	 * @var string
+	 */
+	private static $new_array = '';
 
-    /**
-     * @var string
-     */
-    private static $last_element = '';
+	/**
+	 * @var string
+	 */
+	private static $last_element = '';
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @return array|null
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @return array|null
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        return ComplexArrayMerge::arrayMerge( func_get_args() );
-    }
+		return self::arrayMerge( func_get_args() );
+	}
 
-    /**
-     * @param $args
-     * @return array|null
-     * @throws Exception
-     */
-    private static function arrayMerge( $args ) {
-        ComplexArrayMerge::parseFunctionArguments( $args );
+	/**
+	 * @param $args
+	 * @return array|null
+	 * @throws Exception
+	 */
+	private static function arrayMerge( $args ) {
+		self::parseFunctionArguments( $args );
 
-        if ( !GlobalFunctions::isValidArrayName( ComplexArrayMerge::$new_array ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
-        }
+		if ( !GlobalFunctions::isValidArrayName( self::$new_array ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
+		}
 
-        if ( count( $args ) < 2 ) {
-            return GlobalFunctions::error( wfMessage( 'ca-too-little-arrays' ) );
-        }
+		if ( count( $args ) < 2 ) {
+			return GlobalFunctions::error( wfMessage( 'ca-too-little-arrays' ) );
+		}
 
-        $arrays = ComplexArrayMerge::iterate( $args );
+		$arrays = self::iterate( $args );
 
-        if ( ComplexArrayMerge::$last_element === "recursive" ) {
-            $array = call_user_func_array( 'array_merge_recursive', $arrays );
+		if ( self::$last_element === "recursive" ) {
+			$array = call_user_func_array( 'array_merge_recursive', $arrays );
 
-            if ( !is_array( $array ) ) {
-                return null;
-            }
+			if ( !is_array( $array ) ) {
+				return null;
+			}
 
-            WSArrays::$arrays[ ComplexArrayMerge::$new_array ] = new ComplexArray( $array );
-        } else {
-            $array = call_user_func_array( 'array_merge', $arrays );
+			WSArrays::$arrays[ self::$new_array ] = new ComplexArray( $array );
+		} else {
+			$array = call_user_func_array( 'array_merge', $arrays );
 
-            if ( !is_array( $array ) ) {
-                return null;
-            }
+			if ( !is_array( $array ) ) {
+				return null;
+			}
 
-            WSArrays::$arrays[ ComplexArrayMerge::$new_array ] = new ComplexArray( $array );
-        }
+			WSArrays::$arrays[ self::$new_array ] = new ComplexArray( $array );
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * @param $args
-     */
-    private static function parseFunctionArguments( &$args ) {
-        ComplexArrayMerge::removeFirstItemFromArray( $args );
-        ComplexArrayMerge::getFirstItemFromArray( $args );
-        ComplexArrayMerge::removeFirstItemFromArray( $args );
-        ComplexArrayMerge::removeLastItemFromArray( $args );
+	/**
+	 * @param &$args
+	 */
+	private static function parseFunctionArguments( &$args ) {
+		self::removeFirstItemFromArray( $args );
+		self::getFirstItemFromArray( $args );
+		self::removeFirstItemFromArray( $args );
+		self::removeLastItemFromArray( $args );
 
-        // If the last element is not "recursive", add it back
-        if ( ComplexArrayMerge::$last_element !== "recursive" ) {
-            ComplexArrayMerge::addItemToEndOfArray( $args, ComplexArrayMerge::$last_element );
-        }
-    }
+		// If the last element is not "recursive", add it back
+		if ( self::$last_element !== "recursive" ) {
+			self::addItemToEndOfArray( $args, self::$last_element );
+		}
+	}
 
-    /**
-     * @param $arr
-     * @return array
-     * @throws Exception
-     */
-    private static function iterate( $arr ) {
-        $arrays = [];
-        foreach( $arr as $array ) {
-            // Check if the array exists
-            if ( !isset( WSArrays::$arrays[ $array ] ) ) {
-                continue;
-            }
+	/**
+	 * @param $arr
+	 * @return array
+	 * @throws Exception
+	 */
+	private static function iterate( $arr ) {
+		$arrays = [];
+		foreach ( $arr as $array ) {
+			// Check if the array exists
+			if ( !isset( WSArrays::$arrays[ $array ] ) ) {
+				continue;
+			}
 
-            $array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array ] );
+			$array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array ] );
 
-            array_push( $arrays, $array );
-        }
+			array_push( $arrays, $array );
+		}
 
-        return $arrays;
-    }
+		return $arrays;
+	}
 
-    /**
-     * @param $array
-     */
-    private static function removeFirstItemFromArray( &$array ) {
-        array_shift( $array );
-    }
+	/**
+	 * @param &$array
+	 */
+	private static function removeFirstItemFromArray( &$array ) {
+		array_shift( $array );
+	}
 
-    /**
-     * @param $array
-     */
-    private static function removeLastItemFromArray( &$array ) {
-        ComplexArrayMerge::$last_element = array_pop( $array );
-    }
+	/**
+	 * @param &$array
+	 */
+	private static function removeLastItemFromArray( &$array ) {
+		self::$last_element = array_pop( $array );
+	}
 
-    /**
-     * @param $array
-     */
-    private static function getFirstItemFromArray( &$array ) {
-        ComplexArrayMerge::$new_array = reset( $array );
-    }
+	/**
+	 * @param &$array
+	 */
+	private static function getFirstItemFromArray( &$array ) {
+		self::$new_array = reset( $array );
+	}
 
-    /**
-     * @param $array
-     * @param $item
-     */
-    private static function addItemToEndOfArray( &$array, $item ) {
-        array_push( $array, $item );
-    }
+	/**
+	 * @param &$array
+	 * @param $item
+	 */
+	private static function addItemToEndOfArray( &$array, $item ) {
+		array_push( $array, $item );
+	}
 }

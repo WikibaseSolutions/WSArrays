@@ -27,79 +27,79 @@
  * @extends WSArrays
  */
 class ComplexArraySiblingValue extends ResultPrinter {
-    public function getName() {
-        return 'complexarraysiblingvalue';
-    }
+	public function getName() {
+		return 'complexarraysiblingvalue';
+	}
 
-    public function getAliases() {
-        return [
-            'casiblingvalue',
-            'casiblingv'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'casiblingvalue',
+			'casiblingv'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @param string $array_key
-     * @param string $sibling_key
-     * @return string|array
-     * @throws Exception
-     */
-    public static function getResult(Parser $parser, $array_key = null, $sibling_key = null ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @param string|null $array_key
+	 * @param string|null $sibling_key
+	 * @return string|array
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser, $array_key = null, $sibling_key = null ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $array_key ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Key' ) );
-        }
+		if ( empty( $array_key ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Key' ) );
+		}
 
-        if ( empty( $sibling_key ) && $sibling_key != "0" ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Sibling key' ) );
-        }
+		if ( empty( $sibling_key ) && $sibling_key != "0" ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Sibling key' ) );
+		}
 
-        return ComplexArraySiblingValue::arraySiblingValue( $array_key, $sibling_key );
-    }
+		return self::arraySiblingValue( $array_key, $sibling_key );
+	}
 
-    /**
-     * @param string $array_key
-     * @param string $sibling_key
-     *
-     * @return string
-     * @throws Exception
-     */
-    private static function arraySiblingValue( $array_key, $sibling_key ) {
-        $base_array = GlobalFunctions::getBaseArrayFromArrayName( $array_key );
+	/**
+	 * @param string $array_key
+	 * @param string $sibling_key
+	 *
+	 * @return string
+	 * @throws Exception
+	 */
+	private static function arraySiblingValue( $array_key, $sibling_key ) {
+		$base_array = GlobalFunctions::getBaseArrayFromArrayName( $array_key );
 
-        $array = GlobalFunctions::getArrayFromArrayName( $base_array );
-        $array_keys = GlobalFunctions::getKeys( $array_key );
+		$array = GlobalFunctions::getArrayFromArrayName( $base_array );
+		$array_keys = GlobalFunctions::getKeys( $array_key );
 
-        array_pop($array_keys);
+		array_pop( $array_keys );
 
-        $parent_array = ComplexArraySiblingValue::getArrayFromArrayAtKeys( $array, $array_keys );
+		$parent_array = self::getArrayFromArrayAtKeys( $array, $array_keys );
 
-        if($parent_array && isset($parent_array[$sibling_key]) && !is_array($parent_array[$sibling_key])) {
-            return $parent_array[$sibling_key];
-        }
+		if ( $parent_array && isset( $parent_array[$sibling_key] ) && !is_array( $parent_array[$sibling_key] ) ) {
+			return $parent_array[$sibling_key];
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    private static function getArrayFromArrayAtKeys( array $array, array $array_keys ) {
-        $temp = $array;
+	private static function getArrayFromArrayAtKeys( array $array, array $array_keys ) {
+		$temp = $array;
 
-        foreach($array_keys as $key) {
-            if(isset($temp[$key])) {
-                $temp = $temp[$key];
-            } else {
-                return false;
-            }
-        }
+		foreach ( $array_keys as $key ) {
+			if ( isset( $temp[$key] ) ) {
+				$temp = $temp[$key];
+			} else {
+				return false;
+			}
+		}
 
-        return $temp;
-    }
+		return $temp;
+	}
 }

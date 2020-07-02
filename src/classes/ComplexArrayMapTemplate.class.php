@@ -27,113 +27,113 @@
  * @extends WSArrays
  */
 class ComplexArrayMapTemplate extends ResultPrinter {
-    public function getName() {
-        return 'complexarraymaptemplate';
-    }
+	public function getName() {
+		return 'complexarraymaptemplate';
+	}
 
-    public function getAliases() {
-        return [
-            'camaptemplate',
-            'camapt',
-            'catemplate'
-        ];
-    }
+	public function getAliases() {
+		return [
+			'camaptemplate',
+			'camapt',
+			'catemplate'
+		];
+	}
 
-    public function getType() {
-        return 'normal';
-    }
+	public function getType() {
+		return 'normal';
+	}
 
-    /**
-     * Define all allowed parameters.
-     *
-     * @param Parser $parser
-     * @param string $name
-     * @param string $template
-     * @param string $options
-     * @return array
-     *
-     * @throws Exception
-     */
-    public static function getResult( Parser $parser, $name = '', $template = '', $options = '' ) {
-        GlobalFunctions::fetchSemanticArrays();
+	/**
+	 * Define all allowed parameters.
+	 *
+	 * @param Parser $parser
+	 * @param string $name
+	 * @param string $template
+	 * @param string $options
+	 * @return array
+	 *
+	 * @throws Exception
+	 */
+	public static function getResult( Parser $parser, $name = '', $template = '', $options = '' ) {
+		GlobalFunctions::fetchSemanticArrays();
 
-        if ( empty( $name ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
-        }
+		if ( empty( $name ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Name' ) );
+		}
 
-        if ( empty( $template ) ) {
-            return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Template' ) );
-        }
+		if ( empty( $template ) ) {
+			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Template' ) );
+		}
 
-        return ComplexArrayMapTemplate::arrayMapTemplate( $name, $template, $options );
-    }
+		return self::arrayMapTemplate( $name, $template, $options );
+	}
 
-    /**
-     * @param $name
-     * @param $template
-     * @param $options
-     * @return array
-     *
-     * @throws Exception
-     */
-    private static function arrayMapTemplate( $name, $template, $options = '' ) {
-        $base_array = GlobalFunctions::getBaseArrayFromArrayName( $name );
-        $array = GlobalFunctions::getArrayFromArrayName( $name );
+	/**
+	 * @param $name
+	 * @param $template
+	 * @param $options
+	 * @return array
+	 *
+	 * @throws Exception
+	 */
+	private static function arrayMapTemplate( $name, $template, $options = '' ) {
+		$base_array = GlobalFunctions::getBaseArrayFromArrayName( $name );
+		$array = GlobalFunctions::getArrayFromArrayName( $name );
 
-        if ( !GlobalFunctions::arrayExists( $base_array ) || !$array) {
-            return null;
-        }
+		if ( !GlobalFunctions::arrayExists( $base_array ) || !$array ) {
+			return null;
+		}
 
-        return array( ComplexArrayMapTemplate::mapToArray( $array, $template, $options ), "noparse" => false );
-    }
+		return [ self::mapToArray( $array, $template, $options ), "noparse" => false ];
+	}
 
-    /**
-     * @param $array
-     * @param $template
-     * @param $options
-     * @return string|null
-     */
-    private static function mapToArray( $array, $template, $options ) {
-        $return = null;
+	/**
+	 * @param $array
+	 * @param $template
+	 * @param $options
+	 * @return string|null
+	 */
+	private static function mapToArray( $array, $template, $options ) {
+		$return = null;
 
-        if ( GlobalFunctions::containsArray( $array ) && $options !== "condensed" ) {
-            foreach ( $array as $value ) {
-                ComplexArrayMapTemplate::map( $value, $return, $template );
-            }
-        } else {
-            ComplexArrayMapTemplate::map( $array, $return, $template );
-        }
+		if ( GlobalFunctions::containsArray( $array ) && $options !== "condensed" ) {
+			foreach ( $array as $value ) {
+				self::map( $value, $return, $template );
+			}
+		} else {
+			self::map( $array, $return, $template );
+		}
 
-        return $return;
-    }
+		return $return;
+	}
 
-    /**
-     * @param $value
-     * @param $return
-     * @param $template
-     */
-    private static function map( $value, &$return, $template ) {
-        $t = "{{" . $template;
+	/**
+	 * @param $value
+	 * @param &$return
+	 * @param $template
+	 */
+	private static function map( $value, &$return, $template ) {
+		$t = "{{" . $template;
 
-        if ( is_array( $value ) ) {
-            foreach ( $value as $key => $subvalue ) {
-                if ( is_array( $subvalue ) ) {
-                    $json = json_encode( $subvalue );
-                    GlobalFunctions::JSONtoWSON( $json );
+		if ( is_array( $value ) ) {
+			foreach ( $value as $key => $subvalue ) {
+				if ( is_array( $subvalue ) ) {
+					$json = json_encode( $subvalue );
+					GlobalFunctions::JSONtoWSON( $json );
 
-                    $subvalue = $json;
-                }
+					$subvalue = $json;
+				}
 
-                if( is_numeric( $key ) ) {
-                    $key += 1;
-                }
+				if ( is_numeric( $key ) ) {
+					$key += 1;
+				}
 
-                $t .= "|$key=$subvalue";
-            }
-        } else {
-            $t .= "|$value";
-        }
+				$t .= "|$key=$subvalue";
+			}
+		} else {
+			$t .= "|$value";
+		}
 
-        $return .= $t."}}";
-    }
+		$return .= $t . "}}";
+	}
 }
