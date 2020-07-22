@@ -25,5 +25,7 @@
   "ca-smw-paramdesc-unassociative": "Converts the named keys to integer keys",
   "ca-smw-paramdesc-detailed": "Hides more detailed information from the query",
   "ca-smw-paramdesc-valuesep": "Delimiter between properties of the same name",
-  "ca-invalid-markup": "The markup used is not recognized. Try adding a separator (,) if you are defining a simple array."
+  "ca-invalid-markup": "The markup used is not recognized. Try adding a separator (,) if you are defining a simple array.",
+  "ca-diff-multidimensional": "ComplexArrayDiff can only deal with one-dimensional array. At least one of the array that were given were multidimensional.",
+  "ca-sort-invalid-key": "This sort key is not valid, since it is not available for each sub-array."
 }

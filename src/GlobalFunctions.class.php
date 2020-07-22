@@ -28,7 +28,6 @@ require_once 'ComplexArray.class.php';
  */
 class GlobalFunctions {
 	const CA_MARKUP_SIMPLE = 1;
-	const CA_MARKUP_ARCHI  = 2;
 	const CA_MARKUP_LEGACY = 3;
 
 	/**
@@ -111,13 +110,13 @@ class GlobalFunctions {
 			return null;
 		}
 
-		$markup = str_replace( "\n", '\n', $markup );
-		$markup_type = self::determineMarkup( $markup, $separator );
+		$markup = str_replace( "\n", '', $markup );
+		$markup_type = self::determineMarkup( $markup );
 
 		switch ( $markup_type ) {
 			case self::CA_MARKUP_LEGACY:
 				self::WSONtoJSON( $markup );
-				$array = json_decode( $markup, true );
+				$array = self::trimElements( json_decode( $markup, true ) );
 
 				return $array;
 			case self::CA_MARKUP_SIMPLE:
@@ -125,17 +124,10 @@ class GlobalFunctions {
 					$separator = ',';
 				}
 
-				$array = explode( $separator, $markup );
-				$array = array_map( 'trim', $array );
+				$markup = str_replace( array( "\n", "\r", '\n' ), "", $markup );
 
-				return $array;
-			case self::CA_MARKUP_ARCHI:
-				try {
-					require_once 'classes/lib/ArchieMLParser.php';
-					$array = ArchieML::load( $markup );
-				} catch ( Exception $exception ) {
-					return null;
-				}
+				$array = explode( $separator, $markup );
+				$array = self::trimElements( $array );
 
 				return $array;
 			default:
@@ -145,10 +137,9 @@ class GlobalFunctions {
 
 	/**
 	 * @param $markup
-	 * @param null $separator
 	 * @return int
 	 */
-	public static function determineMarkup( $markup, $separator = null ) {
+	public static function determineMarkup( $markup ) {
 		$json_markup = $markup;
 		self::WSONtoJSON( $json_markup );
 
@@ -156,25 +147,7 @@ class GlobalFunctions {
 			return self::CA_MARKUP_LEGACY;
 		}
 
-		if ( $separator !== null || self::isCommaSeparatedList( $markup ) ) {
-			return self::CA_MARKUP_SIMPLE;
-		}
-
-		return self::CA_MARKUP_ARCHI;
-	}
-
-	/**
-	 * Simple function to check if a string is a comma-separated list. This function is conservative.
-	 *
-	 * @param $markup
-	 * @return bool
-	 */
-	public static function isCommaSeparatedList( $markup ) {
-		if ( !strpos( $markup, '[' ) && !strpos( $markup, ']' ) && !strpos( $markup, ':' ) ) {
-			return true;
-		}
-
-		return false;
+		return self::CA_MARKUP_SIMPLE;
 	}
 
 	public static function getKeys( $array_name ) {
@@ -280,13 +253,11 @@ class GlobalFunctions {
 
 			if ( $wairudokado_helper_object === true ) {
 				$wairudokado_helper_object = false;
-
 				continue;
 			}
 
-			/*
-			 * The Wairudokado (transliterated Japanese for wildcard, tribute to the Scope Resolution Operator in PHP) operator gives users the ability to use wildcards as pointers in an array
-			 */
+			// The Wairudokado (transliterated Japanese for wildcard, tribute to the Scope Resolution Operator in PHP)
+            // operator gives users the ability to use wildcards as pointers in an array
 			if ( self::isWairudokado( $match ) ) {
 				if ( self::isWairudokado( end( $matches ) ) ) {
 					// The Wairudokado operator does not make sense when it's at the end, so just ignore it
@@ -301,6 +272,10 @@ class GlobalFunctions {
 				$array = self::getArrayFromWairudokado( $array, $matches, $index );
 				$wairudokado_helper_object = true;
 			} else {
+			    if ( !is_array( $array ) ) {
+			        return false;
+                }
+
 				foreach ( $array as $key => $value ) {
 					if ( $key == $match ) {
 						$array = $value;
@@ -327,7 +302,7 @@ class GlobalFunctions {
 		$helper_array = [];
 
 		foreach ( $array as $item ) {
-			if ( !is_array( $item ) ) {
+			if ( !is_array( $item ) || !isset( $item[ $matches[ $index + 1 ] ] ) ) {
 				continue;
 			}
 
@@ -388,6 +363,14 @@ class GlobalFunctions {
 			strpos( $array_name, '}' ) !== false ) {
 			return false;
 		}
+
+		if ( is_numeric( $array_name ) ) {
+		    return false;
+        }
+
+		if ( ctype_digit( $array_name ) ) {
+		    return false;
+        }
 
 		return true;
 	}
@@ -492,4 +475,10 @@ class GlobalFunctions {
 	public static function getSFHValue( $arg, $frame ) {
 		return trim( $frame->expand( $arg ) );
 	}
+
+    private static function trimElements( $array ) {
+	    array_walk_recursive( $array, function ( &$value ) { $value = trim( $value ); } );
+
+	    return $array;
+    }
 }

@@ -87,18 +87,14 @@ class ComplexArrayMerge extends ResultPrinter {
 			$array = call_user_func_array( 'array_merge_recursive', $arrays );
 
 			if ( !is_array( $array ) ) {
-				return null;
+                WSArrays::$arrays[ self::$new_array ] = new ComplexArray( $array );
 			}
-
-			WSArrays::$arrays[ self::$new_array ] = new ComplexArray( $array );
 		} else {
 			$array = call_user_func_array( 'array_merge', $arrays );
 
-			if ( !is_array( $array ) ) {
-				return null;
+			if ( is_array( $array ) ) {
+                WSArrays::$arrays[ self::$new_array ] = new ComplexArray( $array );
 			}
-
-			WSArrays::$arrays[ self::$new_array ] = new ComplexArray( $array );
 		}
 
 		return null;
@@ -133,8 +129,7 @@ class ComplexArrayMerge extends ResultPrinter {
 			}
 
 			$array = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array ] );
-
-			array_push( $arrays, $array );
+			array_push( $arrays, (array)$array );
 		}
 
 		return $arrays;

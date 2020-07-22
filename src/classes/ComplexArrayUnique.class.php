@@ -46,7 +46,7 @@ class ComplexArrayUnique extends ResultPrinter {
 	 *
 	 * @param Parser $parser
 	 * @param string $array_name
-	 * @return array|null
+	 * @return array|null|bool
 	 *
 	 * @throws Exception
 	 */
@@ -57,7 +57,13 @@ class ComplexArrayUnique extends ResultPrinter {
 			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Array key' ) );
 		}
 
-		return self::arrayUnique( $array_name );
+        if ( !GlobalFunctions::arrayExists( $array_name ) ) {
+            return false;
+        }
+
+		self::arrayUnique( $array_name );
+
+        return null;
 	}
 
 	/**
@@ -80,7 +86,5 @@ class ComplexArrayUnique extends ResultPrinter {
 
 			WSArrays::$arrays[$array_name] = new ComplexArray( $array );
 		}
-
-		return null;
 	}
 }

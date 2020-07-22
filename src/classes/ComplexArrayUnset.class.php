@@ -105,6 +105,11 @@ class ComplexArrayUnset extends ResultPrinter {
 				// Last key, delete it.
 				unset( $temp[$keys[$i]] );
 
+				if ( count( $temp ) === 0 ) {
+				    // Remove dangling array
+				    unset( $array[$keys[$i - 1]] );
+                }
+
 				return;
 			}
 

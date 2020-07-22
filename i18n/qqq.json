@@ -25,5 +25,6 @@
   "ca-smw-paramdesc-unassociative": "Description of the SMW printer parameter 'unassociative'",
   "ca-smw-paramdesc-detailed": "Description of the SMW printer parameter 'simple'",
   "ca-smw-paramdesc-valuesep": "Description of the SMW printer parameter 'valuesep'",
-  "ca-invalid-markup": "Error message shown when the markup used is not recognized"
+  "ca-invalid-markup": "Error message shown when the markup used is not recognized",
+  "ca-sort-invalid-key": "Error message shown when an invalid sort key is used"
 }

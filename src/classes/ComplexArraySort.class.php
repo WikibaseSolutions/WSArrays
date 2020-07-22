@@ -96,7 +96,7 @@ class ComplexArraySort extends ResultPrinter {
 		if ( empty( $options ) ) {
 			$result = self::sortArray( "sort" );
 		} else {
-			if ( !empty( $key ) ) {
+			if ( $key !== '' ) {
 				self::$key = $key;
 			}
 
@@ -300,17 +300,17 @@ class ComplexArraySort extends ResultPrinter {
 	 * @return bool|string
 	 */
 	private static function keysort( $order ) {
-		if ( !self::$key ) {
-			$ca_sort_missing_key = wfMessage( 'ca-sort-missing-key' );
-
-			return $ca_sort_missing_key;
+		if ( self::$key === null ) {
+			return wfMessage( 'ca-sort-missing-key' );
 		}
 
 		foreach ( self::$array as $value ) {
-			if ( is_array( $value[ self::$key ] ) ) {
-				$ca_sort_array_too_deep = wfMessage( 'ca-sort-array-too-deep' );
+		    if ( !isset( $value[ self::$key ] ) ) {
+		        return wfMessage( 'ca-sort-invalid-key' );
+            }
 
-				return $ca_sort_array_too_deep;
+			if ( is_array( $value[ self::$key ] ) ) {
+				return wfMessage( 'ca-sort-array-too-deep' );
 			}
 		}
 
@@ -339,7 +339,6 @@ class ComplexArraySort extends ResultPrinter {
 	 *
 	 * @param &$array
 	 * @param $key
-	 * @return bool|string
 	 */
 	private static function ksort( &$array, $key ) {
 		$sorter = [];

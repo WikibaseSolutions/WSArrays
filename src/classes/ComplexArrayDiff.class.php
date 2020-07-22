@@ -32,7 +32,7 @@ class ComplexArrayDiff extends ResultPrinter {
 	 */
 	private static $new_array;
 
-	public function getName() {
+    public function getName() {
 		return 'complexarraydiff';
 	}
 
@@ -75,19 +75,27 @@ class ComplexArrayDiff extends ResultPrinter {
 			return GlobalFunctions::error( wfMessage( 'ca-invalid-name' ) );
 		}
 
-		if ( count( $args ) < 2 ) {
-			return GlobalFunctions::error( wfMessage( 'ca-too-little-arrays' ) );
-		}
-
 		$arrays = self::pushArrays( $args );
+
+        if ( count( $arrays ) < 2 ) {
+            return GlobalFunctions::error( wfMessage( 'ca-too-little-arrays' ) );
+        }
+
+        foreach ( $arrays as $array ) {
+            if ( !is_array( $array ) ) {
+                return null;
+            }
+
+            if ( !self::isOneDimensionalArray( $array ) ) {
+                return GlobalFunctions::error( wfMessage( 'ca-diff-multidimensional' ) );
+            }
+        }
 
 		$array_diff = call_user_func_array( 'array_diff_assoc', $arrays );
 
-		if ( !is_array( $array_diff ) ) {
-			return null;
+		if ( is_array( $array_diff ) ) {
+            WSArrays::$arrays[ self::$new_array ] = new ComplexArray( $array_diff );
 		}
-
-		WSArrays::$arrays[ self::$new_array ] = new ComplexArray( $array_diff );
 
 		return null;
 	}
@@ -99,6 +107,7 @@ class ComplexArrayDiff extends ResultPrinter {
 	 */
 	private static function pushArrays( $arr ) {
 		$arrays = [];
+
 		foreach ( $arr as $array ) {
 			// Check if the array exists
 			if ( !isset( WSArrays::$arrays[ $array ] ) ) {
@@ -135,4 +144,14 @@ class ComplexArrayDiff extends ResultPrinter {
 	private static function getFirstItemFromArray( &$array ) {
 		self::$new_array = reset( $array );
 	}
+
+    private static function isOneDimensionalArray(array $array) {
+        foreach ( $array as $item ) {
+            if ( is_array( $item ) ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

@@ -233,29 +233,12 @@ class ComplexArrayPrinter extends ResultPrinter {
 	 */
 	private function addPrintout( $key ) {
 		if ( !empty( $this->v ) ) {
-			if ( $this->isOneDimensional() ) {
-				$this->r[$key] = implode( $this->delimiter, $this->v );
-			} else {
-				if ( count( $this->v ) === 1 ) {
-					$this->r[$key] = $this->v[0];
-				} else {
-					$this->r[$key] = $this->v;
-				}
-			}
+            if ( count( $this->v ) === 1 ) {
+                $this->r[$key] = $this->v[0];
+            } else {
+                $this->r[$key] = $this->v;
+            }
 		}
-	}
-
-	/**
-	 * @return bool
-	 */
-	private function isOneDimensional() {
-		foreach ( $this->v as $value ) {
-			if ( is_array( $value ) ) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	/**
@@ -343,7 +326,7 @@ class ComplexArrayPrinter extends ResultPrinter {
 	 * @return string
 	 */
 	private function formatPropertyOfType_txt( $property ) {
-		return $property;
+	    return $property;
 	}
 
 	/**

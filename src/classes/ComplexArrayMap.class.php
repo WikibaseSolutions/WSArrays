@@ -65,7 +65,7 @@ class ComplexArrayMap extends ResultPrinter {
 	/**
 	 * @var bool
 	 */
-	private static $hide = false;
+	private static $show = false;
 
 	/**
 	 * @var string
@@ -100,10 +100,12 @@ class ComplexArrayMap extends ResultPrinter {
 			return GlobalFunctions::error( wfMessage( 'ca-omitted', 'Map' ) );
 		}
 
-		// Hide
+		// Show
 		if ( isset( $args[4] ) ) {
-			self::$hide = !filter_var( GlobalFunctions::getValue( $args[4], $frame ), FILTER_VALIDATE_BOOLEAN );
-		}
+			self::$show = filter_var( GlobalFunctions::getValue( $args[4], $frame ), FILTER_VALIDATE_BOOLEAN );
+		} else {
+		    self::$show = false;
+        }
 
 		if ( isset( $args[3] ) ) {
 			$sep = GlobalFunctions::getValue( $args[3], $frame );
@@ -132,6 +134,10 @@ class ComplexArrayMap extends ResultPrinter {
 	 */
 	private static function arrayMap( $array_name, $map_key, $map ) {
 		self::$buffer = '';
+
+		if ( empty( $array_name ) || empty( $map_key ) || empty( $map ) ) {
+		    return null;
+        }
 
 		$base_array = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
 		$array = GlobalFunctions::getArrayFromArrayName( $array_name );
@@ -170,14 +176,11 @@ class ComplexArrayMap extends ResultPrinter {
 				}
 			} else {
 				$preg_quote = preg_quote( $map_key );
-
-				$buffer[] = preg_replace_callback( "/($preg_quote(\[[^\[\]]+\])+)/", 'ComplexArrayMap::replaceCallback', $map );
+				$buffer[] = preg_replace_callback( "/($preg_quote((\[[^\[\]]+\])+)?)/", 'ComplexArrayMap::replaceCallback', $map );
 			}
 		}
 
-		$buffer = self::$sep ? implode( self::$sep, $buffer ) : implode( $buffer );
-
-		return $buffer;
+		return self::$sep ? implode( self::$sep, $buffer ) : implode( $buffer );
 	}
 
 	/**
@@ -196,14 +199,14 @@ class ComplexArrayMap extends ResultPrinter {
 				return $value;
 				break;
 			default:
-				if ( !self::$hide ) {
+				if ( self::$show ) {
 					return $matches[ 0 ];
 				}
 
 				break;
 		}
 
-		return null;
+		return '';
 	}
 
 	/**
