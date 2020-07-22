@@ -60,14 +60,14 @@ class ComplexArrayDiff extends ResultPrinter {
 		return self::arrayDiff( func_get_args() );
 	}
 
-	/**
-	 * Calculate difference between arrays.
-	 *
-	 * @param $args
-	 * @return null
-	 *
-	 * @throws Exception
-	 */
+    /**
+     * Calculate difference between arrays.
+     *
+     * @param $args
+     *
+     * @return array|string
+     * @throws Exception
+     */
 	private static function arrayDiff( $args ) {
 		self::parseFunctionArguments( $args );
 
@@ -83,7 +83,7 @@ class ComplexArrayDiff extends ResultPrinter {
 
         foreach ( $arrays as $array ) {
             if ( !is_array( $array ) ) {
-                return null;
+                return '';
             }
 
             if ( !self::isOneDimensionalArray( $array ) ) {
@@ -97,7 +97,7 @@ class ComplexArrayDiff extends ResultPrinter {
             WSArrays::$arrays[ self::$new_array ] = new ComplexArray( $array_diff );
 		}
 
-		return null;
+		return '';
 	}
 
 	/**

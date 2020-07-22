@@ -73,7 +73,7 @@ class ComplexArrayPushValue extends ResultPrinter {
 	/**
 	 * @param $array_name
 	 * @param $markup_value
-	 * @return array|bool|null
+	 * @return array|bool|string
 	 *
 	 * @throws Exception
 	 */
@@ -111,7 +111,7 @@ class ComplexArrayPushValue extends ResultPrinter {
 			WSArrays::$arrays[$base_array] = new ComplexArray( $array );
 		}
 
-		return null;
+		return '';
 	}
 
 	private static function replace( $value, $array, $base_array ) {

@@ -136,14 +136,14 @@ class ComplexArrayMap extends ResultPrinter {
 		self::$buffer = '';
 
 		if ( empty( $array_name ) || empty( $map_key ) || empty( $map ) ) {
-		    return null;
+		    return '';
         }
 
 		$base_array = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
 		$array = GlobalFunctions::getArrayFromArrayName( $array_name );
 
 		if ( !isset( WSArrays::$arrays[$base_array] ) || !$array ) {
-			return null;
+			return '';
 		}
 
 		return self::iterate( $array, $map_key, $map, $array_name );

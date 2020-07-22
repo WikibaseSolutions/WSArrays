@@ -49,7 +49,7 @@ class ComplexArraySearchArray extends ResultPrinter {
 	 * @param string $new_array_name
 	 * @param string $array_name
 	 * @param string $value
-	 * @return array
+	 * @return string|array
 	 *
 	 * @throws Exception
 	 */
@@ -79,13 +79,13 @@ class ComplexArraySearchArray extends ResultPrinter {
 	 * @param $name
 	 * @param $value
 	 * @param $new_array
-	 * @return array|int
+	 * @return string
 	 *
 	 * @throws Exception
 	 */
 	private static function arraySearchArray( $new_array, $name, $value ) {
 		if ( !GlobalFunctions::arrayExists( $name ) ) {
-			return null;
+			return '';
 		}
 
 		self::findValues( $value, $name );
@@ -94,7 +94,7 @@ class ComplexArraySearchArray extends ResultPrinter {
 			WSArrays::$arrays[ $new_array ] = new ComplexArray( self::$found );
 		}
 
-		return null;
+		return '';
 	}
 
 	/**

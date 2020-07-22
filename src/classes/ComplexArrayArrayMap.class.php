@@ -89,6 +89,14 @@ class ComplexArrayArrayMap extends ResultPrinter {
 		return [ self::arrayArrayMap( $value, $variable, $formula, $delimiter, $new_delimiter ), 'noparse' => false ];
 	}
 
+    /**
+     * @param $value
+     * @param $variable
+     * @param $formula
+     * @param $delimiter
+     * @param $new_delimiter
+     * @return string
+     */
 	private static function arrayArrayMap( $value, $variable, $formula, $delimiter, $new_delimiter ) {
         if ( empty( $value ) || empty( $variable ) || empty( $formula ) ) {
             return '';

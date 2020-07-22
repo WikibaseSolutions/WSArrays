@@ -66,13 +66,13 @@ class ComplexArraySize extends ResultPrinter {
 	 *
 	 * @param $name
 	 * @param string $options
-	 * @return array|int
+	 * @return array|string
 	 *
 	 * @throws Exception
 	 */
 	private static function arraySize( $name, $options = '' ) {
 		if ( !GlobalFunctions::arrayExists( GlobalFunctions::getBaseArrayFromArrayName( $name ) ) ) {
-			return null;
+			return '';
 		}
 
 		$array = GlobalFunctions::getArrayFromArrayName( $name );

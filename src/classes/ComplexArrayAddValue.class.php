@@ -81,7 +81,7 @@ class ComplexArrayAddValue extends ResultPrinter {
 	 *
 	 * @param $array_name
 	 * @param $value
-	 * @return array|null
+	 * @return array|string
 	 *
 	 * @throws Exception
 	 */
@@ -89,7 +89,7 @@ class ComplexArrayAddValue extends ResultPrinter {
 		$base_array_name = GlobalFunctions::getBaseArrayFromArrayName( $array_name );
 
 		if ( !GlobalFunctions::arrayExists( $base_array_name ) ) {
-			return null;
+			return '';
 		}
 
 		$keys = GlobalFunctions::getKeys( $array_name );
@@ -104,7 +104,7 @@ class ComplexArrayAddValue extends ResultPrinter {
 
 		WSArrays::$arrays[ $base_array_name ] = new ComplexArray( $array );
 
-		return null;
+		return '';
 	}
 
 	/**

@@ -58,19 +58,18 @@ class ComplexArrayUnique extends ResultPrinter {
 		}
 
         if ( !GlobalFunctions::arrayExists( $array_name ) ) {
-            return false;
+            return '';
         }
 
 		self::arrayUnique( $array_name );
 
-        return null;
+        return '';
 	}
 
 	/**
 	 * Apply array_unique onto the array and safe it again as SafeComplexArray
 	 *
 	 * @param string $array_name
-	 * @return array|null
 	 *
 	 * @throws Exception
 	 */

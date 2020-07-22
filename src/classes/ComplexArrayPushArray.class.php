@@ -62,7 +62,7 @@ class ComplexArrayPushArray extends ResultPrinter {
 
 	/**
 	 * @param $args
-	 * @return array|null
+	 * @return array|string
 	 *
 	 * @throws Exception
 	 */
@@ -81,7 +81,7 @@ class ComplexArrayPushArray extends ResultPrinter {
 
 		WSArrays::$arrays[self::$new_array] = new ComplexArray( $arrays );
 
-		return null;
+		return '';
 	}
 
 	/**

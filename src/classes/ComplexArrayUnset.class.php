@@ -47,7 +47,7 @@ class ComplexArrayUnset extends ResultPrinter {
 	 *
 	 * @param Parser $parser
 	 * @param string $array_name
-	 * @return array|null|bool
+	 * @return array|string
 	 *
 	 * @throws Exception
 	 */
@@ -63,7 +63,7 @@ class ComplexArrayUnset extends ResultPrinter {
 
 	/**
 	 * @param $array_name
-	 * @return null|bool|array
+	 * @return string
 	 * @throws Exception
 	 */
 	private static function arrayUnset( $array_name ) {
@@ -71,29 +71,29 @@ class ComplexArrayUnset extends ResultPrinter {
 
 		if ( $base_array_name === $array_name ) {
 			// The user is trying to unset the entire array, which is not supported.
-			return false;
+			return '';
 		}
 
 		if ( !GlobalFunctions::arrayExists( $base_array_name ) ) {
-			return false;
+			return '';
 		}
 
 		$array = GlobalFunctions::getArrayFromArrayName( $base_array_name );
 		$keys  = GlobalFunctions::getKeys( $array_name );
 
 		if ( !$array || !GlobalFunctions::getArrayFromArrayName( $array_name ) ) {
-			return false;
+			return '';
 		}
 
 		if ( !$keys ) {
-			return false;
+			return '';
 		}
 
 		self::unsetValueFromKeys( $array, $keys );
 
 		WSArrays::$arrays[$base_array_name] = new ComplexArray( $array );
 
-		return null;
+		return '';
 	}
 
 	private static function unsetValueFromKeys( &$array, $keys ) {

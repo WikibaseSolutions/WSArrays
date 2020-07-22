@@ -67,7 +67,7 @@ class ComplexArrayMerge extends ResultPrinter {
 
 	/**
 	 * @param $args
-	 * @return array|null
+	 * @return array|string
 	 * @throws Exception
 	 */
 	private static function arrayMerge( $args ) {
@@ -97,7 +97,7 @@ class ComplexArrayMerge extends ResultPrinter {
 			}
 		}
 
-		return null;
+		return '';
 	}
 
 	/**

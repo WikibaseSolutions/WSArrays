@@ -96,7 +96,7 @@ class ComplexArrayPrint extends ResultPrinter {
 
 		if ( !self::$array ) {
 			// Array does not exist
-			return null;
+			return '';
 		}
 
 		if ( !empty( $options ) ) {

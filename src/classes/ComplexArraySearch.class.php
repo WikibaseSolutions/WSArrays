@@ -71,13 +71,13 @@ class ComplexArraySearch extends ResultPrinter {
 	/**
 	 * @param string $array_name
 	 * @param $value
-	 * @return array|int
+	 * @return array|int|string
 	 *
 	 * @throws Exception
 	 */
 	private static function arraySearch( $array_name, $value ) {
 		if ( !isset( WSArrays::$arrays[ $array_name ] ) ) {
-			return null;
+			return '';
 		}
 
 		self::$array_name = null;

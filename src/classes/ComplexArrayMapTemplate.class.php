@@ -72,7 +72,7 @@ class ComplexArrayMapTemplate extends ResultPrinter {
 	 * @param $name
 	 * @param $template
 	 * @param $options
-	 * @return array
+	 * @return array|string
 	 *
 	 * @throws Exception
 	 */
@@ -81,7 +81,7 @@ class ComplexArrayMapTemplate extends ResultPrinter {
 		$array = GlobalFunctions::getArrayFromArrayName( $name );
 
 		if ( !GlobalFunctions::arrayExists( $base_array ) || !$array ) {
-			return null;
+			return '';
 		}
 
 		return [ self::mapToArray( $array, $template, $options ), "noparse" => false ];

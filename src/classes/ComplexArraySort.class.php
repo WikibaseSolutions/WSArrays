@@ -81,13 +81,13 @@ class ComplexArraySort extends ResultPrinter {
 	 * @param string $array_name
 	 * @param string $options
 	 * @param string $key
-	 * @return array|null
+	 * @return array|string
 	 *
 	 * @throws Exception
 	 */
 	private static function arraySort( $array_name, $options = '', $key = '' ) {
 		if ( !GlobalFunctions::arrayExists( $array_name ) ) {
-			return null;
+			return '';
 		}
 
 		self::$array      = GlobalFunctions::getArrayFromComplexArray( WSArrays::$arrays[ $array_name ] );
@@ -106,7 +106,7 @@ class ComplexArraySort extends ResultPrinter {
 		if ( $result === true ) {
 			WSArrays::$arrays[$array_name] = new ComplexArray( self::$array );
 
-			return null;
+			return '';
 		}
 
 		return GlobalFunctions::error( $result );

@@ -49,7 +49,7 @@ class ComplexArrayDefine extends ResultPrinter {
 	 * @param string $args
 	 *
 	 * @throws Exception
-     * @return array|null
+     * @return array|string
 	 */
 	public static function getResult( Parser $parser, $frame, $args ) {
 		GlobalFunctions::fetchSemanticArrays();
@@ -75,7 +75,7 @@ class ComplexArrayDefine extends ResultPrinter {
 		    self::arrayDefine( $array_name, $array_markup, $sep );
         }
 
-		return null;
+		return '';
 	}
 
 	/**

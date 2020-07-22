@@ -49,7 +49,7 @@ class ComplexArrayDefinedArrays extends ResultPrinter {
 	 * @param Parser $parser
 	 * @param string|null $array_name
 	 *
-	 * @return array|null
+	 * @return array|string
 	 */
 	public static function getResult( Parser $parser, $array_name = null ) {
 		if ( empty( $array_name ) ) {
@@ -62,7 +62,7 @@ class ComplexArrayDefinedArrays extends ResultPrinter {
 
 		self::arrayDefinedArrays( $array_name );
 
-		return null;
+		return '';
 	}
 
 	private static function arrayDefinedArrays( $array_name ) {

@@ -74,7 +74,7 @@ class ComplexArraySlice extends ResultPrinter {
 	 * @param string $array_name
 	 * @param int $offset
 	 * @param int $length
-	 * @return array|null
+	 * @return array|string
 	 *
 	 * @throws Exception
 	 */
@@ -82,7 +82,7 @@ class ComplexArraySlice extends ResultPrinter {
 		$array = GlobalFunctions::getArrayFromArrayName( $array_name );
 
 		if ( !$array ) {
-			return null;
+			return '';
 		}
 
 		if ( !empty( $length ) ) {
@@ -91,6 +91,6 @@ class ComplexArraySlice extends ResultPrinter {
 			WSArrays::$arrays[$new_array_name] = new ComplexArray( array_slice( $array, $offset ) );
 		}
 
-		return null;
+		return '';
 	}
 }
